@@ -1,0 +1,314 @@
+/* ============================================================
+   CORE – Login-side styles
+   ============================================================ */
+
+.login-body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--blush-bg) 0%, var(--blush-mid) 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sentrert innhold ──────────────────────────────────────── */
+.login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 1.5rem 2.5rem;
+}
+
+/* ── Kortet ─────────────────────────────────────────────────── */
+.login-card {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 440px;
+  padding: 2.4rem 2.4rem 2rem;
+  box-shadow: 0 20px 60px rgba(30, 42, 74, 0.12);
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.login-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.login-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.4rem;
+}
+
+.login-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+  font-weight: 300;
+  max-width: 300px;
+  margin: 0 auto 1.4rem;
+}
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+.login-tabs {
+  display: inline-flex;
+  background: var(--blush-bg);
+  border-radius: 50px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.login-tab {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--text-mid);
+  background: transparent;
+  border: none;
+  border-radius: 50px;
+  padding: 0.5rem 1.3rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.login-tab.active {
+  background: var(--navy);
+  color: #fff;
+}
+
+/* ── Feil / suksess ────────────────────────────────────────── */
+.login-error {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  color: #dc2626;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+
+.login-success {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  color: #16a34a;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+
+/* ── Sosiale knapper ───────────────────────────────────────── */
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  border: none;
+}
+
+.social-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.social-btn:active {
+  transform: translateY(0);
+}
+
+.social-btn--google {
+  background: #fff;
+  color: #1f1f1f;
+  border: 1.5px solid #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.social-btn--google:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+}
+
+.social-btn--facebook {
+  background: #1877F2;
+  color: #fff;
+}
+
+.social-btn--facebook:hover {
+  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.35);
+}
+
+/* ── Separator ─────────────────────────────────────────────── */
+.login-separator {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.1rem 0;
+  color: var(--text-light);
+  font-size: 0.78rem;
+}
+
+.login-separator::before,
+.login-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--blush-mid);
+}
+
+/* ── Skjema ─────────────────────────────────────────────────── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  letter-spacing: 0.02em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--blush-mid);
+  border-radius: 10px;
+  background: var(--blush-bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--navy);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(30, 42, 74, 0.07);
+}
+
+.form-group input::placeholder {
+  color: var(--text-light);
+}
+
+/* ── Passord-felt ───────────────────────────────────────────── */
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 2.8rem;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.pw-toggle:hover {
+  color: var(--navy);
+}
+
+/* ── Glemt passord ─────────────────────────────────────────── */
+.forgot-link {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: var(--text-mid);
+  text-decoration: none;
+  margin-top: -0.2rem;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--coral);
+}
+
+/* ── Send-knapp ─────────────────────────────────────────────── */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.submit-btn:hover {
+  background: var(--coral);
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner */
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsiv ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.8rem 1.4rem 1.6rem;
+    border-radius: 18px;
+  }
+}

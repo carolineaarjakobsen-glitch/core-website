@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORE – Logg inn</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="login.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="login-body">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+        </svg>
+        <span class="logo-wordmark">core</span>
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">← Tilbake</a>
+    </nav>
+  </header>
+
+  <!-- Login-kort -->
+  <main class="login-main">
+
+    <div class="login-card">
+
+      <!-- Topp: tittel + tabs -->
+      <div class="login-header">
+        <h1 class="login-title">Velkommen til CORE</h1>
+        <p class="login-subtitle">Din lokale reiseguide – logg inn for å lagre favoritter og turer</p>
+
+        <div class="login-tabs" role="tablist">
+          <button class="login-tab active" id="tab-login"    onclick="switchTab('login')"    role="tab" aria-selected="true">Logg inn</button>
+          <button class="login-tab"        id="tab-register" onclick="switchTab('register')" role="tab" aria-selected="false">Registrer deg</button>
+        </div>
+      </div>
+
+      <!-- Feilmelding -->
+      <div class="login-error" id="login-error" style="display:none"></div>
+
+      <!-- Suksessmelding -->
+      <div class="login-success" id="login-success" style="display:none"></div>
+
+      <!-- Sosiale innlogginger -->
+      <div class="social-buttons">
+
+        <!-- Google -->
+        <button class="social-btn social-btn--google" onclick="signInWithGoogle()">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.5 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.1C9.5 36.4 16.2 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.6l6.2 5.2C37 39.4 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+          </svg>
+          Fortsett med Google
+        </button>
+
+        <!-- Facebook -->
+        <button class="social-btn social-btn--facebook" onclick="signInWithFacebook()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.27h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/>
+          </svg>
+          Fortsett med Facebook
+        </button>
+
+      </div>
+
+      <!-- Separator -->
+      <div class="login-separator">
+        <span>eller</span>
+      </div>
+
+      <!-- E-post + passord: LOGG INN -->
+      <form class="login-form" id="form-login" onsubmit="submitLogin(event)">
+        <div class="form-group">
+          <label for="login-email">E-postadresse</label>
+          <input type="email" id="login-email" placeholder="din@epost.no" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Passord</label>
+          <div class="password-wrap">
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="pw-toggle" onclick="togglePassword('login-password', this)" aria-label="Vis/skjul passord">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <a href="#" class="forgot-link" onclick="forgotPassword(event)">Glemt passord?</a>
+        </div>
+        <button type="submit" class="submit-btn" id="login-submit-btn">
+          <span class="btn-text">Logg inn</span>
+          <span class="btn-spinner" style="display:none"></span>
+        </button>
+      </form>
+
+      <!-- E-post + passord: REGISTRER DEG -->
+      <form class="login-form" id="form-register" style="display:none" onsubmit="submitRegister(event)">
+        <div class="form-group">
+          <label for="reg-name">Navn</label>
+          <input type="text" id="reg-name" placeholder="Ditt navn" autocomplete="name" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-email">E-postadresse</label>
+          <input type="email" id="reg-email" placeholder="din@epost.no" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Passord</label>
+          <div class="password-wrap">
+            <input type="password" id="reg-password" placeholder="Minst 6 tegn" autocomplete="new-password" required minlength="6" />
+            <button type="button" class="pw-toggle" onclick="togglePassword('reg-password', this)" aria-label="Vis/skjul passord">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn" id="reg-submit-btn">
+          <span class="btn-text">Opprett konto</span>
+          <span class="btn-spinner" style="display:none"></span>
+        </button>
+      </form>
+
+    </div>
+
+  </main>
+
+  <!-- Firebase SDK (compat mode) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

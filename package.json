@@ -1,0 +1,11 @@
+{
+  "name": "core-website",
+  "version": "1.0.0",
+  "description": "CORE – Din lokale reiseleder",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

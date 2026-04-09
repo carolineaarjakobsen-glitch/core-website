@@ -102,15 +102,119 @@ nav a:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-nav a:last-child {
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  margin-left: 0.4rem;
+/* Login-knapp i navbar */
+.nav-login-btn {
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  margin-left: 0.4rem !important;
+  background: transparent;
 }
 
-nav a:last-child:hover {
-  background-color: var(--coral);
-  border-color: var(--coral);
+.nav-login-btn:hover {
+  background-color: var(--coral) !important;
+  border-color: var(--coral) !important;
+}
+
+/* Bruker-avatar + dropdown */
+.nav-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 0.6rem;
+  cursor: pointer;
+}
+
+.nav-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.25);
+  transition: border-color 0.2s;
+  user-select: none;
+}
+
+.nav-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav-user:hover .nav-avatar {
+  border-color: rgba(255,255,255,0.6);
+}
+
+/* Dropdown */
+.nav-user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(20, 28, 52, 0.18);
+  min-width: 200px;
+  padding: 0.9rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 600;
+  border: 1px solid var(--blush-mid);
+}
+
+.nav-user-dropdown.open {
+  display: flex;
+}
+
+.nav-user-info {
+  padding: 0.2rem 0.3rem 0.6rem;
+  border-bottom: 1px solid var(--blush-mid);
+}
+
+.nav-user-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-user-email {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.1rem;
+}
+
+.nav-signout-btn {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: var(--blush-bg);
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-signout-btn:hover {
+  background: var(--coral);
+  color: #fff;
 }
 
 /* =====================
