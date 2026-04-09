@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORE – Velg din opplevelse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="city-landing.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="landing-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+        </svg>
+        <span class="logo-wordmark">core</span>
+      </a>
+    </div>
+    <nav>
+      <a href="#">Om oss</a>
+      <a href="#">Byer</a>
+      <a href="#">Kontakt</a>
+    </nav>
+  </header>
+
+  <main class="landing-split">
+
+    <!-- Panel 1: Velg din guide -->
+    <a id="panel-guide" class="landing-panel" href="#">
+      <div class="panel-bg" id="guide-bg"></div>
+      <div class="panel-overlay panel-overlay--guide"></div>
+      <div class="panel-content">
+        <div class="panel-eyebrow">Personlig reiseopplevelse</div>
+        <h2 class="panel-title">Velg din<br /><em>guide</em></h2>
+        <p class="panel-desc">Bli koblet med en lokal ekspert som kjenner gatene, historiene og hemmelighetene ingen reiseguide skriver om.</p>
+        <span class="panel-cta">
+          Finn din guide
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+        <div class="panel-coming-soon">Kommer snart</div>
+      </div>
+    </a>
+
+    <!-- Panel 2: Filtrer for aktiviteter -->
+    <a id="panel-activities" class="landing-panel" href="#">
+      <div class="panel-bg" id="activity-bg"></div>
+      <div class="panel-overlay panel-overlay--activities"></div>
+      <div class="panel-content">
+        <div class="panel-eyebrow">Tilpasset for deg</div>
+        <h2 class="panel-title">Filtrer for<br /><em>aktiviteter</em></h2>
+        <p class="panel-desc">Fortell oss hvem du er med, hva du har lyst til og hva du vil bruke – vi finner de beste lokale opplevelsene for deg.</p>
+        <span class="panel-cta">
+          Utforsk aktiviteter
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Panel 3: Hva skjer i byen -->
+    <a id="panel-events" class="landing-panel" href="#">
+      <div class="panel-bg" id="event-bg"></div>
+      <div class="panel-overlay panel-overlay--events"></div>
+      <div class="panel-content">
+        <div class="panel-eyebrow">Denne måneden</div>
+        <h2 class="panel-title">Hva skjer i<br /><em id="event-city-name"></em></h2>
+        <p class="panel-desc">Se hva som skjer i byen dag for dag – markeder, festivaler, konserter og lokale happenings.</p>
+        <span class="panel-cta">
+          Åpne kalender
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Midtstrek med by-navn -->
+    <div class="landing-divider">
+      <div class="divider-city" id="divider-city-name"></div>
+    </div>
+
+  </main>
+
+  <script src="cities.js"></script>
+  <script src="city-landing.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORE – Utforsk</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="explore.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="explore-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <span class="logo-letter">c</span>
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+        </svg>
+        <span class="logo-letter">re</span>
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">← Tilbake</a>
+      <a href="#">Om oss</a>
+      <a href="#">Byer</a>
+      <a href="#">Kontakt</a>
+    </nav>
+  </header>
+
+  <!-- HERO: by-banner -->
+  <div class="explore-hero">
+    <div class="explore-hero-bg" id="explore-bg"></div>
+    <div class="explore-hero-overlay"></div>
+    <div class="explore-hero-content">
+      <p class="explore-eyebrow">Tilpass opplevelsen din</p>
+      <h1 class="explore-title">Hva vil du oppleve i <span id="explore-city">Roma</span>?</h1>
+    </div>
+  </div>
+
+  <!-- FILTER-SEKSJON -->
+  <main class="explore-main">
+
+    <div class="filter-card">
+
+      <!-- SELSKAP -->
+      <div class="filter-group">
+        <h2 class="filter-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+          Selskap
+        </h2>
+        <div class="filter-options">
+          <button class="filter-btn" data-group="selskap" data-value="solo">
+            <span class="filter-btn-icon">🧍</span>
+            Solo
+          </button>
+          <button class="filter-btn" data-group="selskap" data-value="par">
+            <span class="filter-btn-icon">👫</span>
+            Par
+          </button>
+          <button class="filter-btn" data-group="selskap" data-value="venner">
+            <span class="filter-btn-icon">👯</span>
+            Venner
+          </button>
+          <button class="filter-btn" data-group="selskap" data-value="familie">
+            <span class="filter-btn-icon">👨‍👩‍👧‍👦</span>
+            Familie
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- KOSTNAD -->
+      <div class="filter-group">
+        <h2 class="filter-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+          </svg>
+          Kostnad
+        </h2>
+        <div class="filter-options">
+          <button class="filter-btn" data-group="kostnad" data-value="gratis">
+            <span class="filter-btn-icon">🎁</span>
+            Gratis
+          </button>
+          <button class="filter-btn wide" data-group="kostnad" data-value="$">
+            <span class="cost-symbol">$</span>
+            Rimelig
+          </button>
+          <button class="filter-btn wide" data-group="kostnad" data-value="$$">
+            <span class="cost-symbol">$$</span>
+            Moderat
+          </button>
+          <button class="filter-btn wide" data-group="kostnad" data-value="$$$">
+            <span class="cost-symbol">$$$</span>
+            Eksklusivt
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- TID -->
+      <div class="filter-group">
+        <h2 class="filter-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Tid på dagen
+        </h2>
+        <div class="filter-options">
+          <button class="filter-btn" data-group="tid" data-value="morgen">
+            <span class="filter-btn-icon">🌅</span>
+            Morgen
+          </button>
+          <button class="filter-btn" data-group="tid" data-value="formiddag">
+            <span class="filter-btn-icon">☀️</span>
+            Formiddag
+          </button>
+          <button class="filter-btn" data-group="tid" data-value="ettermiddag">
+            <span class="filter-btn-icon">🌤️</span>
+            Ettermiddag
+          </button>
+          <button class="filter-btn" data-group="tid" data-value="kveld">
+            <span class="filter-btn-icon">🌙</span>
+            Kveld
+          </button>
+        </div>
+      </div>
+
+      <!-- AKTIVE FILTER + KNAPP -->
+      <div class="filter-footer">
+        <div class="active-filters" id="active-filters">
+          <span class="active-filters-label">Ingen filtre valgt ennå</span>
+        </div>
+        <button class="explore-btn" id="explore-btn" onclick="showResults()">
+          Vis opplevelser
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RESULTATER (placeholder) -->
+    <div class="results-area" id="results-area" style="display:none;">
+      <p class="results-placeholder">✨ Resultater vises her – denne seksjonen er under utvikling.</p>
+    </div>
+
+  </main>
+
+  <script src="cities.js"></script>
+  <script src="experiences.js"></script>
+  <script src="explore.js"></script>
+</body>
+</html>

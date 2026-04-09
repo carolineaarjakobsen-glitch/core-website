@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORE – Kalender</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="calendar.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="cal-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+        </svg>
+        <span class="logo-wordmark">core</span>
+      </a>
+    </div>
+    <nav>
+      <a id="nav-back" href="#">← Tilbake</a>
+      <a href="#">Kontakt</a>
+    </nav>
+  </header>
+
+  <main class="cal-main">
+
+    <!-- Venstre: kalender -->
+    <section class="cal-section">
+
+      <div class="cal-header">
+        <div class="cal-city-label" id="cal-city-label"></div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="btn-prev" aria-label="Forrige måned">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <h2 class="cal-month-title" id="cal-month-title"></h2>
+          <button class="cal-nav-btn" id="btn-next" aria-label="Neste måned">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ukedager -->
+      <div class="cal-weekdays">
+        <span>Man</span><span>Tir</span><span>Ons</span>
+        <span>Tor</span><span>Fre</span><span>Lør</span><span>Søn</span>
+      </div>
+
+      <!-- Kalendergrid -->
+      <div class="cal-grid" id="cal-grid"></div>
+
+    </section>
+
+    <!-- Høyre: arrangementsforslag -->
+    <aside class="cal-aside" id="cal-aside">
+      <div class="cal-aside-empty" id="cal-aside-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-light)">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <p>Klikk på en dato for å se forslag til hva som skjer i byen</p>
+      </div>
+      <div id="cal-aside-content" style="display:none">
+        <div class="cal-aside-date" id="cal-aside-date"></div>
+        <div class="cal-events-list" id="cal-events-list"></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="cities.js"></script>
+  <script src="calendar.js"></script>
+</body>
+</html>
