@@ -1,5 +1,5 @@
 // ============================================================
-//  CORE – Vercel serverless function
+//  Glimt – Vercel serverless function
 //  POST /api/suggest  →  Claude genererer aktivitetsforslag
 // ============================================================
 

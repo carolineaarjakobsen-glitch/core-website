@@ -1,6 +1,6 @@
 /*
  * ============================================================
- *  CORE – BY-DATABASE  (auto-generert av convert.py)
+ *  Glimt – BY-DATABASE  (auto-generert av convert.py)
  * ============================================================
  *  IKKE rediger denne filen direkte.
  *  Gjør endringer i database.xlsx og kjør:  python3 convert.py

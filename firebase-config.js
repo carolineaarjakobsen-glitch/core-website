@@ -1,5 +1,5 @@
 // ============================================================
-//  CORE – Firebase-konfigurasjon
+//  Glimt – Firebase-konfigurasjon
 //  Følg FIREBASE_SETUP.md for å fylle inn riktige verdier
 // ============================================================
 

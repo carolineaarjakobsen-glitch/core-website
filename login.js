@@ -1,5 +1,5 @@
 // ============================================================
-//  CORE – Login-side logikk
+//  Glimt – Login-side logikk
 //  Bruker Firebase Authentication (Google, Facebook, e-post)
 // ============================================================
 

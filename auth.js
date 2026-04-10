@@ -1,5 +1,5 @@
 // ============================================================
-//  CORE – Auth state management
+//  Glimt – Auth state management
 //  Inkluderes på alle sider etter firebase-config.js
 //  Oppdaterer navbar automatisk basert på innloggingsstatus
 // ============================================================

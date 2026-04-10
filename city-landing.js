@@ -49,7 +49,7 @@ function init() {
   const cityName = params.get("city") || "";
 
   // Sett sidetittel
-  document.title = `CORE – ${cityName}`;
+  document.title = `Glimt – ${cityName}`;
 
   // Vis bynavn i midtstrek-pill
   const pill = document.getElementById("divider-city-name");

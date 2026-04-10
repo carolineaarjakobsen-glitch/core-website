@@ -334,7 +334,7 @@ function nextMonth() {
 //  OPPSTART
 // =====================
 function init() {
-  document.title = `CORE – Kalender · ${cityName}`;
+  document.title = `Glimt – Kalender · ${cityName}`;
 
   const label = document.getElementById("cal-city-label");
   if (label) label.textContent = cityName;
