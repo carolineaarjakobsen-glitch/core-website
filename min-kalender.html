@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Min kalender</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="min-kalender.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="mkal-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </a>
+    </div>
+    <nav>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Mine glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="mine-enkeltglimt.html">Mine glimt</a>
+          <a href="mine-glimt.html">Mine reisebrev</a>
+          <a href="mine-reiseplaner.html">Mine reiseplaner</a>
+          <a href="min-kalender.html">Min kalender</a>
+        </div>
+      </div>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Utforsk glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="utforsk-glimt.html">Utforsk glimt</a>
+          <a href="utforsk-reisebrev.html">Utforsk reisebrev</a>
+          <a href="explore.html">Skreddersy glimt</a>
+          <a href="calendar.html">Utforsk kalender</a>
+        </div>
+      </div>
+      <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
+      <div class="nav-user" id="nav-user" style="display:none">
+        <div class="nav-avatar" id="nav-avatar"></div>
+        <div class="nav-user-dropdown" id="nav-user-dropdown">
+          <div class="nav-user-info">
+            <div class="nav-user-name" id="nav-user-name"></div>
+            <div class="nav-user-email" id="nav-user-email"></div>
+          </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
+          <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mkal-main">
+
+    <!-- Venstre: alle lagrede glimt -->
+    <aside class="mkal-events-sidebar" id="mkal-events-sidebar">
+      <div class="mkal-sidebar-header">
+        <h2 class="mkal-sidebar-title">Mine glimt</h2>
+        <span class="mkal-sidebar-count" id="mkal-sidebar-count">0</span>
+      </div>
+      <div class="mkal-sidebar-list" id="mkal-sidebar-list">
+        <div class="mkal-sidebar-empty" id="mkal-sidebar-empty">
+          <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="var(--text-light)" stroke-width="1.5">
+            <rect x="6" y="10" width="36" height="32" rx="4" />
+            <path d="M6 18h36" />
+            <path d="M16 6v8" /><path d="M32 6v8" />
+          </svg>
+          <p>Ingen lagrede glimt enn&aring;.</p>
+          <p class="mkal-sidebar-hint">Opprett et glimt eller lagre fra kalenderen.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Midt: kalender -->
+    <section class="mkal-section">
+
+      <div class="mkal-header">
+        <div class="mkal-title-row">
+          <h1 class="mkal-title">Min kalender</h1>
+          <button class="mkal-add-btn" id="btn-add-event" title="Opprett nytt glimt">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Nytt glimt
+          </button>
+        </div>
+        <div class="mkal-nav">
+          <button class="mkal-nav-btn" id="btn-prev" aria-label="Forrige m&aring;ned">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <span class="mkal-month-title" id="mkal-month-title"></span>
+          <button class="mkal-nav-btn" id="btn-next" aria-label="Neste m&aring;ned">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mkal-weekdays">
+        <span>Man</span><span>Tir</span><span>Ons</span><span>Tor</span><span>Fre</span><span>L&oslash;r</span><span>S&oslash;n</span>
+      </div>
+
+      <div class="mkal-grid" id="mkal-grid"></div>
+
+    </section>
+
+    <!-- Hoyre: lagrede events for valgt dato -->
+    <aside class="mkal-aside">
+      <div class="mkal-aside-empty" id="mkal-aside-empty">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--blush-mid)" stroke-width="1.5">
+          <rect x="6" y="10" width="36" height="32" rx="4" />
+          <path d="M6 18h36" />
+          <path d="M16 6v8" /><path d="M32 6v8" />
+          <path d="M20 28l4 4 6-8" stroke="var(--coral)" stroke-width="2" />
+        </svg>
+        <p>Velg en dato for &aring; se dine lagrede arrangementer</p>
+      </div>
+      <div id="mkal-aside-content" style="display:none">
+        <div class="mkal-aside-date" id="mkal-aside-date"></div>
+        <div class="mkal-events-list" id="mkal-events-list"></div>
+        <div class="mkal-aside-empty-day" id="mkal-aside-empty-day" style="display:none">
+          <p>Ingen lagrede arrangementer for denne datoen.</p>
+          <a href="calendar.html" class="mkal-discover-link">Utforsk arrangementer</a>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Modal: Opprett nytt glimt -->
+  <div class="mkal-modal-overlay" id="mkal-modal" style="display:none">
+    <div class="mkal-modal">
+      <div class="mkal-modal-header">
+        <h2 class="mkal-modal-title">Opprett nytt glimt</h2>
+        <button class="mkal-modal-close" id="btn-modal-close">&times;</button>
+      </div>
+      <form id="mkal-form" class="mkal-form">
+
+        <div class="mkal-form-row">
+          <label class="mkal-label" for="glimt-emoji">Emoji</label>
+          <div class="mkal-emoji-picker" id="emoji-picker">
+            <button type="button" class="mkal-emoji-opt selected" data-emoji="&#127911;">&#127911;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#127925;">&#127925;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#9917;">&#9917;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#127917;">&#127917;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#127866;">&#127866;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#9992;">&#9992;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#127796;">&#127796;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#128247;">&#128247;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#128218;">&#128218;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#127881;">&#127881;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#128156;">&#128156;</button>
+            <button type="button" class="mkal-emoji-opt" data-emoji="&#11088;">&#11088;</button>
+          </div>
+          <input type="hidden" id="glimt-emoji" value="&#127911;" />
+        </div>
+
+        <div class="mkal-form-row">
+          <label class="mkal-label" for="glimt-title">Tittel</label>
+          <input type="text" id="glimt-title" class="mkal-input" placeholder="F.eks. Konsert i Operaen" required />
+        </div>
+
+        <div class="mkal-form-row mkal-form-row--half">
+          <div>
+            <label class="mkal-label" for="glimt-date">Dato</label>
+            <input type="date" id="glimt-date" class="mkal-input" required />
+          </div>
+          <div>
+            <label class="mkal-label" for="glimt-city">By</label>
+            <select id="glimt-city" class="mkal-input">
+              <option value="K&oslash;benhavn">K&oslash;benhavn</option>
+              <option value="Roma">Roma</option>
+              <option value="Stockholm">Stockholm</option>
+              <option value="Dublin">Dublin</option>
+              <option value="Gardasjøen">Gardasjøen</option>
+              <option value="Annet">Annet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mkal-form-row">
+          <label class="mkal-label" for="glimt-category">Kategori</label>
+          <select id="glimt-category" class="mkal-input">
+            <option value="Arrangement">Arrangement</option>
+            <option value="Konsert">Konsert</option>
+            <option value="Festival">Festival</option>
+            <option value="Mat">Mat &amp; drikke</option>
+            <option value="Kultur">Kultur</option>
+            <option value="Sport">Sport</option>
+            <option value="Tur">Tur &amp; aktivitet</option>
+            <option value="Marked">Marked</option>
+            <option value="Sesong">Sesong</option>
+            <option value="Annet">Annet</option>
+          </select>
+        </div>
+
+        <div class="mkal-form-row">
+          <label class="mkal-label" for="glimt-desc">Beskrivelse</label>
+          <textarea id="glimt-desc" class="mkal-input mkal-textarea" rows="3" placeholder="Kort beskrivelse av glimtet..."></textarea>
+        </div>
+
+        <button type="submit" class="mkal-submit-btn">Lagre glimt</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase Auth -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="auth.js"></script>
+  <script src="min-kalender.js"></script>
+</body>
+</html>

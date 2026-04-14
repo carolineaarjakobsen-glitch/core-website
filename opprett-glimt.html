@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Opprett nytt reisebrev</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="opprett-glimt.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="opprett-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </a>
+    </div>
+    <nav>
+      <a href="mine-glimt.html">← Tilbake til mine reisebrev</a>
+      <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
+      <div class="nav-user" id="nav-user" style="display:none">
+        <div class="nav-avatar" id="nav-avatar"></div>
+        <div class="nav-user-dropdown" id="nav-user-dropdown">
+          <div class="nav-user-info">
+            <div class="nav-user-name" id="nav-user-name"></div>
+            <div class="nav-user-email" id="nav-user-email"></div>
+          </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
+          <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="opprett-main">
+
+    <!-- VENSTRE: Storyline -->
+    <aside class="opprett-storyline" aria-label="Storyline">
+      <div class="storyline-inner">
+        <div class="storyline-head">
+          <div class="storyline-eyebrow">Storyline</div>
+          <div class="storyline-title">Ditt reisebrev</div>
+          <div class="storyline-count">
+            <span id="storyline-count">0</span>
+            <span class="storyline-count-label">glimt</span>
+          </div>
+        </div>
+        <div class="storyline-roadmap">
+          <div class="storyline-roadpoint storyline-roadpoint-start">
+            <span class="storyline-roadpoint-icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.4"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22V4M4 4h11l-2 4 2 4H4"/>
+              </svg>
+            </span>
+            <span class="storyline-roadpoint-label">Start her</span>
+          </div>
+
+          <ol class="storyline-list" id="storyline-list">
+            <!-- Storyline-elementer genereres av JS -->
+          </ol>
+
+          <div class="storyline-roadpoint storyline-roadpoint-end">
+            <span class="storyline-roadpoint-icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.4"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22V4M4 4h14l-2 4 2 4H4M8 8h4v4H8z"/>
+              </svg>
+            </span>
+            <span class="storyline-roadpoint-label">Reisens slutt</span>
+          </div>
+        </div>
+
+        <div class="storyline-empty" id="storyline-empty">
+          Start med å fylle inn det første glimtet ditt.
+        </div>
+
+        <div class="storyline-guide-toggle">
+          <label class="guide-toggle" for="guide-toggle-cb">
+            <input type="checkbox" id="guide-toggle-cb" class="guide-toggle-input" />
+            <span class="guide-toggle-switch"></span>
+            <span class="guide-toggle-text">
+              <span class="guide-toggle-label">Lagre som guide</span>
+              <span class="guide-toggle-desc">Synlig for andre reisende i denne byen</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- HØYRE: Skjema -->
+    <div class="opprett-content">
+
+      <section class="opprett-header">
+        <div class="opprett-eyebrow">Nytt reisebrev</div>
+        <h1 class="opprett-title">Samle dine glimt</h1>
+        <p class="opprett-subtitle">
+          Legg til ett glimt for hvert øyeblikk du vil huske fra turen. Når du er
+          ferdig, samles alt til et eget reisebrev i din samling.
+        </p>
+      </section>
+
+      <form id="guide-form" class="opprett-form" novalidate>
+
+        <!-- Container for alle glimt-kort -->
+        <div id="glimts-container" class="glimts-container">
+          <!-- Glimt-kort legges inn dynamisk av JS -->
+        </div>
+
+        <!-- Plusstegn for å legge til nytt glimt -->
+        <button type="button" id="add-glimt-btn" class="add-glimt-btn">
+          <span class="add-glimt-plus">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </span>
+          Legg til et nytt glimt
+        </button>
+
+        <!-- Bunn-knapper -->
+        <div class="opprett-actions">
+          <a href="mine-glimt.html" class="btn-ghost">Avbryt</a>
+          <button type="submit" class="btn-primary">
+            Lagre reisebrev
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+  <!-- Mal for et glimt-kort (brukes av JS) -->
+  <template id="glimt-card-template">
+    <div class="glimt-form-card" data-glimt-card>
+      <div class="glimt-form-head">
+        <span class="glimt-form-number">Glimt <span data-glimt-number>1</span></span>
+        <button type="button" class="glimt-remove-btn" data-remove title="Fjern glimt" aria-label="Fjern glimt">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <label class="field">
+        <span class="field-label">Glimt</span>
+        <input type="text" class="field-input" data-title placeholder="f.eks. Frokost på Trastevere" />
+      </label>
+
+      <div class="field">
+        <span class="field-label">Adresse</span>
+        <div class="address-autocomplete" data-address-wrapper>
+          <input type="text" class="field-input" data-address
+                 placeholder="Søk etter sted, by eller adresse"
+                 autocomplete="off" spellcheck="false" />
+          <ul class="address-suggestions" data-address-suggestions role="listbox" hidden></ul>
+        </div>
+      </div>
+
+      <label class="field">
+        <span class="field-label">Note</span>
+        <textarea class="field-textarea" data-note rows="4" placeholder="Beskriv hva som gjør dette stedet spesielt…"></textarea>
+      </label>
+
+      <div class="field">
+        <span class="field-label">Legg ved bilde</span>
+        <label class="image-drop" data-image-drop>
+          <input type="file" accept="image/*" class="image-input" data-image hidden />
+          <div class="image-drop-empty" data-image-empty>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+            <span>Klikk for å velge bilde</span>
+            <small>PNG eller JPG</small>
+          </div>
+          <div class="image-drop-preview" data-image-preview hidden>
+            <img data-image-thumb alt="Forhåndsvisning" />
+            <button type="button" class="image-remove" data-image-remove title="Fjern bilde" aria-label="Fjern bilde">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        </label>
+      </div>
+
+      <div class="glimt-form-foot">
+        <button type="button" class="btn-save-glimt" data-save>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span data-save-label>Lagre glimt</span>
+        </button>
+      </div>
+
+      <!-- Visning av lagret glimt (vises når kortet er i is-view-modus) -->
+      <div class="glimt-preview" data-preview>
+        <div class="glimt-preview-image" data-preview-image hidden>
+          <img data-preview-img alt="" />
+        </div>
+        <div class="glimt-preview-body">
+          <h3 class="glimt-preview-title" data-preview-title>Uten tittel</h3>
+          <div class="glimt-preview-address" data-preview-address hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+            <span data-preview-address-text></span>
+          </div>
+          <p class="glimt-preview-note" data-preview-note hidden></p>
+          <div class="glimt-preview-foot">
+            <span class="glimt-preview-status">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+              Lagret
+            </span>
+            <button type="button" class="btn-edit-glimt" data-edit>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+              </svg>
+              Rediger
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <!-- Google Maps / Places – valgfritt. Faller tilbake til Nominatim hvis
+       nøkkelen mangler. Se SETUP-GOOGLE-MAPS.md for oppsett. -->
+  <script src="google-maps-config.js"></script>
+  <script>
+    (function () {
+      var key = window.GLIMT_GOOGLE_MAPS_KEY;
+      if (!key) return;
+      window.glimtGoogleReady = function () {
+        document.dispatchEvent(new Event("glimt:google-ready"));
+      };
+      var s = document.createElement("script");
+      s.src =
+        "https://maps.googleapis.com/maps/api/js?key=" +
+        encodeURIComponent(key) +
+        "&libraries=places&loading=async&callback=glimtGoogleReady";
+      s.async = true;
+      s.defer = true;
+      s.onerror = function () {
+        console.warn(
+          "Glimt: Kunne ikke laste Google Maps JS SDK. Bruker Nominatim i stedet."
+        );
+      };
+      document.head.appendChild(s);
+    })();
+  </script>
+
+  <script src="opprett-glimt.js"></script>
+</body>
+</html>

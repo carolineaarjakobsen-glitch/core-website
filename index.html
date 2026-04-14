@@ -15,20 +15,41 @@
     <div class="logo">
       <span class="logo-word">
         <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
           <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
           <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
         </svg>
-        <span class="logo-wordmark">core</span>
+        <span class="logo-wordmark">glimt</span>
       </span>
     </div>
 
     <nav>
-      <a href="#">Om oss</a>
-      <a href="#">Byer</a>
-      <a href="#">Kontakt</a>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Mine glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="mine-enkeltglimt.html">Mine glimt</a>
+          <a href="mine-glimt.html">Mine reisebrev</a>
+          <a href="mine-reiseplaner.html">Mine reiseplaner</a>
+          <a href="min-kalender.html">Min kalender</a>
+        </div>
+      </div>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Utforsk glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="utforsk-glimt.html">Utforsk glimt</a>
+          <a href="utforsk-reisebrev.html">Utforsk reisebrev</a>
+          <a href="explore.html">Skreddersy glimt</a>
+          <a href="calendar.html">Utforsk kalender</a>
+        </div>
+      </div>
       <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
       <div class="nav-user" id="nav-user" style="display:none">
         <div class="nav-avatar" id="nav-avatar"></div>
@@ -37,6 +58,12 @@
             <div class="nav-user-name" id="nav-user-name"></div>
             <div class="nav-user-email" id="nav-user-email"></div>
           </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
           <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
         </div>
       </div>
@@ -58,9 +85,9 @@
         <!-- Liten logo-variant over overskriften -->
         <div class="brand-badge">
           <svg viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg" width="28">
-            <rect x="0.8" y="0.8" width="26.4" height="19.4" rx="1.8" stroke="#1e2a4a" stroke-width="1.5"/>
-            <path d="M0.8 2.5 L14 12 L27.2 2.5" stroke="#1e2a4a" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M14 15.5 C14 15.5 9 12 9 9.3 C9 7.8 10.3 7 11.4 7 C12.2 7 13 7.5 13.8 8.3 C14.5 7.5 15.3 7 16.2 7 C17.4 7 18.8 7.8 18.8 9.3 C18.8 12 14 15.5 14 15.5Z" fill="#d95f5f"/>
+            <rect x="0.8" y="0.8" width="26.4" height="19.4" rx="1.8" stroke="#5D372A" stroke-width="1.5"/>
+            <path d="M0.8 2.5 L14 12 L27.2 2.5" stroke="#5D372A" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="14" cy="12" r="2.5" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.2" stroke-linecap="round"><line x1="14" y1="7.5" x2="14" y2="8.5"/><line x1="14" y1="15.5" x2="14" y2="16.5"/><line x1="9.5" y1="12" x2="10.5" y2="12"/><line x1="17.5" y1="12" x2="18.5" y2="12"/><line x1="10.8" y1="8.8" x2="11.5" y2="9.5"/><line x1="16.5" y1="14.5" x2="17.2" y2="15.2"/><line x1="10.8" y1="15.2" x2="11.5" y2="14.5"/><line x1="16.5" y1="9.5" x2="17.2" y2="8.8"/></g>
           </svg>
           <span>Din lokale guide</span>
         </div>

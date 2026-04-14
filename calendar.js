@@ -1,4 +1,109 @@
 // =====================
+//  TICKETMASTER DISCOVERY API
+//  Gratis: 5000 kall/dag, 5 req/sek
+//  Registrer deg på https://developer.ticketmaster.com/
+//  og bytt ut nøkkelen under.
+// =====================
+const TM_API_KEY = "MWHzzg3nQarJajkj0QU9JNijh8FCYylq";
+const TM_BASE    = "https://app.ticketmaster.com/discovery/v2/events.json";
+
+// By → Ticketmaster countryCode + latlong (mer treffsikkert enn city-navn)
+const CITY_TM_MAP = {
+  "Roma":       { countryCode: "IT", latlong: "41.9028,12.4964" },
+  "København":  { countryCode: "DK", latlong: "55.6761,12.5683" },
+  "Stockholm":  { countryCode: "SE", latlong: "59.3293,18.0686" },
+  "Dublin":     { countryCode: "IE", latlong: "53.3498,-6.2603" },
+  "Gardasjøen": { countryCode: "IT", latlong: "45.6387,10.7229" }
+};
+
+// Cache for å unngå unødvendige API-kall
+const tmCache = {};
+
+// Hent events fra Ticketmaster for en gitt dato
+async function fetchTicketmasterEvents(cityName, year, month, day) {
+  const mapping = CITY_TM_MAP[cityName];
+  if (!mapping || TM_API_KEY === "DIN_TICKETMASTER_API_KEY") return [];
+
+  const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const cacheKey = `${cityName}-${dateStr}`;
+  if (tmCache[cacheKey]) return tmCache[cacheKey];
+
+  const startDateTime = `${dateStr}T00:00:00Z`;
+  const endDateTime   = `${dateStr}T23:59:59Z`;
+
+  const params = new URLSearchParams({
+    apikey: TM_API_KEY,
+    latlong: mapping.latlong,
+    radius: "30",
+    unit: "km",
+    countryCode: mapping.countryCode,
+    startDateTime,
+    endDateTime,
+    size: 10,
+    sort: "date,asc"
+  });
+
+  try {
+    const res = await fetch(`${TM_BASE}?${params}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+
+    const events = (data._embedded?.events || []).map(ev => {
+      const classification = ev.classifications?.[0];
+      const rawSegment = classification?.segment?.name || "";
+      const rawGenre   = classification?.genre?.name || "";
+      const segment = rawSegment === "Undefined" ? "" : rawSegment;
+      const genre   = rawGenre === "Undefined" ? "" : rawGenre;
+      const venue   = ev._embedded?.venues?.[0]?.name || "";
+      const time    = ev.dates?.start?.localTime
+        ? ev.dates.start.localTime.slice(0, 5)
+        : "";
+      const url     = ev.url || "";
+
+      // Velg emoji basert på kategori
+      let emoji = "🎫";
+      if (segment === "Music")  emoji = "🎵";
+      if (segment === "Sports") emoji = "⚽";
+      if (segment === "Arts & Theatre") emoji = "🎭";
+      if (genre === "Comedy")   emoji = "😂";
+      if (genre === "Festival") emoji = "🎪";
+      if (genre === "Classical") emoji = "🎻";
+      if (segment === "Miscellaneous") emoji = "🎫";
+
+      // Lag en pen tagg – filtrer bort "Miscellaneous" og "Undefined"
+      const niceTag = (genre && genre !== "Miscellaneous")
+        ? genre
+        : (segment && segment !== "Miscellaneous")
+          ? segment
+          : "Arrangement";
+
+      return {
+        emoji,
+        title: ev.name,
+        desc: [venue, time ? `kl. ${time}` : ""].filter(Boolean).join(" · "),
+        tag: niceTag,
+        url,
+        source: "ticketmaster"
+      };
+    });
+
+    // Dedupliser: behold kun ett arrangement per unikt navn
+    const seen = new Set();
+    const unique = events.filter(ev => {
+      if (seen.has(ev.title)) return false;
+      seen.add(ev.title);
+      return true;
+    });
+
+    tmCache[cacheKey] = unique;
+    return unique;
+  } catch (err) {
+    console.warn("Ticketmaster API feil:", err);
+    return [];
+  }
+}
+
+// =====================
 //  ARRANGEMENTSBASE PER BY
 //  Struktur per by:
 //    always   → skjer hele året
@@ -149,6 +254,42 @@ const CITY_EVENTS = {
     friday: [
       { emoji: "🎭", title: "Abbey Theatre", desc: "Irlands nasjonalteater har forestillinger de fleste fredager og lørdager.", tag: "Kultur" },
     ],
+  },
+
+  "Gardasjøen": {
+    months: {
+      3: [
+        { emoji: "🌸", title: "Vårfestival Lago di Garda", desc: "Internasjonal kulturfestival med konserter og utstillinger langs sjøen i april.", tag: "Festival" },
+      ],
+      4: [
+        { emoji: "🍋", title: "Sitronhøsting i Limone", desc: "Limonaia-hagene åpner for sesongen – smak ferske sitroner rett fra treet.", tag: "Sesong" },
+        { emoji: "⛵", title: "Seilsesongen åpner", desc: "Gardasjøens seilklubber åpner for sesongen med regattaer og prøveseilas.", tag: "Sport" },
+      ],
+      5: [
+        { emoji: "🍷", title: "Palio del Chiaretto i Bardolino", desc: "Vinfestival som feirer Chiaretto-rosévin med smaking, musikk og konkurranse mellom landsbyene.", tag: "Festival" },
+        { emoji: "🏊", title: "Badesesongen starter", desc: "Strendene langs sjøen åpner for sommeren – Cassone og Limone er blant de fineste.", tag: "Sesong" },
+      ],
+      6: [
+        { emoji: "🎵", title: "Garda Jazz Festival", desc: "Jazzmusikere inntar torgene og hagene langs sjøen gjennom sommeren.", tag: "Konsert" },
+        { emoji: "🪂", title: "Paragliding fra Monte Baldo", desc: "Høysesongen for tandem-paragliding – fly over sjøen med utsikt til Dolomittene.", tag: "Sport" },
+      ],
+      7: [
+        { emoji: "🎭", title: "La Notte di Fiaba", desc: "Riva del Garda forvandles til et eventyrteater med forestillinger, workshops og musikk.", tag: "Festival" },
+      ],
+      10: [
+        { emoji: "🫒", title: "Olivenhøst ved Gardasjøen", desc: "Lokale gårder åpner for olivenplugging og olivenolje-smaking langs østbredden.", tag: "Mat" },
+      ],
+      11: [
+        { emoji: "🎄", title: "Julemarked i Riva del Garda", desc: "Tradisjonelt julemarked med lokalt håndverk, vin og alpeinspirert mat ved sjøen.", tag: "Marked" },
+      ],
+    },
+    weekend: [
+      { emoji: "🛒", title: "Onsdagsmarkedet i Malcesine", desc: "Bondens eget marked med lokal olivenolje, honning og fjelltørket skinke.", tag: "Marked" },
+      { emoji: "🚢", title: "Fergetur mellom landsbyene", desc: "Ta fergen fra Malcesine til Limone – en time på vannet med spektakulær fjellkulisse.", tag: "Aktivitet" },
+    ],
+    friday: [
+      { emoji: "🍷", title: "Vinbar-hopping i Bardolino", desc: "Bardolino-vinruten langs østbredden er perfekt for en fredagskveld med lokale viner.", tag: "Mat & drikke" },
+    ],
   }
 };
 
@@ -156,7 +297,7 @@ const CITY_EVENTS = {
 //  TILSTAND
 // =====================
 const params   = new URLSearchParams(window.location.search);
-const cityName = params.get("city") || "Roma";
+let cityName = params.get("city") || "København";
 
 let viewYear  = new Date().getFullYear();
 let viewMonth = new Date().getMonth(); // 0-indexed
@@ -281,13 +422,11 @@ function renderCalendar() {
 // =====================
 //  VELG DATO
 // =====================
-function selectDay(day) {
+async function selectDay(day) {
   selectedDay = day;
-  renderCalendar(); // re-render for å vise valgt dag
+  renderCalendar();
 
-  const events = getEventsForDate(viewYear, viewMonth, day);
-  const date   = new Date(viewYear, viewMonth, day);
-
+  const date = new Date(viewYear, viewMonth, day);
   const dateStr = date.toLocaleDateString("no-NO", {
     weekday: "long", day: "numeric", month: "long", year: "numeric"
   });
@@ -297,16 +436,119 @@ function selectDay(day) {
   document.getElementById("cal-aside-date").textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
   const list = document.getElementById("cal-events-list");
-  list.innerHTML = events.map(ev => `
-    <div class="cal-event-card">
-      <span class="cal-event-emoji">${ev.emoji}</span>
-      <div class="cal-event-body">
-        <div class="cal-event-title">${ev.title}</div>
-        <div class="cal-event-desc">${ev.desc}</div>
-        <span class="cal-event-tag">${ev.tag}</span>
+
+  // Hent egne lagrede glimt for denne datoen
+  const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  let customEvents = [];
+  try {
+    const raw = localStorage.getItem(MKAL_STORAGE_KEY);
+    const saved = raw ? JSON.parse(raw) : [];
+    customEvents = saved
+      .filter(e => e.date === dateKey && (e.city === cityName || e.source === "custom"))
+      .map(e => ({ ...e, source: e.source || "custom" }));
+  } catch(e) {}
+
+  // Vis lokale forslag mens vi laster Ticketmaster-data
+  const localEvents = getEventsForDate(viewYear, viewMonth, day);
+  const initialCombined = [...customEvents, ...localEvents];
+  list.innerHTML = renderEventCards(initialCombined);
+
+  // Hent Ticketmaster-events asynkront
+  const tmEvents = await fetchTicketmasterEvents(cityName, viewYear, viewMonth, day);
+
+  // Kombiner: egne glimt + Ticketmaster + lokale tips (maks 10 totalt)
+  const combined = [...customEvents, ...tmEvents, ...localEvents].slice(0, 10);
+  list.innerHTML = renderEventCards(combined);
+}
+
+// =====================
+//  LAGRE TIL MIN KALENDER
+// =====================
+const MKAL_STORAGE_KEY = "glimt.myCalendar";
+
+function saveEventToMyCalendar(eventData) {
+  try {
+    const raw = localStorage.getItem(MKAL_STORAGE_KEY);
+    const saved = raw ? JSON.parse(raw) : [];
+    // Sjekk om allerede lagret (basert pa tittel + dato)
+    const exists = saved.some(e => e.title === eventData.title && e.date === eventData.date);
+    if (exists) return false;
+    saved.push(eventData);
+    localStorage.setItem(MKAL_STORAGE_KEY, JSON.stringify(saved));
+    return true;
+  } catch (err) {
+    console.warn("Kunne ikke lagre event:", err);
+    return false;
+  }
+}
+
+function handleSaveEvent(btn, ev) {
+  const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+  const eventData = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    title: ev.title,
+    desc: ev.desc || "",
+    emoji: ev.emoji || "",
+    tag: ev.tag || "Arrangement",
+    city: cityName,
+    date: dateStr,
+    url: ev.url || "",
+    source: ev.source || "local",
+    savedAt: new Date().toISOString()
+  };
+  const success = saveEventToMyCalendar(eventData);
+  if (success) {
+    btn.innerHTML = "&#10003;";
+    btn.classList.add("cal-save-btn--saved");
+    btn.disabled = true;
+  }
+}
+
+// Gjor events tilgjengelig for onclick-handler
+let currentRenderedEvents = [];
+
+// =====================
+//  RENDER EVENT-KORT
+// =====================
+function renderEventCards(events) {
+  currentRenderedEvents = events;
+  return events.map((ev, idx) => {
+    const linkOpen  = ev.url ? `<a href="${ev.url}" target="_blank" rel="noopener" class="cal-event-link">` : "";
+    const linkClose = ev.url ? "</a>" : "";
+    const sourceTag = ev.source === "ticketmaster"
+      ? `<span class="cal-event-tag cal-event-tag--tm">Ticketmaster</span>`
+      : ev.source === "custom"
+        ? `<span class="cal-event-tag cal-event-tag--custom">Mitt glimt</span>`
+        : "";
+
+    // Sjekk om allerede lagret
+    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+    let alreadySaved = false;
+    try {
+      const raw = localStorage.getItem(MKAL_STORAGE_KEY);
+      const saved = raw ? JSON.parse(raw) : [];
+      alreadySaved = saved.some(e => e.title === ev.title && e.date === dateStr);
+    } catch(e) {}
+
+    const saveBtn = alreadySaved
+      ? `<button class="cal-save-btn cal-save-btn--saved" disabled>&#10003;</button>`
+      : `<button class="cal-save-btn" onclick="handleSaveEvent(this, currentRenderedEvents[${idx}])" title="Lagre til min kalender">&#43;</button>`;
+
+    return `
+      <div class="cal-event-card ${ev.source === "ticketmaster" ? "cal-event-card--tm" : ""}">
+        <span class="cal-event-emoji">${ev.emoji}</span>
+        <div class="cal-event-body">
+          ${linkOpen}<div class="cal-event-title">${ev.title}</div>${linkClose}
+          <div class="cal-event-desc">${ev.desc}</div>
+          <div class="cal-event-tags">
+            <span class="cal-event-tag">${ev.tag}</span>
+            ${sourceTag}
+          </div>
+        </div>
+        ${saveBtn}
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 // =====================
@@ -331,6 +573,130 @@ function nextMonth() {
 }
 
 // =====================
+//  BY-SWITCHER
+// =====================
+function switchCity(newCity) {
+  cityName = newCity;
+  selectedDay = null;
+
+  // Oppdater UI
+  document.title = `Glimt – Kalender · ${cityName}`;
+  const label = document.getElementById("cal-city-label");
+  if (label) label.textContent = cityName;
+
+  const back = document.getElementById("nav-back");
+  if (back) back.href = `city-landing.html?city=${encodeURIComponent(cityName)}`;
+
+  // Oppdater aktiv pill
+  document.querySelectorAll(".cal-city-pill").forEach(pill => {
+    pill.classList.toggle("active", pill.dataset.city === cityName);
+  });
+
+  // Oppdater URL uten reload
+  const url = new URL(window.location);
+  url.searchParams.set("city", cityName);
+  history.replaceState(null, "", url);
+
+  // Reset sidebar
+  document.getElementById("cal-aside-empty").style.display   = "flex";
+  document.getElementById("cal-aside-content").style.display = "none";
+
+  renderCalendar();
+}
+
+function setupCityFilter() {
+  document.querySelectorAll(".cal-city-pill").forEach(pill => {
+    pill.addEventListener("click", () => switchCity(pill.dataset.city));
+  });
+  // Sett aktiv pill
+  document.querySelectorAll(".cal-city-pill").forEach(pill => {
+    pill.classList.toggle("active", pill.dataset.city === cityName);
+  });
+}
+
+// =====================
+//  MODAL: OPPRETT GLIMT
+// =====================
+function openCalModal() {
+  document.getElementById("cal-modal").style.display = "flex";
+
+  // Forhåndsutfyll dato
+  const dateInput = document.getElementById("cal-glimt-date");
+  if (selectedDay !== null) {
+    dateInput.value = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+  } else {
+    const t = new Date();
+    dateInput.value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  }
+
+  // Forhåndsutfyll by
+  document.getElementById("cal-glimt-city").value = cityName;
+
+  // Reset øvrige felt
+  document.getElementById("cal-glimt-title").value = "";
+  document.getElementById("cal-glimt-desc").value = "";
+  document.getElementById("cal-glimt-category").value = "Arrangement";
+
+  // Reset emoji
+  document.querySelectorAll(".cal-emoji-opt").forEach((btn, i) => {
+    btn.classList.toggle("selected", i === 0);
+  });
+  document.getElementById("cal-glimt-emoji").value = document.querySelector(".cal-emoji-opt").dataset.emoji;
+}
+
+function closeCalModal() {
+  document.getElementById("cal-modal").style.display = "none";
+}
+
+function setupCalEmojiPicker() {
+  const picker = document.getElementById("cal-emoji-picker");
+  const hidden = document.getElementById("cal-glimt-emoji");
+
+  picker.addEventListener("click", (e) => {
+    const btn = e.target.closest(".cal-emoji-opt");
+    if (!btn) return;
+    picker.querySelectorAll(".cal-emoji-opt").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    hidden.value = btn.dataset.emoji;
+  });
+}
+
+function handleCalGlimtSubmit(e) {
+  e.preventDefault();
+
+  const emoji    = document.getElementById("cal-glimt-emoji").value;
+  const title    = document.getElementById("cal-glimt-title").value.trim();
+  const dateVal  = document.getElementById("cal-glimt-date").value;
+  const city     = document.getElementById("cal-glimt-city").value;
+  const category = document.getElementById("cal-glimt-category").value;
+  const desc     = document.getElementById("cal-glimt-desc").value.trim();
+
+  if (!title || !dateVal) return;
+
+  const eventData = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    title,
+    desc,
+    emoji,
+    tag: category,
+    city,
+    date: dateVal,
+    url: "",
+    source: "custom",
+    savedAt: new Date().toISOString()
+  };
+
+  saveEventToMyCalendar(eventData);
+  closeCalModal();
+
+  // Vis den nye datoen i kalenderen
+  const d = new Date(dateVal);
+  if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+    selectDay(d.getDate());
+  }
+}
+
+// =====================
 //  OPPSTART
 // =====================
 function init() {
@@ -344,6 +710,18 @@ function init() {
 
   document.getElementById("btn-prev").addEventListener("click", prevMonth);
   document.getElementById("btn-next").addEventListener("click", nextMonth);
+
+  // By-filter
+  setupCityFilter();
+
+  // Modal
+  document.getElementById("btn-add-glimt").addEventListener("click", openCalModal);
+  document.getElementById("btn-modal-close").addEventListener("click", closeCalModal);
+  document.getElementById("cal-modal").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeCalModal();
+  });
+  setupCalEmojiPicker();
+  document.getElementById("cal-glimt-form").addEventListener("submit", handleCalGlimtSubmit);
 
   renderCalendar();
 }

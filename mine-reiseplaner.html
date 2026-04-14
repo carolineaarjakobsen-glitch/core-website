@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Mine reiseplaner</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mine-reiseplaner.css" />
+  <link rel="stylesheet" href="saved-glimt.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="rp-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </a>
+    </div>
+    <nav>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Mine glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="mine-enkeltglimt.html">Mine glimt</a>
+          <a href="mine-glimt.html">Mine reisebrev</a>
+          <a href="mine-reiseplaner.html">Mine reiseplaner</a>
+          <a href="min-kalender.html">Min kalender</a>
+        </div>
+      </div>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Utforsk glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="utforsk-glimt.html">Utforsk glimt</a>
+          <a href="utforsk-reisebrev.html">Utforsk reisebrev</a>
+          <a href="explore.html">Skreddersy glimt</a>
+          <a href="calendar.html">Utforsk kalender</a>
+        </div>
+      </div>
+      <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
+      <div class="nav-user" id="nav-user" style="display:none">
+        <div class="nav-avatar" id="nav-avatar"></div>
+        <div class="nav-user-dropdown" id="nav-user-dropdown">
+          <div class="nav-user-info">
+            <div class="nav-user-name" id="nav-user-name"></div>
+            <div class="nav-user-email" id="nav-user-email"></div>
+          </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
+          <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="rp-main">
+
+    <!-- ── Page header ─────────────────────────────────── -->
+    <section class="rp-header">
+      <div class="rp-eyebrow">Planlegg</div>
+      <h1 class="rp-title">Mine reiseplaner</h1>
+      <p class="rp-subtitle">
+        Sett sammen din drømmetur med lagrede glimt, events og aktiviteter – alt på ett sted.
+      </p>
+    </section>
+
+    <!-- ── By-filter ─────────────────────────────────── -->
+    <div class="rp-city-filter" id="rp-city-filter">
+      <div class="rp-city-filter-label">Filtrert for:</div>
+      <div class="rp-city-chips" id="rp-city-chips"></div>
+    </div>
+
+    <!-- ── Tabs ────────────────────────────────────────── -->
+    <div class="rp-tabs">
+      <button class="rp-tab rp-tab--active" data-tab="planer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Mine planer
+      </button>
+      <button class="rp-tab" data-tab="glimt">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Lagrede glimt
+      </button>
+      <button class="rp-tab" data-tab="events">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Lagrede events
+      </button>
+      <button class="rp-tab" data-tab="maler">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Maler
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         TAB: MINE PLANER
+         ═══════════════════════════════════════════════════ -->
+    <section class="rp-panel" id="panel-planer">
+
+      <div class="rp-panel-top">
+        <h2 class="rp-panel-heading">Dine reiseplaner</h2>
+        <button class="rp-new-plan-btn" id="rp-new-plan-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Ny reiseplan
+        </button>
+      </div>
+
+      <div class="rp-plans-grid" id="rp-plans-grid"></div>
+
+      <!-- Tom tilstand -->
+      <div class="rp-empty" id="rp-plans-empty" style="display:none">
+        <div class="rp-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <h3>Ingen reiseplaner ennå</h3>
+        <p>Lag din første plan – kombiner lagrede glimt, events og aktiviteter til en komplett reiseguide.</p>
+        <button class="rp-empty-cta" onclick="document.getElementById('rp-new-plan-btn').click()">
+          Lag min første plan
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         TAB: LAGREDE GLIMT
+         ═══════════════════════════════════════════════════ -->
+    <section class="rp-panel rp-panel--hidden" id="panel-glimt">
+      <div class="rp-panel-top">
+        <h2 class="rp-panel-heading">Lagrede glimt fra andre</h2>
+        <span class="rp-count-badge" id="glimt-count">0</span>
+      </div>
+      <p class="rp-panel-desc">Glimt du har lagret fra andre brukeres reisebrev – klar til å legges i en reiseplan.</p>
+      <div class="rp-glimt-grid" id="rp-glimt-grid"></div>
+      <div class="rp-empty" id="rp-glimt-empty" style="display:none">
+        <div class="rp-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <h3>Ingen lagrede glimt</h3>
+        <p>Utforsk reisebrev fra andre brukere og lagre de glimtene som inspirerer deg.</p>
+        <a href="utforsk-reisebrev.html" class="rp-empty-cta">
+          Utforsk reisebrev
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         TAB: LAGREDE EVENTS
+         ═══════════════════════════════════════════════════ -->
+    <section class="rp-panel rp-panel--hidden" id="panel-events">
+      <div class="rp-panel-top">
+        <h2 class="rp-panel-heading">Lagrede events</h2>
+        <span class="rp-count-badge" id="events-count">0</span>
+      </div>
+      <p class="rp-panel-desc">Events fra kalenderen din – konserter, festivaler og opplevelser du har lagret.</p>
+      <div class="rp-events-list" id="rp-events-list"></div>
+      <div class="rp-empty" id="rp-events-empty" style="display:none">
+        <div class="rp-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3>Ingen lagrede events</h3>
+        <p>Finn arrangementer og festivaler via kalendersiden og lagre dem her.</p>
+        <a href="min-kalender.html" class="rp-empty-cta">
+          Gå til kalenderen
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         TAB: MALER
+         ═══════════════════════════════════════════════════ -->
+    <section class="rp-panel rp-panel--hidden" id="panel-maler">
+      <div class="rp-panel-top">
+        <h2 class="rp-panel-heading">Ferdige maler</h2>
+      </div>
+      <p class="rp-panel-desc">Bruk en mal som utgangspunkt – tilpass den med dine egne lagrede glimt og events.</p>
+      <div class="rp-maler-grid" id="rp-maler-grid"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         MODAL: Ny reiseplan
+         ═══════════════════════════════════════════════════ -->
+    <div class="rp-modal-overlay" id="rp-modal-overlay" style="display:none">
+      <div class="rp-modal">
+        <button class="rp-modal-close" id="rp-modal-close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h2 class="rp-modal-title">Ny reiseplan</h2>
+        <p class="rp-modal-desc">Gi planen et navn og velg by – du kan legge til innhold etterpå.</p>
+        <form id="rp-modal-form">
+          <label class="rp-modal-label">
+            Navn på reiseplan
+            <input type="text" class="rp-modal-input" id="rp-modal-name" placeholder="F.eks. Roma i mai" required />
+          </label>
+          <label class="rp-modal-label">
+            Velg by
+            <select class="rp-modal-select" id="rp-modal-city"></select>
+          </label>
+          <label class="rp-modal-label">
+            Datoer (valgfritt)
+            <div class="rp-modal-dates">
+              <input type="date" class="rp-modal-input rp-modal-input--date" id="rp-modal-from" />
+              <span class="rp-modal-dash">–</span>
+              <input type="date" class="rp-modal-input rp-modal-input--date" id="rp-modal-to" />
+            </div>
+          </label>
+          <button type="submit" class="rp-modal-submit">
+            Opprett plan
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="cities.js"></script>
+  <script src="saved-glimt.js"></script>
+  <script src="mine-reiseplaner.js"></script>
+</body>
+</html>

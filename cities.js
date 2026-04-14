@@ -27,5 +27,10 @@ const CITIES = [
     "name": "Dublin",
     "image": "https://images.unsplash.com/photo-1564959130747-897fb406b9af?w=1200&q=80",
     "alt": "Dublins ikoniske bylandskap"
+  },
+  {
+    "name": "Gardasjøen",
+    "image": "https://images.unsplash.com/photo-1534631006967-ec4c5765fa2b?w=1200&q=80",
+    "alt": "Gardasjøens turkise vann og fjellbakgrunn"
   }
 ];

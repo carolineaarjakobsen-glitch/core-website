@@ -1,0 +1,868 @@
+/* ============================================================
+   Glimt – Mine Reiseplaner
+   ============================================================ */
+
+.rp-body {
+  background: var(--blush-bg);
+  min-height: 100vh;
+}
+
+.rp-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 2.5rem 5rem;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.rp-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.rp-eyebrow {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral);
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(234, 103, 45, 0.35);
+  border-radius: 999px;
+  background: rgba(234, 103, 45, 0.06);
+  margin-bottom: 1.2rem;
+}
+
+.rp-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.7rem;
+}
+
+.rp-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--text-mid);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── By-filter ────────────────────────────────────────────── */
+.rp-city-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.rp-city-filter-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.rp-city-chips {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.rp-city-chip {
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid rgba(30,42,74,0.1);
+  border-radius: 999px;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.rp-city-chip:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.rp-city-chip--active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.rp-city-chip--active:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.rp-tabs {
+  display: flex;
+  gap: 0.35rem;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0.35rem;
+  box-shadow: 0 2px 12px rgba(30,42,74,0.06);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.rp-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.rp-tab:hover {
+  background: var(--blush-bg);
+  color: var(--navy);
+}
+
+.rp-tab--active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.rp-tab--active:hover {
+  background: var(--navy);
+  color: #fff;
+}
+
+.rp-tab svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.rp-tab--active svg {
+  opacity: 1;
+}
+
+/* ── Panels ───────────────────────────────────────────────── */
+.rp-panel {
+  animation: rpFadeIn 0.3s ease;
+}
+
+.rp-panel--hidden {
+  display: none !important;
+}
+
+@keyframes rpFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.rp-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.rp-panel-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.rp-panel-desc {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.rp-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 0.5rem;
+  background: var(--coral);
+  color: #fff;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── New plan button ──────────────────────────────────────── */
+.rp-new-plan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.rp-new-plan-btn:hover {
+  background: var(--coral-light);
+  transform: translateY(-1px);
+}
+
+/* ── Plans grid ───────────────────────────────────────────── */
+.rp-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.4rem;
+}
+
+/* Plan card */
+.rp-plan-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 14px rgba(30,42,74,0.06);
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.rp-plan-card:hover {
+  border-color: var(--coral);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(234,103,45,0.12);
+}
+
+.rp-plan-hero {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.rp-plan-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(93,55,42,0.55) 0%, transparent 60%);
+}
+
+.rp-plan-city-pill {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--navy);
+  backdrop-filter: blur(6px);
+}
+
+.rp-plan-city-pill svg {
+  color: var(--coral);
+}
+
+.rp-plan-body {
+  padding: 1.3rem 1.4rem 1.4rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.rp-plan-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.35rem;
+}
+
+.rp-plan-dates {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-bottom: 0.8rem;
+}
+
+.rp-plan-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.rp-plan-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--blush-bg);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+.rp-plan-stat svg {
+  flex-shrink: 0;
+  color: var(--coral);
+}
+
+/* Draft badge */
+.rp-plan-draft {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 1;
+  padding: 0.25rem 0.6rem;
+  background: rgba(255,255,255,0.9);
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Glimt grid (saved glimt from others) ─────────────────── */
+.rp-glimt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+.rp-glimt-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30,42,74,0.06);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.rp-glimt-card:hover {
+  border-color: var(--coral);
+  transform: translateY(-2px);
+}
+
+.rp-glimt-img {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+}
+
+.rp-glimt-body {
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+.rp-glimt-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+
+.rp-glimt-meta {
+  font-size: 0.76rem;
+  color: var(--text-light);
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rp-glimt-meta svg {
+  color: var(--coral);
+  flex-shrink: 0;
+}
+
+.rp-glimt-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.rp-glimt-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--blush-bg);
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.rp-glimt-action:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+.rp-glimt-action svg { flex-shrink: 0; }
+
+/* ── Events list ──────────────────────────────────────────── */
+.rp-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.rp-event-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  border-radius: 14px;
+  padding: 1rem 1.3rem;
+  box-shadow: 0 2px 10px rgba(30,42,74,0.05);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.rp-event-row:hover {
+  border-color: var(--coral);
+  transform: translateX(3px);
+}
+
+.rp-event-date-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 52px;
+  background: var(--navy);
+  border-radius: 12px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.rp-event-date-day {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.rp-event-date-month {
+  font-size: 0.62rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.rp-event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rp-event-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rp-event-venue {
+  font-size: 0.76rem;
+  color: var(--text-light);
+}
+
+.rp-event-city {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--blush-bg);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--text-mid);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.rp-event-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.85rem;
+  background: var(--blush-bg);
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--coral);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.rp-event-add-btn:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+/* ── Maler grid ───────────────────────────────────────────── */
+.rp-maler-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.4rem;
+}
+
+.rp-mal-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 14px rgba(30,42,74,0.06);
+  border: 1.5px solid transparent;
+  transition: border-color 0.25s, transform 0.25s;
+  cursor: pointer;
+}
+
+.rp-mal-card:hover {
+  border-color: var(--coral);
+  transform: translateY(-3px);
+}
+
+.rp-mal-hero {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem 1.2rem;
+}
+
+.rp-mal-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(93,55,42,0.7) 0%, transparent 70%);
+}
+
+.rp-mal-duration {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.rp-mal-body {
+  padding: 1.2rem 1.3rem 1.3rem;
+}
+
+.rp-mal-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: rgba(234,103,45,0.08);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--coral);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6rem;
+}
+
+.rp-mal-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.35rem;
+}
+
+.rp-mal-desc {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+  margin-bottom: 0.8rem;
+}
+
+.rp-mal-includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rp-mal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.65rem;
+  background: var(--blush-bg);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.rp-empty {
+  max-width: 440px;
+  margin: 2rem auto 0;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid rgba(30,42,74,0.08);
+  box-shadow: 0 6px 24px rgba(30,42,74,0.05);
+}
+
+.rp-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--blush-bg);
+  color: var(--coral);
+  margin-bottom: 1.2rem;
+}
+
+.rp-empty h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+
+.rp-empty p {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+  margin-bottom: 1.5rem;
+}
+
+.rp-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.4rem;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.rp-empty-cta:hover {
+  background: var(--coral-light);
+  transform: translateY(-1px);
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.rp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(93,55,42,0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rpFadeIn 0.2s ease;
+}
+
+.rp-modal {
+  background: #fff;
+  border-radius: 22px;
+  padding: 2.2rem 2.4rem 2.4rem;
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(30,42,74,0.18);
+}
+
+.rp-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.rp-modal-close:hover {
+  color: var(--coral);
+}
+
+.rp-modal-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+
+.rp-modal-desc {
+  font-size: 0.85rem;
+  color: var(--text-mid);
+  margin-bottom: 1.6rem;
+  line-height: 1.55;
+}
+
+.rp-modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+.rp-modal-input,
+.rp-modal-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(30,42,74,0.12);
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--navy);
+  background: var(--blush-bg);
+  transition: border-color 0.2s;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+.rp-modal-input:focus,
+.rp-modal-select:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.rp-modal-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.rp-modal-input--date {
+  flex: 1;
+}
+
+.rp-modal-dash {
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.rp-modal-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 0.5rem;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rp-modal-submit:hover {
+  background: var(--coral-light);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .rp-main {
+    padding: 110px 1.2rem 3rem;
+  }
+
+  .rp-tabs {
+    gap: 0.2rem;
+  }
+
+  .rp-tab {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+  }
+
+  .rp-plans-grid,
+  .rp-maler-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-glimt-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-panel-top {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+}

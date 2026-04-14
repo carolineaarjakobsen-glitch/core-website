@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Reiseplan</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="reiseplan-detalj.css" />
+  <link rel="stylesheet" href="saved-glimt.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet" />
+</head>
+<body class="rpd-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </a>
+    </div>
+    <nav>
+      <a href="mine-reiseplaner.html" id="nav-back">← Tilbake til mine reiseplaner</a>
+      <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
+      <div class="nav-user" id="nav-user" style="display:none">
+        <div class="nav-avatar" id="nav-avatar"></div>
+        <div class="nav-user-dropdown" id="nav-user-dropdown">
+          <div class="nav-user-info">
+            <div class="nav-user-name" id="nav-user-name"></div>
+            <div class="nav-user-email" id="nav-user-email"></div>
+          </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
+          <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════ -->
+  <section class="rpd-hero" id="rpd-hero">
+    <div class="rpd-hero-overlay"></div>
+    <div class="rpd-hero-content">
+      <div class="rpd-hero-badge" id="rpd-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span id="rpd-city">Roma</span>
+      </div>
+      <h1 class="rpd-hero-title" id="rpd-title" contenteditable="true" spellcheck="false">Roma i mai</h1>
+      <div class="rpd-hero-dates" id="rpd-dates">12.–17. mai 2026</div>
+      <div class="rpd-hero-quote">
+        <span class="rpd-quote-icon">✦</span>
+        <em id="rpd-quote">Alle veier fører til Roma – og denne planen viser deg de beste.</em>
+      </div>
+    </div>
+  </section>
+
+  <main class="rpd-main">
+
+    <!-- ── Left: Inspirasjon sidebar ──────────────────── -->
+    <aside class="rpd-sidebar">
+      <div class="rpd-sidebar-sticky">
+
+        <div class="rpd-sidebar-section">
+          <div class="rpd-sidebar-heading">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Reisetips
+          </div>
+          <div class="rpd-tips-card" id="rpd-tips">
+            <p>Skriv notater, tips og påminnelser til deg selv her...</p>
+          </div>
+        </div>
+
+        <div class="rpd-sidebar-section">
+          <div class="rpd-sidebar-heading">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Dine lagrede glimt
+          </div>
+          <div class="rpd-inspo-list" id="rpd-inspo-glimt"></div>
+        </div>
+
+        <div class="rpd-sidebar-section">
+          <div class="rpd-sidebar-heading">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Events i kalenderen
+          </div>
+          <div class="rpd-inspo-list" id="rpd-inspo-events"></div>
+        </div>
+
+        <div class="rpd-sidebar-section">
+          <div class="rpd-sidebar-heading">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Foreslåtte aktiviteter
+          </div>
+          <div class="rpd-inspo-list" id="rpd-inspo-activities"></div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ── Right: Plan builder ────────────────────────── -->
+    <div class="rpd-content">
+
+      <!-- Dag-seksjoner -->
+      <div class="rpd-days" id="rpd-days"></div>
+
+      <!-- Legg til dag -->
+      <button class="rpd-add-day-btn" id="rpd-add-day">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Legg til en dag
+      </button>
+
+      <!-- ── Ekstra seksjoner ──────────────────────────── -->
+      <div class="rpd-extras">
+
+        <div class="rpd-extra-card">
+          <div class="rpd-extra-header">
+            <span class="rpd-extra-emoji">🏨</span>
+            <h3>Overnatting</h3>
+          </div>
+          <div class="rpd-extra-body">
+            <div class="rpd-note-field" contenteditable="true" data-placeholder="Hotell, Airbnb, adresse, bookingreferanse..." id="rpd-accommodation"></div>
+          </div>
+        </div>
+
+        <div class="rpd-extra-card">
+          <div class="rpd-extra-header">
+            <span class="rpd-extra-emoji">✈️</span>
+            <h3>Transport</h3>
+          </div>
+          <div class="rpd-extra-body">
+            <div class="rpd-note-field" contenteditable="true" data-placeholder="Fly, tog, leiebil, avgangstider..." id="rpd-transport"></div>
+          </div>
+        </div>
+
+        <div class="rpd-extra-card">
+          <div class="rpd-extra-header">
+            <span class="rpd-extra-emoji">💰</span>
+            <h3>Budsjett</h3>
+          </div>
+          <div class="rpd-extra-body">
+            <div class="rpd-note-field" contenteditable="true" data-placeholder="Estimert budsjett, valuta, betalingsmåter..." id="rpd-budget"></div>
+          </div>
+        </div>
+
+        <div class="rpd-extra-card">
+          <div class="rpd-extra-header">
+            <span class="rpd-extra-emoji">🎒</span>
+            <h3>Pakkeliste</h3>
+          </div>
+          <div class="rpd-extra-body">
+            <div class="rpd-checklist" id="rpd-packing">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="rpd-checklist-add">
+              <input type="text" class="rpd-checklist-input" id="rpd-packing-input" placeholder="Legg til noe å pakke..." />
+              <button class="rpd-checklist-add-btn" id="rpd-packing-add">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpd-extra-card">
+          <div class="rpd-extra-header">
+            <span class="rpd-extra-emoji">📝</span>
+            <h3>Egne notater</h3>
+          </div>
+          <div class="rpd-extra-body">
+            <div class="rpd-note-field rpd-note-field--tall" contenteditable="true" data-placeholder="Alt du vil huske: restauranttips, åpningstider, kontaktinfo..." id="rpd-notes"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Lagre-knapp -->
+      <div class="rpd-save-bar">
+        <span class="rpd-save-status" id="rpd-save-status">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Automatisk lagret
+        </span>
+        <div class="rpd-save-actions">
+          <button class="rpd-save-btn" id="rpd-save-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Lagre plan
+          </button>
+          <button class="rpd-delete-btn" id="rpd-delete-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            Slett plan
+          </button>
+        </div>
+      </div>
+
+      <!-- Bekreft sletting overlay -->
+      <div class="rpd-confirm-overlay" id="rpd-confirm-overlay">
+        <div class="rpd-confirm-dialog">
+          <div class="rpd-confirm-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3 class="rpd-confirm-title">Slett reiseplan?</h3>
+          <p class="rpd-confirm-text">Er du sikker på at du vil slette denne planen? Denne handlingen kan ikke angres.</p>
+          <div class="rpd-confirm-actions">
+            <button class="rpd-confirm-cancel" id="rpd-confirm-cancel">Avbryt</button>
+            <button class="rpd-confirm-delete" id="rpd-confirm-delete">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              Ja, slett planen
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="cities.js"></script>
+  <script src="saved-glimt.js"></script>
+  <script src="reiseplan-detalj.js"></script>
+</body>
+</html>

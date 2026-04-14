@@ -1,58 +1,80 @@
-# Vercel-oppsett for CORE – AI-aktivitetsforslag
+# Flytte Glimt fra GitHub Pages til Vercel
 
-Vercel gir deg gratis hosting + serverless functions som kan kalle Claude API.
-Siden du allerede har GitHub, tar dette ca. 5 minutter.
+GitHub Pages kan bare servere statiske filer (HTML, CSS, JS). Vercel gjør det samme, men støtter også **serverless functions** — små backend-funksjoner som kjører i `/api/`-mappen. Det er disse vi trenger for autofill-funksjonen (som kaller Claude API).
 
----
-
-## Steg 1 – Hent Anthropic API-nøkkel
-
-1. Gå til **console.anthropic.com** og logg inn (eller opprett en konto)
-2. Gå til **API Keys → Create Key**
-3. Gi den et navn, f.eks. `core-website`
-4. Kopier nøkkelen – du bruker den i Steg 3
+Vercel er gratis for personlige prosjekter. Du trenger bare en GitHub-konto (som du allerede har).
 
 ---
 
-## Steg 2 – Koble GitHub til Vercel
+## Steg 1 — Opprett Vercel-konto
 
-1. Gå til **vercel.com** og klikk **Sign Up** → velg **Continue with GitHub**
-2. Etter innlogging, klikk **Add New → Project**
-3. Finn og velg ditt GitHub-repo: `carolineaarjakobsen-glitch/core-website`
-4. Klikk **Import**
-5. La alle innstillinger stå som de er (Vercel oppdager automatisk at det er en statisk side med API-funksjoner)
-6. Klikk **Deploy**
+1. Gå til **vercel.com** og klikk **Sign Up**
+2. Velg **Continue with GitHub**
+3. Godkjenn at Vercel får tilgang til GitHub-kontoen din
 
 ---
 
-## Steg 3 – Legg til API-nøkkel som miljøvariabel
+## Steg 2 — Importer prosjektet
 
-1. Etter deploy, gå til **Settings → Environment Variables** i Vercel-prosjektet
-2. Klikk **Add New**
-3. Fyll inn:
+1. Etter innlogging, klikk **Add New → Project**
+2. Finn og velg repoet: **core-website**
+3. Klikk **Import**
+4. Under "Configure Project":
+   - **Framework Preset**: la stå på "Other"
+   - **Build Command**: la stå tom
+   - **Output Directory**: la stå på `.`
+5. Klikk **Deploy**
+
+Vercel oppdager automatisk `vercel.json` og `api/`-mappen.
+
+---
+
+## Steg 3 — Legg til API-nøkkel
+
+Autofill-funksjonen bruker Anthropic (Claude) API. Du trenger en API-nøkkel:
+
+1. Gå til **console.anthropic.com** → logg inn eller opprett konto
+2. Gå til **API Keys → Create Key** → gi den et navn, f.eks. `glimt`
+3. Kopier nøkkelen
+
+Deretter i Vercel:
+
+1. Gå til prosjektet ditt → **Settings → Environment Variables**
+2. Legg til:
    - **Name:** `ANTHROPIC_API_KEY`
-   - **Value:** nøkkelen du kopierte i Steg 1
-4. Klikk **Save**
-5. Gå til **Deployments** og klikk **Redeploy** (nødvendig for at env-variabelen skal bli aktiv)
+   - **Value:** nøkkelen du kopierte
+3. Klikk **Save**
+4. Gå til **Deployments** → klikk **Redeploy** på siste deploy (slik at nøkkelen aktiveres)
 
 ---
 
-## Steg 4 – Fremtidige oppdateringer
+## Steg 4 — Pek domenet ditt (valgfritt)
 
-Hver gang du pusher kode til GitHub (`git push`), vil Vercel automatisk bygge og deploye den nye versjonen. Du trenger ikke gjøre noe manuelt.
+Vercel gir deg en URL som `core-website-abc123.vercel.app`. Hvis du vil bruke et eget domene, gå til **Settings → Domains** i Vercel-prosjektet.
+
+Hvis du brukte GitHub Pages med et custom domain, må du oppdatere DNS-innstillingene til å peke mot Vercel i stedet.
 
 ---
 
-## Ferdig!
+## Steg 5 — Deaktiver GitHub Pages (valgfritt)
 
-Nettsiden din vil nå ligge på en URL som ligner:
-`https://core-website-abc123.vercel.app`
+Etter at Vercel fungerer, kan du deaktivere GitHub Pages:
 
-Aktivitetsfilteret på `explore.html` kaller `/api/suggest` som igjen kaller Claude API og returnerer skreddersydde forslag basert på brukerens preferanser.
+1. Gå til GitHub-repoet → **Settings → Pages**
+2. Sett **Source** til **None**
+
+---
+
+## Hvordan fungerer det etterpå?
+
+- Hver gang du pusher til GitHub (`git push`), deployer Vercel automatisk
+- Statiske filer (HTML, CSS, JS) serveres som vanlig
+- Filer i `/api/`-mappen blir serverless functions
+- Du trenger ikke endre noe i hvordan du jobber med koden — `git add`, `git commit`, `git push` fungerer akkurat som før
 
 ---
 
 ## Kostnader
 
-- **Vercel:** Gratis (Hobby-plan dekker godt mer enn nok for dette prosjektet)
-- **Anthropic API:** Betalt per bruk – ca. $0.003 per forespørsel med claude-opus-4-6 (altså 3 øre per søk)
+- **Vercel Hobby (gratis):** 100 GB båndbredde/mnd, 100 000 serverless-kall/mnd
+- **Anthropic API:** ca. $0.003 per autofill-kall (3 øre)

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Mine glimt</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mine-enkeltglimt.css" />
+  <link rel="stylesheet" href="saved-glimt.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="meg-body">
+
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </a>
+    </div>
+    <nav>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Mine glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="mine-enkeltglimt.html">Mine glimt</a>
+          <a href="mine-glimt.html">Mine reisebrev</a>
+          <a href="mine-reiseplaner.html">Mine reiseplaner</a>
+          <a href="min-kalender.html">Min kalender</a>
+        </div>
+      </div>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Utforsk glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="utforsk-glimt.html">Utforsk glimt</a>
+          <a href="utforsk-reisebrev.html">Utforsk reisebrev</a>
+          <a href="explore.html">Skreddersy glimt</a>
+          <a href="calendar.html">Utforsk kalender</a>
+        </div>
+      </div>
+      <a href="login.html" class="nav-login-btn" id="nav-login-btn">Logg inn</a>
+      <div class="nav-user" id="nav-user" style="display:none">
+        <div class="nav-avatar" id="nav-avatar"></div>
+        <div class="nav-user-dropdown" id="nav-user-dropdown">
+          <div class="nav-user-info">
+            <div class="nav-user-name" id="nav-user-name"></div>
+            <div class="nav-user-email" id="nav-user-email"></div>
+          </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
+          <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="meg-main">
+
+    <!-- Hero -->
+    <section class="meg-hero">
+      <div class="meg-eyebrow">Dine egne opplevelser</div>
+      <h1 class="meg-title">Mine glimt</h1>
+      <p class="meg-subtitle">
+        Opprett dine egne glimt, og finn igjen de du har lagret fra andre.
+      </p>
+    </section>
+
+    <!-- Tabs -->
+    <div class="meg-tabs">
+      <button class="meg-tab active" data-tab="mine">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+        Mine glimt
+      </button>
+      <button class="meg-tab" data-tab="lagrede">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        Lagrede glimt
+      </button>
+    </div>
+
+    <!-- ═══ Tab: Mine glimt ═══ -->
+    <section class="meg-panel" id="panel-mine">
+
+      <button class="meg-create-btn" id="meg-create-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+        Opprett nytt glimt
+      </button>
+
+      <div class="meg-grid" id="meg-mine-grid"></div>
+
+      <div class="meg-empty" id="meg-mine-empty" style="display:none">
+        <div class="meg-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+          </svg>
+        </div>
+        <h2>Ingen glimt ennå</h2>
+        <p>Del din første opplevelse med verden! Trykk "Opprett nytt glimt" over for å komme i gang.</p>
+      </div>
+    </section>
+
+    <!-- ═══ Tab: Lagrede glimt ═══ -->
+    <section class="meg-panel" id="panel-lagrede" style="display:none">
+
+      <div class="meg-grid" id="meg-lagrede-grid"></div>
+
+      <div class="meg-empty" id="meg-lagrede-empty" style="display:none">
+        <div class="meg-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+          </svg>
+        </div>
+        <h2>Ingen lagrede glimt</h2>
+        <p>Utforsk glimt fra andre reisende og lagre de du liker.</p>
+        <a class="meg-empty-cta" href="utforsk-glimt.html">
+          Utforsk glimt
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       OPPRETT GLIMT – Fullscreen overlay / modal
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="meg-modal-overlay" id="meg-modal" style="display:none">
+    <div class="meg-modal">
+
+      <div class="meg-modal-header">
+        <h2>Opprett nytt glimt</h2>
+        <button class="meg-modal-close" id="meg-modal-close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form class="meg-form" id="meg-form">
+
+        <!-- ── Auto-fyll fra lenke ── -->
+        <div class="meg-autofill">
+          <div class="meg-autofill-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span>Har du en lenke? Lim inn og fyll ut automatisk</span>
+          </div>
+          <div class="meg-autofill-row">
+            <input type="url" class="meg-input meg-autofill-input" id="meg-url-input" placeholder="https://restaurant.no/meny eller https://events.com/marathon..." />
+            <button type="button" class="meg-autofill-btn" id="meg-autofill-btn">
+              <span class="meg-autofill-btn-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 21l-4.35-4.35"/><circle cx="11" cy="11" r="8"/></svg>
+                Hent data
+              </span>
+              <span class="meg-autofill-spinner" style="display:none"></span>
+            </button>
+          </div>
+          <div class="meg-autofill-status" id="meg-autofill-status" style="display:none"></div>
+        </div>
+
+        <hr class="meg-divider" />
+
+        <!-- Tittel -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Tittel <span class="meg-required">*</span>
+          </label>
+          <input type="text" name="title" class="meg-input" placeholder="F.eks. Frokost i Trastevere" required />
+        </div>
+
+        <!-- Beskrivelse -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Beskrivelse <span class="meg-required">*</span>
+          </label>
+          <textarea name="desc" class="meg-textarea" rows="3" placeholder="Fortell om opplevelsen..." required></textarea>
+        </div>
+
+        <!-- Sted / adresse -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Sted / adresse <span class="meg-required">*</span>
+          </label>
+          <input type="text" name="sted" class="meg-input" placeholder="F.eks. Piazza Santa Maria in Trastevere, Roma" required />
+        </div>
+
+        <!-- By -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+            By <span class="meg-required">*</span>
+          </label>
+          <select name="city" class="meg-select" id="meg-city-select" required>
+            <option value="" disabled selected>Velg by...</option>
+          </select>
+        </div>
+
+        <!-- Tips -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Ditt beste tips
+          </label>
+          <textarea name="tips" class="meg-textarea" rows="2" placeholder="Noe andre bør vite..."></textarea>
+        </div>
+
+        <!-- Bilde-URL -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Bilde (URL)
+          </label>
+          <input type="url" name="image" class="meg-input" placeholder="https://images.unsplash.com/..." />
+        </div>
+
+        <hr class="meg-divider" />
+
+        <!-- ── Filtreringsegenskaper ── -->
+        <h3 class="meg-section-title">Filtreringsegenskaper</h3>
+        <p class="meg-section-desc">Disse feltene gjør at glimtet ditt dukker opp riktig i Skreddersy- og Utforsk-filteret.</p>
+
+        <!-- Hvem passer det for -->
+        <div class="meg-field">
+          <label class="meg-label">Hvem passer det for?</label>
+          <div class="meg-chips" data-name="hvem">
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="alene" /><span>Alene</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="par" /><span>Par / date</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="venner" /><span>Vennegjeng</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="familie" /><span>Familie med barn</span></label>
+          </div>
+        </div>
+
+        <!-- Budsjett -->
+        <div class="meg-field">
+          <label class="meg-label">Budsjett</label>
+          <div class="meg-chips" data-name="budsjett">
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="gratis" /><span>Gratis</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="lav" /><span>$ Lav</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="middels" /><span>$$ Middels</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="høy" /><span>$$$ Høy</span></label>
+          </div>
+        </div>
+
+        <!-- Stemning / type -->
+        <div class="meg-field">
+          <label class="meg-label">Stemning / type</label>
+          <div class="meg-chips" data-name="stemning">
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="rolig" /><span>Rolig & avslappende</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="aktiv" /><span>Aktiv & sporty</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="kulturell" /><span>Kulturell & historisk</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="mat" /><span>Mat & drikke</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="romantisk" /><span>Romantisk</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="eventyr" /><span>Eventyrlig & unik</span></label>
+          </div>
+        </div>
+
+        <!-- Tidspunkt -->
+        <div class="meg-field">
+          <label class="meg-label">Tidspunkt</label>
+          <div class="meg-chips" data-name="tidspunkt">
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="formiddag" /><span>Formiddag</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="ettermiddag" /><span>Ettermiddag</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="kveld" /><span>Kveld</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="hel_dag" /><span>Hel dag</span></label>
+          </div>
+        </div>
+
+        <!-- Aktivitetsnivå -->
+        <div class="meg-field">
+          <label class="meg-label">Aktivitetsnivå</label>
+          <div class="meg-chips" data-name="aktivitetsniva">
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="lavt" /><span>Lavt</span></label>
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="middels" /><span>Middels</span></label>
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="høyt" /><span>Høyt</span></label>
+          </div>
+        </div>
+
+        <!-- Varighet -->
+        <div class="meg-field">
+          <label class="meg-label">Varighet</label>
+          <div class="meg-chips" data-name="varighet">
+            <label class="meg-chip"><input type="radio" name="varighet" value="under1" /><span>Under 1 time</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="1-2" /><span>1–2 timer</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="2-4" /><span>2–4 timer</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="halvdag" /><span>Halvdag</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="heldag" /><span>Hel dag</span></label>
+          </div>
+        </div>
+
+        <!-- Kostnad (fritekst) -->
+        <div class="meg-field">
+          <label class="meg-label">Kostnad (fritekst)</label>
+          <input type="text" name="kostnad" class="meg-input" placeholder="F.eks. Gratis, Ca. 15–20 €, 30–50 € per person" />
+        </div>
+
+        <!-- Emoji -->
+        <div class="meg-field">
+          <label class="meg-label">Emoji (valgfritt)</label>
+          <input type="text" name="emoji" class="meg-input meg-input-emoji" placeholder="F.eks. 🍕 🏛️ 🌅" maxlength="4" />
+        </div>
+
+        <button type="submit" class="meg-submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+          Opprett glimt
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="cities.js"></script>
+  <script src="saved-glimt.js"></script>
+  <script src="mine-enkeltglimt.js"></script>
+</body>
+</html>

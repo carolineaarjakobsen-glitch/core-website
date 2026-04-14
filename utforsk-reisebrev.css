@@ -1,0 +1,427 @@
+/* =====================
+   UTFORSK REISEBREV – BODY
+   ===================== */
+.utforsk-body {
+  background: var(--blush-bg);
+  min-height: 100vh;
+}
+
+.utforsk-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 128px 3rem 5rem;
+}
+
+/* =====================
+   HEADER
+   ===================== */
+.utforsk-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.utforsk-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-decoration: none;
+  margin-bottom: 1.6rem;
+  transition: color 0.25s;
+}
+
+.utforsk-back:hover {
+  color: var(--coral);
+}
+
+.utforsk-eyebrow {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral);
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(234, 103, 45, 0.35);
+  border-radius: 999px;
+  background: rgba(234, 103, 45, 0.06);
+  margin-bottom: 1.2rem;
+}
+
+.utforsk-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+}
+
+.utforsk-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  color: var(--text-mid);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* =====================
+   FILTER CHIPS
+   ===================== */
+.utforsk-filters {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 2.8rem;
+}
+
+.filter-chip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.55rem 1.3rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(30, 42, 74, 0.12);
+  background: #fff;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.filter-chip:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.filter-chip.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+/* =====================
+   FEED GRID
+   ===================== */
+.utforsk-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.8rem;
+}
+
+/* =====================
+   FEED CARD
+   ===================== */
+.feed-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(30, 42, 74, 0.06);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: feedFadeUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.feed-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 45px rgba(30, 42, 74, 0.14);
+}
+
+/* Stagger animation */
+.feed-card:nth-child(1) { animation-delay: 0s; }
+.feed-card:nth-child(2) { animation-delay: 0.08s; }
+.feed-card:nth-child(3) { animation-delay: 0.16s; }
+.feed-card:nth-child(4) { animation-delay: 0.24s; }
+.feed-card:nth-child(5) { animation-delay: 0.32s; }
+.feed-card:nth-child(6) { animation-delay: 0.40s; }
+
+@keyframes feedFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bildemosaikk (2x2) */
+.feed-card-mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+  aspect-ratio: 16 / 10;
+  background: var(--navy);
+}
+
+.feed-card-mosaic-tile {
+  overflow: hidden;
+  background-color: var(--navy-light);
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.feed-card:hover .feed-card-mosaic-tile {
+  transform: scale(1.05);
+}
+
+/* Innhold */
+.feed-card-body {
+  padding: 1.3rem 1.4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.feed-card-author {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.feed-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--blush-mid);
+  color: var(--coral);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Glimt admin-avatar */
+.feed-card-avatar--glimt {
+  background: var(--coral);
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(234, 103, 45, 0.3);
+}
+
+/* "Glimt anbefaler"-badge overlagt på mosaik */
+.feed-card-glimt-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--coral);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+  box-shadow: 0 2px 10px rgba(234, 103, 45, 0.35);
+  z-index: 3;
+}
+
+.feed-card-mosaic {
+  position: relative;
+}
+
+.feed-card-author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-card-author-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.feed-card-author-date {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.feed-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.feed-card-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.feed-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(30, 42, 74, 0.06);
+  margin-top: 0.3rem;
+}
+
+.feed-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.feed-card-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+.feed-card-stat svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--text-light);
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.feed-card-read {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--coral);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap 0.25s ease;
+}
+
+.feed-card:hover .feed-card-read {
+  gap: 0.55rem;
+}
+
+.feed-card-read svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--coral);
+  fill: none;
+  stroke-width: 2.2;
+}
+
+/* Save button on cards */
+.feed-card .save-glimt-btn {
+  margin-top: 0.6rem;
+  align-self: flex-start;
+}
+
+/* =====================
+   TOM TILSTAND
+   ===================== */
+.utforsk-empty {
+  max-width: 520px;
+  margin: 2rem auto 0;
+  padding: 3.5rem 2.5rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid rgba(30, 42, 74, 0.08);
+  box-shadow: 0 8px 30px rgba(30, 42, 74, 0.06);
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--blush-mid);
+  color: var(--coral);
+  margin-bottom: 1.4rem;
+}
+
+.empty-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.empty-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+}
+
+.empty-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.98rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+  margin-bottom: 1.8rem;
+}
+
+.empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.6rem;
+  background: var(--coral);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.empty-cta:hover {
+  background: var(--coral-light);
+  transform: translateX(3px);
+}
+
+/* =====================
+   RESPONSIV
+   ===================== */
+@media (max-width: 720px) {
+  .utforsk-main {
+    padding: 110px 1.4rem 3rem;
+  }
+
+  .utforsk-feed {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .utforsk-title {
+    font-size: 1.8rem;
+  }
+
+  .feed-card-body {
+    padding: 1.3rem 1.4rem 1.4rem;
+  }
+
+  .feed-card-title {
+    font-size: 1.15rem;
+  }
+
+  .utforsk-filters {
+    flex-wrap: wrap;
+  }
+}

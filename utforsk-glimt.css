@@ -1,0 +1,472 @@
+/* ============================================================
+   UTFORSK GLIMT – Enkeltaktiviteter / glimt-kort
+   ============================================================ */
+
+.utforsk-glimt-body {
+  background: var(--blush-bg);
+  min-height: 100vh;
+}
+
+.ug-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 120px 3rem 5rem;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.ug-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.ug-hero-eyebrow {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral);
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(234, 103, 45, 0.35);
+  border-radius: 999px;
+  background: rgba(234, 103, 45, 0.06);
+  margin-bottom: 1.2rem;
+}
+
+.ug-hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+}
+
+.ug-hero-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  color: var(--text-mid);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ── Toolbar (søk + filtre) ───────────────────────────────── */
+.ug-toolbar {
+  margin-bottom: 2.5rem;
+}
+
+.ug-search-wrap {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto 1.4rem;
+}
+
+.ug-search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+.ug-search {
+  width: 100%;
+  padding: 0.85rem 1.2rem 0.85rem 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--navy);
+  background: #fff;
+  border: 1.5px solid rgba(30, 42, 74, 0.1);
+  border-radius: 999px;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.ug-search:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(234, 103, 45, 0.1);
+}
+
+.ug-search::placeholder {
+  color: var(--text-light);
+}
+
+/* By-filter chips */
+.ug-filter-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.ug-filter-chip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.5rem 1.15rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(30, 42, 74, 0.12);
+  background: #fff;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.ug-filter-chip:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.ug-filter-chip.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+/* Kategori-chips */
+.ug-category-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.ug-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(30, 42, 74, 0.08);
+  background: rgba(255,255,255,0.7);
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.ug-cat-chip:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.ug-cat-chip.active {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+
+.ug-cat-chip svg {
+  flex-shrink: 0;
+}
+
+/* ── Grid ─────────────────────────────────────────────────── */
+.ug-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.6rem;
+}
+
+/* ── Glimt-kort ───────────────────────────────────────────── */
+.ug-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(30, 42, 74, 0.06);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: ugFadeUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.ug-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 45px rgba(30, 42, 74, 0.14);
+}
+
+/* Staggered animation */
+.ug-card:nth-child(1)  { animation-delay: 0s; }
+.ug-card:nth-child(2)  { animation-delay: 0.06s; }
+.ug-card:nth-child(3)  { animation-delay: 0.12s; }
+.ug-card:nth-child(4)  { animation-delay: 0.18s; }
+.ug-card:nth-child(5)  { animation-delay: 0.24s; }
+.ug-card:nth-child(6)  { animation-delay: 0.30s; }
+.ug-card:nth-child(7)  { animation-delay: 0.36s; }
+.ug-card:nth-child(8)  { animation-delay: 0.42s; }
+.ug-card:nth-child(9)  { animation-delay: 0.48s; }
+.ug-card:nth-child(10) { animation-delay: 0.54s; }
+.ug-card:nth-child(11) { animation-delay: 0.60s; }
+.ug-card:nth-child(12) { animation-delay: 0.66s; }
+
+@keyframes ugFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bilde */
+.ug-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--navy-light);
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ug-card-image-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.ug-card:hover .ug-card-image {
+  transform: scale(1.06);
+}
+
+/* Kategori-badge på bildet */
+.ug-card-cat-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.92);
+  color: var(--navy);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* By-badge på bildet */
+.ug-card-city-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.22rem 0.6rem;
+  border-radius: 50px;
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ug-card-city-badge svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+/* Innhold */
+.ug-card-body {
+  padding: 1.1rem 1.3rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.ug-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.ug-card-address {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+.ug-card-address svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  stroke: var(--text-light);
+}
+
+.ug-card-note {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Fra-reisebrev badge */
+.ug-card-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 0.2rem;
+}
+
+.ug-card-source svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+/* Footer med handlingsknapper */
+.ug-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(30, 42, 74, 0.06);
+  margin-top: 0.3rem;
+}
+
+.ug-card-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.85rem;
+  background: var(--blush-bg);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--coral);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.ug-card-save-btn:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+.ug-card-save-btn--saved {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+
+.ug-card-save-btn--saved:hover {
+  background: #d45520;
+}
+
+.ug-card-plan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.85rem;
+  background: transparent;
+  border: 1.5px solid rgba(30, 42, 74, 0.1);
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.ug-card-plan-btn:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+/* ── Tom tilstand ─────────────────────────────────────────── */
+.ug-empty {
+  max-width: 520px;
+  margin: 2rem auto 0;
+  padding: 3.5rem 2.5rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid rgba(30, 42, 74, 0.08);
+  box-shadow: 0 8px 30px rgba(30, 42, 74, 0.06);
+}
+
+.ug-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--blush-mid);
+  color: var(--coral);
+  margin-bottom: 1.4rem;
+}
+
+.ug-empty-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.ug-empty-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+}
+
+.ug-empty-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.98rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+/* ── Responsiv ────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .ug-main {
+    padding: 110px 1.2rem 3rem;
+  }
+
+  .ug-grid {
+    grid-template-columns: 1fr;
+    gap: 1.3rem;
+  }
+
+  .ug-hero-title {
+    font-size: 1.8rem;
+  }
+
+  .ug-category-row {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.3rem;
+    flex-wrap: nowrap;
+  }
+
+  .ug-cat-chip {
+    white-space: nowrap;
+  }
+}

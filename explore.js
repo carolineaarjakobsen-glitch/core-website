@@ -3,18 +3,46 @@
 // ============================================================
 
 const params = new URLSearchParams(window.location.search);
-const CITY   = params.get("city") || "København";
+let CITY = params.get("city") || "";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Populate city selector from CITIES array
+  const citySelect = document.getElementById("city-select");
+  if (citySelect && typeof CITIES !== "undefined") {
+    CITIES.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.name;
+      opt.textContent = c.name;
+      if (c.name === CITY) opt.selected = true;
+      citySelect.appendChild(opt);
+    });
+
+    citySelect.addEventListener("change", () => {
+      CITY = citySelect.value;
+      updateCityUI();
+    });
+  }
+
+  updateCityUI();
+});
+
+function updateCityUI() {
   const badge = document.getElementById("explore-city-badge");
-  if (badge) badge.textContent = CITY;
+  if (badge) {
+    badge.textContent = CITY;
+    badge.style.display = CITY ? "" : "none";
+  }
 
   const back = document.getElementById("nav-back");
-  if (back) back.href = `city-landing.html?city=${encodeURIComponent(CITY)}`;
+  if (back) {
+    back.href = CITY
+      ? `city-landing.html?city=${encodeURIComponent(CITY)}`
+      : "index.html";
+  }
 
   const loadingCity = document.getElementById("loading-city");
-  if (loadingCity) loadingCity.textContent = CITY;
-});
+  if (loadingCity) loadingCity.textContent = CITY || "din by";
+}
 
 // ============================================================
 //  LOKAL AKTIVITETSDATABASE
@@ -290,6 +318,65 @@ const ACTIVITIES = {
       hvem: ["alene","par","venner"], budsjett: ["lav","middels"], stemning: ["mat","eventyr","rolig"], tidspunkt: ["kveld"]
     },
   ],
+
+  "Gardasjøen": [
+    {
+      emoji: "🚡", title: "Taubanen opp til Monte Baldo",
+      desc: "Den roterende gondolen fra Malcesine tar deg til 1800 meters høyde på 10 minutter. Utsikten over hele Gardasjøen fra toppen er overveldende – på klare dager ser du til Dolomittene.",
+      sted: "Funivia Malcesine–Monte Baldo, Malcesine",
+      kostnad: "Ca. 25 € tur-retur", tid: "Halvdag",
+      tips: "Ta første gondolen kl. 08:00 – du har fjellet nesten for deg selv, og lyset er magisk. Pakk en ekstra genser, det er 15 grader kaldere på toppen.",
+      hvem: ["alene","par","venner","familie"], budsjett: ["middels"], stemning: ["aktiv","eventyr"], tidspunkt: ["formiddag","hel_dag"]
+    },
+    {
+      emoji: "🍋", title: "Limonaia del Castel i Limone",
+      desc: "Et levende museum i en 700 år gammel sitronhage hengende over sjøen. Her dyrket munkene sitroner i steinterrasser lenge før resten av Europa hadde smakt en. Duften er uforglemmelig.",
+      sted: "Limonaia del Castel, Via Orti 6, Limone sul Garda",
+      kostnad: "Ca. 3 €", tid: "1 time",
+      tips: "Kjøp en flaske hjemmelaget limoncello i den lille butikken inne – den er laget av sitroner fra akkurat disse trærne.",
+      hvem: ["alene","par","venner","familie"], budsjett: ["gratis","lav"], stemning: ["rolig","kulturell"], tidspunkt: ["formiddag","ettermiddag"]
+    },
+    {
+      emoji: "🚴", title: "Ciclopista del Garda – sykkelstien over vannet",
+      desc: "En spektakulær sykkelsti som henger utover klippeveggen rett over sjøen ved Limone. Verdens vakreste pendlervei er åpen for syklister og fotgjengere – og den er gratis.",
+      sted: "Ciclopista del Garda, Limone sul Garda",
+      kostnad: "Gratis (sykkelleie ca. 15 €)", tid: "1–2 timer",
+      tips: "Gå tidlig om morgenen eller ved solnedgang. Det er en fotobom – men knapt noen turister vet at du kan gå forbi den til den uferdigstilte forlengelsen med enda bedre utsikt.",
+      hvem: ["alene","par","venner","familie"], budsjett: ["gratis","lav"], stemning: ["aktiv","romantisk","eventyr"], tidspunkt: ["formiddag","ettermiddag"]
+    },
+    {
+      emoji: "🏰", title: "Scaliger-slottet i Malcesine",
+      desc: "Et middelalderslott som strekker seg rett ut over vannet – Goethe ble arrestert her i 1786 fordi vaktene trodde skissene hans var spionkart. Gå opp de 112 trinnene i tårnet for den beste utsikten i hele Malcesine.",
+      sted: "Castello Scaligero, Malcesine",
+      kostnad: "Ca. 7 €", tid: "1–2 timer",
+      tips: "Gå like før stengetid – turistene har dratt, og sollyset treffer slottet og sjøen perfekt.",
+      hvem: ["alene","par","venner","familie"], budsjett: ["lav"], stemning: ["kulturell","romantisk","rolig"], tidspunkt: ["formiddag","ettermiddag"]
+    },
+    {
+      emoji: "⛵", title: "Seiling med historisk trebåt",
+      desc: "Gå ombord på Siora Veronica, en restaurert vintagebåt fra 1926, for en stille seiltur langs Malcesines kystlinje. Ingen motor – bare vind, bølger og Gardasjøens fjellkulisse.",
+      sted: "Porto di Malcesine, Malcesine",
+      kostnad: "Ca. 35–45 €", tid: "2–3 timer",
+      tips: "Book solnedgangsturen – kapteinen åpner en flaske Lugana-vin fra lokale vinmarker når solen går ned bak fjellene.",
+      hvem: ["par","venner"], budsjett: ["middels","høy"], stemning: ["romantisk","rolig","eventyr"], tidspunkt: ["ettermiddag","kveld"]
+    },
+    {
+      emoji: "🍷", title: "Aperitivo med utsikt i Limone",
+      desc: "Finn en av de små barene langs havnepromenaden i Limone og bestill en Aperol Spritz mens du ser solen forsvinne bak fjellene på vestsiden. Pastellhusene lyser opp i gyllent lys – det er ren magi.",
+      sted: "Lungolago Marconi, Limone sul Garda",
+      kostnad: "8–15 €", tid: "1–2 timer",
+      tips: "Gå forbi de første turistbarene og finn Osteria Al Vecchio Fontec litt opp i bakken – bedre priser, fantastisk terrasse og en kokk som lager pasta for hånd.",
+      hvem: ["alene","par","venner"], budsjett: ["lav","middels"], stemning: ["rolig","romantisk","mat"], tidspunkt: ["ettermiddag","kveld"]
+    },
+    {
+      emoji: "🏊", title: "Bading fra klippene ved Cassone",
+      desc: "Den lille landsbyen Cassone, like sør for Malcesine, har verdens korteste elv og en hemmelig badebukt mellom klippene. Lokalbefolkningen drar hit når strendene fylles av turister.",
+      sted: "Cassone di Malcesine",
+      kostnad: "Gratis", tid: "2–4 timer",
+      tips: "Følg stien forbi den lille havnen og ned til høyre – der finner du flate klipper med krystallklart vann og nesten ingen mennesker.",
+      hvem: ["alene","par","venner","familie"], budsjett: ["gratis"], stemning: ["aktiv","rolig","eventyr"], tidspunkt: ["formiddag","ettermiddag","hel_dag"]
+    },
+  ],
 };
 
 // ============================================================
@@ -305,10 +392,10 @@ const HVEM_MAP = {
 };
 
 const BUDSJETT_MAP = {
-  "Gratis":      "gratis",
-  "Under 100 kr":"lav",
-  "100–300 kr":  "middels",
-  "300 kr+":     "høy",
+  "Gratis": "gratis",
+  "$":      "lav",
+  "$$":     "middels",
+  "$$$":    "høy",
 };
 
 const STEMNING_MAP = {
@@ -336,8 +423,47 @@ function scoreActivity(act, filters) {
   return score;
 }
 
+// ── Hent brukeropprettede glimt og konverter til aktivitetsformat ─
+function loadUserCreatedActivities() {
+  try {
+    const raw = localStorage.getItem("glimt.myCreatedGlimt");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(g => ({
+      emoji:     g.emoji || "✦",
+      title:     g.title || "",
+      desc:      g.desc || "",
+      sted:      g.sted || "",
+      kostnad:   g.kostnad || "",
+      tid:       ({ under1: "Under 1 time", "1-2": "1–2 timer", "2-4": "2–4 timer", halvdag: "Halvdag", heldag: "Hel dag" })[g.varighet] || "",
+      tips:      g.tips || "",
+      city:      g.city || "",
+      hvem:      g.hvem || [],
+      budsjett:  g.budsjett || [],
+      stemning:  g.stemning || [],
+      tidspunkt: g.tidspunkt || [],
+      isUserCreated: true
+    }));
+  } catch { return []; }
+}
+
 function getSuggestions(city, rawFilters) {
-  const pool = ACTIVITIES[city] || ACTIVITIES["Roma"];
+  // If no city selected, pool from ALL cities
+  let pool;
+  if (city && ACTIVITIES[city]) {
+    pool = [...ACTIVITIES[city]];
+  } else {
+    pool = Object.values(ACTIVITIES).flat();
+  }
+
+  // Inkluder brukeropprettede glimt
+  const userActs = loadUserCreatedActivities();
+  if (city) {
+    pool = pool.concat(userActs.filter(a => a.city === city));
+  } else {
+    pool = pool.concat(userActs);
+  }
 
   const filters = {
     hvem:      HVEM_MAP[rawFilters.med_hvem]  || null,
@@ -362,6 +488,7 @@ function getSuggestions(city, rawFilters) {
     kostnad: s.act.kostnad,
     tid:     s.act.tid,
     tips:    s.act.tips,
+    isUserCreated: s.act.isUserCreated || false,
   }));
 }
 
@@ -411,6 +538,7 @@ function renderCards(activities) {
 
   grid.innerHTML = activities.map(act => `
     <div class="activity-card">
+      ${act.isUserCreated ? '<div class="card-user-badge">Opprettet av deg</div>' : ''}
       <div class="card-emoji">${act.emoji || "📍"}</div>
       <div class="card-title">${escHtml(act.title)}</div>
       <div class="card-desc">${escHtml(act.desc)}</div>

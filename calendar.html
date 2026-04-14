@@ -14,13 +14,13 @@
     <div class="logo">
       <a href="index.html" class="logo-word">
         <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="42" height="30" rx="5" fill="#fceee9" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
           <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
           <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M22 25 C22 25 14 19.5 14 15 C14 12.4 16.1 11 18 11 C19.4 11 20.7 11.9 22 13.2 C23.3 11.9 24.6 11 26 11 C27.9 11 30 12.4 30 15 C30 19.5 22 25 22 25Z" fill="#d95f5f"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
         </svg>
-        <span class="logo-wordmark">core</span>
+        <span class="logo-wordmark">glimt</span>
       </a>
     </div>
     <nav>
@@ -34,11 +34,25 @@
             <div class="nav-user-name" id="nav-user-name"></div>
             <div class="nav-user-email" id="nav-user-email"></div>
           </div>
+          <a href="index.html" class="nav-menu-item">Hjem</a>
+          <hr class="nav-menu-divider" />
+          <a href="#" class="nav-menu-item">Om oss</a>
+          <a href="#" class="nav-menu-item">Byer</a>
+          <a href="#" class="nav-menu-item">Kontakt</a>
+          <hr class="nav-menu-divider" />
           <button class="nav-signout-btn" onclick="signOutUser()">Logg ut</button>
         </div>
       </div>
     </nav>
   </header>
+
+  <!-- By-filter -->
+  <div class="cal-city-filter" id="cal-city-filter">
+    <button class="cal-city-pill" data-city="København">København</button>
+    <button class="cal-city-pill" data-city="Roma">Roma</button>
+    <button class="cal-city-pill" data-city="Stockholm">Stockholm</button>
+    <button class="cal-city-pill" data-city="Dublin">Dublin</button>
+  </div>
 
   <main class="cal-main">
 
@@ -47,7 +61,12 @@
 
       <div class="cal-header">
         <div class="cal-city-label" id="cal-city-label"></div>
-        <div class="cal-nav">
+        <div class="cal-header-right">
+          <button class="cal-add-btn" id="btn-add-glimt" title="Opprett nytt glimt">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Nytt glimt
+          </button>
+          <div class="cal-nav">
           <button class="cal-nav-btn" id="btn-prev" aria-label="Forrige måned">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M15 18l-6-6 6-6"/>
@@ -59,6 +78,7 @@
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
+          </div>
         </div>
       </div>
 
@@ -88,6 +108,82 @@
     </aside>
 
   </main>
+
+  <!-- Modal: Opprett nytt glimt -->
+  <div class="cal-modal-overlay" id="cal-modal" style="display:none">
+    <div class="cal-modal">
+      <div class="cal-modal-header">
+        <h2 class="cal-modal-title">Opprett nytt glimt</h2>
+        <button class="cal-modal-close" id="btn-modal-close">&times;</button>
+      </div>
+      <form id="cal-glimt-form" class="cal-modal-form">
+
+        <div class="cal-form-row">
+          <label class="cal-form-label" for="cal-glimt-emoji">Emoji</label>
+          <div class="cal-emoji-picker" id="cal-emoji-picker">
+            <button type="button" class="cal-emoji-opt selected" data-emoji="🎧">🎧</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="🎵">🎵</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="⚽">⚽</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="🎭">🎭</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="🍷">🍷</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="✈️">✈️</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="🌴">🌴</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="📷">📷</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="📚">📚</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="🎉">🎉</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="💜">💜</button>
+            <button type="button" class="cal-emoji-opt" data-emoji="⭐">⭐</button>
+          </div>
+          <input type="hidden" id="cal-glimt-emoji" value="🎧" />
+        </div>
+
+        <div class="cal-form-row">
+          <label class="cal-form-label" for="cal-glimt-title">Tittel</label>
+          <input type="text" id="cal-glimt-title" class="cal-form-input" placeholder="F.eks. Konsert i Operaen" required />
+        </div>
+
+        <div class="cal-form-row cal-form-row--half">
+          <div>
+            <label class="cal-form-label" for="cal-glimt-date">Dato</label>
+            <input type="date" id="cal-glimt-date" class="cal-form-input" required />
+          </div>
+          <div>
+            <label class="cal-form-label" for="cal-glimt-city">By</label>
+            <select id="cal-glimt-city" class="cal-form-input">
+              <option value="København">København</option>
+              <option value="Roma">Roma</option>
+              <option value="Stockholm">Stockholm</option>
+              <option value="Dublin">Dublin</option>
+              <option value="Annet">Annet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cal-form-row">
+          <label class="cal-form-label" for="cal-glimt-category">Kategori</label>
+          <select id="cal-glimt-category" class="cal-form-input">
+            <option value="Arrangement">Arrangement</option>
+            <option value="Konsert">Konsert</option>
+            <option value="Festival">Festival</option>
+            <option value="Mat">Mat &amp; drikke</option>
+            <option value="Kultur">Kultur</option>
+            <option value="Sport">Sport</option>
+            <option value="Tur">Tur &amp; aktivitet</option>
+            <option value="Marked">Marked</option>
+            <option value="Sesong">Sesong</option>
+            <option value="Annet">Annet</option>
+          </select>
+        </div>
+
+        <div class="cal-form-row">
+          <label class="cal-form-label" for="cal-glimt-desc">Beskrivelse</label>
+          <textarea id="cal-glimt-desc" class="cal-form-textarea" rows="3" placeholder="Kort beskrivelse av arrangementet..."></textarea>
+        </div>
+
+        <button type="submit" class="cal-form-submit">Lagre glimt</button>
+      </form>
+    </div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>

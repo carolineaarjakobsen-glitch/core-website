@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glimt – Velg din opplevelse</title>
+  <title>Glimt – Utforsk reisebrev</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="city-landing.css" />
+  <link rel="stylesheet" href="utforsk-reisebrev.css" />
+  <link rel="stylesheet" href="saved-glimt.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 </head>
-<body class="landing-body">
+<body class="utforsk-body">
 
   <header class="navbar">
     <div class="logo">
@@ -68,70 +69,51 @@
     </nav>
   </header>
 
-  <main class="landing-main">
+  <main class="utforsk-main">
 
-    <!-- ═══ TO-KOLONNE LAYOUT: Hero + Meny-kort ═══ -->
-    <section class="city-split">
+    <!-- Header -->
+    <section class="utforsk-header">
+      <a class="utforsk-back" id="back-link" href="city-landing.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Tilbake
+      </a>
+      <div class="utforsk-eyebrow">Fra andre reisende</div>
+      <h1 class="utforsk-title">Reisebrev fra <span id="utforsk-city-name"></span></h1>
+      <p class="utforsk-subtitle">
+        Se hvordan andre har utforsket byen – finn inspirasjon til din neste tur.
+      </p>
+    </section>
 
-      <!-- VENSTRE: Hero-bilde med byintroduksjon -->
-      <div class="hero-tile hero-tile--intro">
-        <div class="hero-tile-bg" id="reisebrev-bg"></div>
-        <div class="hero-tile-overlay"></div>
-        <div class="hero-tile-content">
-          <div class="hero-tile-eyebrow" id="hero-eyebrow">Velkommen til</div>
-          <h2 class="hero-tile-title"><em id="hero-city-name"></em></h2>
-          <p class="hero-tile-desc" id="hero-city-intro"></p>
-        </div>
+    <!-- Filter-bar -->
+    <section class="utforsk-filters">
+      <button class="filter-chip active" data-filter="alle">Alle</button>
+      <button class="filter-chip" data-filter="nyeste">Nyeste</button>
+      <button class="filter-chip" data-filter="populære">Populære</button>
+    </section>
+
+    <!-- Feed-grid -->
+    <section class="utforsk-feed" id="utforsk-feed"></section>
+
+    <!-- Tom tilstand -->
+    <section class="utforsk-empty" id="utforsk-empty" style="display:none">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
       </div>
-
-      <!-- HØYRE: Fire meny-kort stablet vertikalt -->
-      <div class="city-sidebar">
-        <a id="panel-planer" class="menu-card" href="#">
-          <div class="menu-card-emoji">📋</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Mine reiseplaner for <span id="planer-city-name"></span></h3>
-            <p class="menu-card-desc">Se og rediger dine reiseplaner for denne byen – eller lag en ny plan basert på inspirasjon herfra.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag" id="planer-count-tag">0 planer</span>
-              <span class="menu-card-tag">✨ Din planlegging</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-reisebrev" class="menu-card" href="#">
-          <div class="menu-card-emoji">📖</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Utforsk reisebrev fra <span id="reisebrev-city-name"></span></h3>
-            <p class="menu-card-desc">Bli inspirert av andres opplevelser – se hvordan reisende har utforsket gatene, spisestedene og skjulte perlene.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">✨ Fra andre reisende</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-activities" class="menu-card" href="#">
-          <div class="menu-card-emoji">🎯</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Filtrer for aktiviteter</h3>
-            <p class="menu-card-desc">Fortell oss hvem du er med og hva du har lyst til – vi finner de beste opplevelsene.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">✨ Tilpasset for deg</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-events" class="menu-card" href="#">
-          <div class="menu-card-emoji">📅</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Hva skjer i <span id="event-city-name"></span></h3>
-            <p class="menu-card-desc">Se markeder, festivaler, konserter og lokale happenings dag for dag.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">🗓️ Denne måneden</span>
-            </div>
-          </div>
-        </a>
-      </div>
-
+      <h2 class="empty-title">Ingen reisebrev ennå</h2>
+      <p class="empty-desc">
+        Det er ingen delte reisebrev fra denne byen ennå. Kanskje du vil bli den første?
+      </p>
+      <a class="empty-cta" href="opprett-glimt.html">
+        Opprett et reisebrev
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
     </section>
 
   </main>
@@ -140,8 +122,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="firebase-config.js"></script>
   <script src="auth.js"></script>
-  <script src="cities.js"></script>
   <script src="saved-glimt.js"></script>
-  <script src="city-landing.js"></script>
+  <script src="utforsk-reisebrev.js"></script>
 </body>
 </html>

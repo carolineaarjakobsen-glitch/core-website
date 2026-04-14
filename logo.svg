@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 100" width="260" height="100">
 
   <!-- Beige bakgrunn -->
-  <rect width="260" height="100" fill="#fceee9" rx="16"/>
+  <rect width="260" height="100" fill="#FFEEBC" rx="16"/>
 
   <!-- "c" -->
-  <text x="20" y="68" font-family="Poppins, sans-serif" font-size="52" font-weight="500" fill="#1e2a4a">c</text>
+  <text x="20" y="68" font-family="Poppins, sans-serif" font-size="52" font-weight="500" fill="#5D372A">c</text>
 
   <!-- Konvolutt som "o" -->
   <g transform="translate(58, 26)">
-    <rect x="0" y="0" width="48" height="36" rx="5.5" fill="#fceee9" stroke="#1e2a4a" stroke-width="2.5"/>
-    <path d="M0 4.5 L24 21 L48 4.5" stroke="#1e2a4a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-    <path d="M0 33 L17 20" stroke="#1e2a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M48 33 L31 20" stroke="#1e2a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M24 29 C24 29 15 23 15 18 C15 15.1 17.3 13.2 19.3 13.2 C20.9 13.2 22.3 14.1 24 15.6 C25.7 14.1 27.1 13.2 28.7 13.2 C30.7 13.2 33 15.1 33 18 C33 23 24 29 24 29Z" fill="#d95f5f"/>
+    <rect x="0" y="0" width="48" height="36" rx="5.5" fill="#FFEEBC" stroke="#5D372A" stroke-width="2.5"/>
+    <path d="M0 4.5 L24 21 L48 4.5" stroke="#5D372A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M0 33 L17 20" stroke="#5D372A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M48 33 L31 20" stroke="#5D372A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="24" cy="20" r="5" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.8" stroke-linecap="round"><line x1="24" y1="12" x2="24" y2="14"/><line x1="24" y1="26" x2="24" y2="28"/><line x1="16" y1="20" x2="18" y2="20"/><line x1="30" y1="20" x2="32" y2="20"/><line x1="18.3" y1="14.3" x2="19.7" y2="15.7"/><line x1="28.3" y1="24.3" x2="29.7" y2="25.7"/><line x1="18.3" y1="25.7" x2="19.7" y2="24.3"/><line x1="28.3" y1="15.7" x2="29.7" y2="14.3"/></g>
   </g>
 
   <!-- "re" -->
-  <text x="114" y="68" font-family="Poppins, sans-serif" font-size="52" font-weight="500" fill="#1e2a4a">re</text>
+  <text x="114" y="68" font-family="Poppins, sans-serif" font-size="52" font-weight="500" fill="#5D372A">re</text>
 
 </svg>

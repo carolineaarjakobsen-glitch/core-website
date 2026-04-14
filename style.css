@@ -8,17 +8,18 @@
 }
 
 :root {
-  /* Hentet fra logo-designet */
-  --blush-bg:    #fceee9;       /* lys rosa bakgrunn */
-  --blush-mid:   #f5d9d0;       /* litt dypere blush */
-  --navy:        #1e2a4a;       /* mørk navy (konvolutt + tekst) */
-  --navy-light:  #2e3f6e;       /* litt lysere navy */
-  --coral:       #d95f5f;       /* hjerte-rød / aksent */
-  --coral-light: #e88080;       /* hover-versjon */
-  --cream:       #fff9f7;       /* nesten hvit for tekst-panel */
-  --text-dark:   #1e2a4a;       /* primær tekst = navy */
-  --text-mid:    #5a6480;       /* sekundær tekst */
-  --text-light:  #9ba3bb;       /* dempet tekst */
+  /* Fifth Sip-inspirert palett */
+  --blush-bg:    #fff7e0;       /* Vanilla — varm hovedbakgrunn */
+  --vanilla-warm:#FFEEBC;       /* Vanilla varm — aksent-bakgrunner */
+  --blush-mid:   #D2E8FF;       /* Columbia Blue — borders, sekundær */
+  --navy:        #5D372A;       /* Bistre — navbar, overskrifter */
+  --navy-light:  #7a5044;       /* Bistre lys — hover */
+  --coral:       #EA672D;       /* Flame — primær aksent */
+  --coral-light: #d05520;       /* Flame mørk — hover */
+  --cream:       #fff9f0;       /* Lys varm krem */
+  --text-dark:   #5D372A;       /* Bistre — primær tekst */
+  --text-mid:    #7a5044;       /* Bistre lys — sekundær tekst */
+  --text-light:  #9a8a7a;       /* Dempet brun */
   --transition:  0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -197,6 +198,35 @@ nav a:hover {
   margin-top: 0.1rem;
 }
 
+.nav-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-menu-item:hover {
+  background: var(--blush-bg);
+  color: var(--coral);
+}
+
+.nav-menu-divider {
+  height: 1px;
+  background: var(--blush-mid);
+  margin: 0.25rem 0;
+  border: none;
+}
+
 .nav-signout-btn {
   width: 100%;
   padding: 0.55rem 0.7rem;
@@ -215,6 +245,100 @@ nav a:hover {
 .nav-signout-btn:hover {
   background: var(--coral);
   color: #fff;
+}
+
+/* ── Nav dropdown groups (Mine glimt / Utforsk glimt) ──── */
+.nav-dropdown-group {
+  position: relative;
+}
+
+.nav-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0.45rem 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-dropdown-trigger:hover,
+.nav-dropdown-group:hover .nav-dropdown-trigger {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-dropdown-trigger svg {
+  opacity: 0.6;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.nav-dropdown-group:hover .nav-dropdown-trigger svg {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(20, 28, 52, 0.18);
+  min-width: 200px;
+  padding: 0.5rem;
+  padding-top: calc(0.5rem + 6px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  border: 1px solid var(--blush-mid);
+}
+
+/* Usynlig bro mellom trigger og meny for å unngå hover-gap */
+.nav-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+.nav-dropdown-group:hover .nav-dropdown-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-dropdown-menu a {
+  display: block;
+  padding: 0.6rem 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-dark) !important;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover {
+  background: var(--blush-bg) !important;
+  color: var(--coral) !important;
 }
 
 /* =====================
@@ -407,11 +531,11 @@ nav a:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(30, 42, 74, 0.92);
+  background: rgba(93, 55, 42, 0.92);
   backdrop-filter: blur(8px);
   border-radius: 50px;
   padding: 0.45rem 0.7rem 0.45rem 0.9rem;
-  box-shadow: 0 4px 20px rgba(30, 42, 74, 0.25);
+  box-shadow: 0 4px 20px rgba(93, 55, 42, 0.25);
 }
 
 .admin-label {
@@ -722,7 +846,7 @@ nav a:hover {
 .city-card-option:hover {
   border-color: var(--coral);
   transform: translateX(3px);
-  box-shadow: 0 4px 16px rgba(217, 95, 95, 0.12);
+  box-shadow: 0 4px 16px rgba(234, 103, 45, 0.12);
 }
 
 .city-card-thumb {

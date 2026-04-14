@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glimt – Velg din opplevelse</title>
+  <title>Glimt – Utforsk glimt</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="city-landing.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="utforsk-glimt.css" />
+  <link rel="stylesheet" href="saved-glimt.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
-<body class="landing-body">
+<body class="utforsk-glimt-body">
 
   <header class="navbar">
     <div class="logo">
@@ -68,70 +69,67 @@
     </nav>
   </header>
 
-  <main class="landing-main">
+  <main class="ug-main">
 
-    <!-- ═══ TO-KOLONNE LAYOUT: Hero + Meny-kort ═══ -->
-    <section class="city-split">
+    <!-- Hero -->
+    <section class="ug-hero">
+      <div class="ug-hero-eyebrow">Enkeltopplevelser fra hele verden</div>
+      <h1 class="ug-hero-title">Utforsk glimt</h1>
+      <p class="ug-hero-subtitle">
+        Glimt er enkeltaktiviteter, restauranter, severdigheter og skjulte perler delt av reisende. Lagre de du liker, og legg dem til i dine reiseplaner eller reisebrev.
+      </p>
+    </section>
 
-      <!-- VENSTRE: Hero-bilde med byintroduksjon -->
-      <div class="hero-tile hero-tile--intro">
-        <div class="hero-tile-bg" id="reisebrev-bg"></div>
-        <div class="hero-tile-overlay"></div>
-        <div class="hero-tile-content">
-          <div class="hero-tile-eyebrow" id="hero-eyebrow">Velkommen til</div>
-          <h2 class="hero-tile-title"><em id="hero-city-name"></em></h2>
-          <p class="hero-tile-desc" id="hero-city-intro"></p>
-        </div>
+    <!-- Søk og filtrering -->
+    <section class="ug-toolbar">
+      <div class="ug-search-wrap">
+        <svg class="ug-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" class="ug-search" id="ug-search" placeholder="Søk etter glimt, steder eller byer..." />
       </div>
-
-      <!-- HØYRE: Fire meny-kort stablet vertikalt -->
-      <div class="city-sidebar">
-        <a id="panel-planer" class="menu-card" href="#">
-          <div class="menu-card-emoji">📋</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Mine reiseplaner for <span id="planer-city-name"></span></h3>
-            <p class="menu-card-desc">Se og rediger dine reiseplaner for denne byen – eller lag en ny plan basert på inspirasjon herfra.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag" id="planer-count-tag">0 planer</span>
-              <span class="menu-card-tag">✨ Din planlegging</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-reisebrev" class="menu-card" href="#">
-          <div class="menu-card-emoji">📖</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Utforsk reisebrev fra <span id="reisebrev-city-name"></span></h3>
-            <p class="menu-card-desc">Bli inspirert av andres opplevelser – se hvordan reisende har utforsket gatene, spisestedene og skjulte perlene.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">✨ Fra andre reisende</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-activities" class="menu-card" href="#">
-          <div class="menu-card-emoji">🎯</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Filtrer for aktiviteter</h3>
-            <p class="menu-card-desc">Fortell oss hvem du er med og hva du har lyst til – vi finner de beste opplevelsene.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">✨ Tilpasset for deg</span>
-            </div>
-          </div>
-        </a>
-
-        <a id="panel-events" class="menu-card" href="#">
-          <div class="menu-card-emoji">📅</div>
-          <div class="menu-card-body">
-            <h3 class="menu-card-title">Hva skjer i <span id="event-city-name"></span></h3>
-            <p class="menu-card-desc">Se markeder, festivaler, konserter og lokale happenings dag for dag.</p>
-            <div class="menu-card-tags">
-              <span class="menu-card-tag">🗓️ Denne måneden</span>
-            </div>
-          </div>
-        </a>
+      <div class="ug-filter-row">
+        <button class="ug-filter-chip active" data-city="alle">Alle byer</button>
       </div>
+      <div class="ug-category-row" id="ug-category-row">
+        <button class="ug-cat-chip active" data-cat="alle">Alle</button>
+        <button class="ug-cat-chip" data-cat="mat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          Mat & drikke
+        </button>
+        <button class="ug-cat-chip" data-cat="kultur">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7H3l2-4h14l2 4"/></svg>
+          Kultur & historie
+        </button>
+        <button class="ug-cat-chip" data-cat="natur">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 22h20L12 2z"/></svg>
+          Natur & utsikt
+        </button>
+        <button class="ug-cat-chip" data-cat="aktivitet">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+          Aktiviteter
+        </button>
+        <button class="ug-cat-chip" data-cat="shopping">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          Shopping & marked
+        </button>
+      </div>
+    </section>
 
+    <!-- Glimt-grid -->
+    <section class="ug-grid" id="ug-grid"></section>
+
+    <!-- Tom tilstand -->
+    <section class="ug-empty" id="ug-empty" style="display:none">
+      <div class="ug-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+      <h2 class="ug-empty-title">Ingen glimt funnet</h2>
+      <p class="ug-empty-desc">
+        Prøv å justere filtrene eller søkeordet ditt for å finne flere glimt.
+      </p>
     </section>
 
   </main>
@@ -141,7 +139,8 @@
   <script src="firebase-config.js"></script>
   <script src="auth.js"></script>
   <script src="cities.js"></script>
+  <script src="demo-glimts.js"></script>
   <script src="saved-glimt.js"></script>
-  <script src="city-landing.js"></script>
+  <script src="utforsk-glimt.js"></script>
 </body>
 </html>

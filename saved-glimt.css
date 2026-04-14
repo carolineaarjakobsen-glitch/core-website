@@ -1,0 +1,210 @@
+/* ============================================================
+   Glimt – Shared: Toast & Plan Picker styles
+   ============================================================ */
+
+/* ── Toast ────────────────────────────────────────────────── */
+.glimt-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--navy, #5D372A);
+  color: #fff;
+  border-radius: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 12px 40px rgba(30,42,74,0.25);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.glimt-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.glimt-toast--success svg { color: #6ee7b7; }
+.glimt-toast--remove svg  { color: #fca5a5; }
+.glimt-toast--info svg    { color: #93c5fd; }
+
+/* ── Plan picker overlay ──────────────────────────────────── */
+.glimt-plan-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(93,55,42,0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.glimt-plan-picker-overlay.glimt-plan-picker--visible {
+  opacity: 1;
+}
+
+.glimt-plan-picker {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.8rem 2rem 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 60px rgba(30,42,74,0.2);
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.glimt-plan-picker--visible .glimt-plan-picker {
+  transform: scale(1);
+}
+
+.glimt-plan-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+
+.glimt-plan-picker-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--navy, #5D372A);
+}
+
+.glimt-plan-picker-close {
+  background: none;
+  border: none;
+  color: var(--text-light, #999);
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.glimt-plan-picker-close:hover {
+  color: var(--coral, #EA672D);
+}
+
+.glimt-plan-picker-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-mid, #777);
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+}
+
+.glimt-plan-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.glimt-plan-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  background: var(--blush-bg, #fff7e0);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.glimt-plan-picker-item:hover {
+  border-color: var(--coral, #EA672D);
+  background: #fff;
+  transform: translateX(3px);
+}
+
+.glimt-plan-picker-item svg {
+  color: var(--coral, #EA672D);
+  flex-shrink: 0;
+}
+
+.glimt-plan-picker-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.glimt-plan-picker-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--navy, #5D372A);
+}
+
+.glimt-plan-picker-city {
+  font-size: 0.72rem;
+  color: var(--text-light, #999);
+}
+
+/* ── Lagre-glimt knapp (brukt på utforsk + detalj) ────────── */
+.save-glimt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: var(--blush-bg, #fff7e0);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--coral, #EA672D);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.save-glimt-btn:hover {
+  background: var(--coral, #EA672D);
+  color: #fff;
+}
+
+.save-glimt-btn--saved {
+  background: var(--coral, #EA672D);
+  color: #fff;
+  border-color: var(--coral, #EA672D);
+}
+
+.save-glimt-btn--saved:hover {
+  background: #d45520;
+}
+
+/* Fjern-knapp variant */
+.remove-glimt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--blush-bg, #fff7e0);
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-mid, #777);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.remove-glimt-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.remove-glimt-btn svg { flex-shrink: 0; }
