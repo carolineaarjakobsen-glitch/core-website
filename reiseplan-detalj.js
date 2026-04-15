@@ -273,16 +273,16 @@ function buildDayHTML(num, title, dateStr, items) {
           <div class="rpd-day-title-text">${escHtml(title)}</div>
           <div class="rpd-day-date">${escHtml(dateStr)}</div>
         </div>
-        <div class="rpd-day-item-count">${items.length} aktiviteter</div>
+        <div class="rpd-day-item-count">${items.length} glimt</div>
         <div class="rpd-day-chevron" style="transform:${chevronRotation}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
       <div class="rpd-day-items">
         ${itemsHTML}
-        <button class="rpd-add-item" onclick="event.stopPropagation(); this.style.display='none'">
+        <button class="rpd-add-item" onclick="event.stopPropagation(); openGlimtModal(${num})">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-          Legg til aktivitet
+          Legg til glimt
         </button>
       </div>
     </div>`;
@@ -328,14 +328,14 @@ function addInspoToDay(btn) {
   // Finn aktiv dag
   const activeDay = document.querySelector(".rpd-day--active");
   if (!activeDay) {
-    showToast("Åpne en dag først for å legge til aktivitet", "info");
+    showToast("Åpne en dag først for å legge til glimt", "info");
     return;
   }
 
   const dayItems = activeDay.querySelector(".rpd-day-items");
   if (!dayItems) return;
 
-  // Bygg nytt aktivitet-element
+  // Bygg nytt glimt-element
   const desc = type === "event" ? `Event · ${date}` : (sub || "Lagt til fra inspirasjon");
   const newItem = document.createElement("div");
   newItem.className = "rpd-item rpd-item--added";
@@ -358,7 +358,7 @@ function addInspoToDay(btn) {
     </div>
   `;
 
-  // Sett inn før "Legg til aktivitet"-knappen
+  // Sett inn før "Legg til glimt"-knappen
   const addBtn = dayItems.querySelector(".rpd-add-item");
   if (addBtn) {
     dayItems.insertBefore(newItem, addBtn);
@@ -384,7 +384,7 @@ function updateDayCount() {
   document.querySelectorAll(".rpd-day").forEach(day => {
     const items = day.querySelectorAll(".rpd-item").length;
     const badge = day.querySelector(".rpd-day-item-count");
-    if (badge) badge.textContent = `${items} aktiviteter`;
+    if (badge) badge.textContent = `${items} glimt`;
   });
 }
 
@@ -559,3 +559,259 @@ function getDateForDay(fromStr, dayNum) {
   const dayNames = ["søndag","mandag","tirsdag","onsdag","torsdag","fredag","lørdag"];
   return `${dayNames[d.getDay()]} ${d.getDate()}. ${MONTHS_SHORT[d.getMonth()]}`;
 }
+
+// ── Glimt-velger modal ──────────────────────────────────────
+
+let _glimtModalTargetDay = null;
+
+function openGlimtModal(dayNum) {
+  _glimtModalTargetDay = dayNum;
+  const overlay = document.getElementById("glimt-modal-overlay");
+  overlay.classList.add("glimt-modal--visible");
+  document.body.style.overflow = "hidden";
+  populateGlimtTabs();
+}
+
+function closeGlimtModal() {
+  const overlay = document.getElementById("glimt-modal-overlay");
+  overlay.classList.remove("glimt-modal--visible");
+  document.body.style.overflow = "";
+  _glimtModalTargetDay = null;
+}
+
+function populateGlimtTabs() {
+  populateMineGlimt();
+  populateLagredeGlimt();
+}
+
+// ── Tab: Mine glimt ──────────────────────────────────────────
+
+function populateMineGlimt() {
+  const container = document.getElementById("glimt-list-mine");
+
+  // Hent fra glimt.myCreatedGlimt (standalone opprettede glimt)
+  let myGlimt = [];
+  try {
+    const raw = localStorage.getItem("glimt.myCreatedGlimt");
+    if (raw) myGlimt = JSON.parse(raw) || [];
+  } catch {}
+
+  // Hent også glimt fra brukerens reisebrev (glimt.userGlimts)
+  let reisebrevGlimt = [];
+  try {
+    const raw = localStorage.getItem("glimt.userGlimts");
+    if (raw) {
+      const letters = JSON.parse(raw) || [];
+      letters.forEach(letter => {
+        if (letter.glimts && Array.isArray(letter.glimts)) {
+          letter.glimts.forEach(g => {
+            reisebrevGlimt.push({
+              id: g.id || `rb-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+              emoji: "✦",
+              title: g.title || "Uten tittel",
+              desc: g.description || g.desc || "",
+              image: g.image || "",
+              city: letter.city || "",
+              source: `Fra reisebrev: ${letter.title || "Uten tittel"}`
+            });
+          });
+        }
+      });
+    }
+  } catch {}
+
+  const allMine = [...myGlimt, ...reisebrevGlimt];
+
+  if (allMine.length === 0) {
+    container.innerHTML = `
+      <div class="glimt-modal-empty">
+        <div class="glimt-modal-empty-icon">✦</div>
+        <p>Du har ingen egne glimt ennå.</p>
+        <p class="glimt-modal-empty-hint">Opprett et nytt glimt i fanen «Opprett nytt», eller gå til <a href="mine-enkeltglimt.html">Mine glimt</a>.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = allMine.map(g => buildGlimtPickerCard(g, "mine")).join("");
+}
+
+// ── Tab: Lagrede glimt ───────────────────────────────────────
+
+function populateLagredeGlimt() {
+  const container = document.getElementById("glimt-list-lagrede");
+  const saved = typeof loadSavedGlimt === "function" ? loadSavedGlimt() : [];
+
+  if (saved.length === 0) {
+    container.innerHTML = `
+      <div class="glimt-modal-empty">
+        <div class="glimt-modal-empty-icon">🔖</div>
+        <p>Ingen lagrede glimt ennå.</p>
+        <p class="glimt-modal-empty-hint">Utforsk glimt fra andre reisende og lagre favorittene dine.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = saved.map(g => buildGlimtPickerCard(g, "lagret")).join("");
+}
+
+// ── Bygg kort i picker ───────────────────────────────────────
+
+function buildGlimtPickerCard(g, type) {
+  const emoji = g.emoji || "✦";
+  const title = escHtml(g.title || "Uten tittel");
+  const desc  = escHtml(g.desc || g.description || "");
+  const city  = escHtml(g.city || "");
+  const source = type === "lagret"
+    ? escHtml(g.author || "Fra andre")
+    : escHtml(g.source || "Opprettet av deg");
+  const img = g.image || "";
+
+  const thumbHtml = img
+    ? `<div class="glimt-picker-thumb" style="background-image:url('${img}')"></div>`
+    : `<div class="glimt-picker-thumb glimt-picker-thumb--emoji">${emoji}</div>`;
+
+  return `
+    <div class="glimt-picker-card" data-glimt-id="${escHtml(g.id || '')}" data-glimt-emoji="${emoji}" data-glimt-title="${title}" data-glimt-desc="${desc}" data-glimt-city="${city}" data-glimt-image="${img}">
+      ${thumbHtml}
+      <div class="glimt-picker-info">
+        <div class="glimt-picker-name">${title}</div>
+        <div class="glimt-picker-sub">${source}${city ? ' · ' + city : ''}</div>
+        ${desc ? `<div class="glimt-picker-desc">${desc.length > 80 ? desc.slice(0, 80) + '…' : desc}</div>` : ''}
+      </div>
+      <button class="glimt-picker-add" onclick="addPickedGlimtToDay(this)" title="Legg til i dagen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>`;
+}
+
+// ── Legg valgt glimt til i dag (kopi-tilnærming) ────────────
+
+function addPickedGlimtToDay(btn) {
+  const card = btn.closest(".glimt-picker-card");
+  const emoji = card.dataset.glimtEmoji || "📌";
+  const title = card.dataset.glimtTitle || "Uten tittel";
+  const desc  = card.dataset.glimtDesc || "";
+
+  addGlimtItemToDay(emoji, title, desc, "Fra glimt");
+
+  // Visuell feedback
+  btn.classList.add("glimt-picker-add--done");
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+  setTimeout(() => {
+    btn.classList.remove("glimt-picker-add--done");
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>`;
+  }, 1500);
+}
+
+// ── Opprett nytt glimt direkte ───────────────────────────────
+
+function initGlimtCreateForm() {
+  const form = document.getElementById("glimt-create-form");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const emoji = document.getElementById("glimt-new-emoji").value.trim() || "📌";
+    const title = document.getElementById("glimt-new-title").value.trim();
+    const desc  = document.getElementById("glimt-new-desc").value.trim();
+    const time  = document.getElementById("glimt-new-time").value.trim();
+    const cost  = document.getElementById("glimt-new-cost").value.trim();
+
+    if (!title) return;
+
+    const tags = [];
+    if (time) tags.push(time);
+    if (cost) tags.push(cost);
+
+    const fullDesc = desc + (tags.length ? ` · ${tags.join(", ")}` : "");
+    addGlimtItemToDay(emoji, title, fullDesc, "Nytt glimt");
+
+    // Reset form
+    form.reset();
+    document.getElementById("glimt-new-emoji").value = "📌";
+  });
+}
+
+// ── Felles: Legg glimt til aktiv dag ────────────────────────
+
+function addGlimtItemToDay(emoji, title, desc, tagLabel) {
+  const targetDay = _glimtModalTargetDay
+    ? document.querySelector(`.rpd-day[data-day="${_glimtModalTargetDay}"]`)
+    : document.querySelector(".rpd-day--active");
+
+  if (!targetDay) {
+    showToast("Ingen dag valgt", "info");
+    return;
+  }
+
+  // Sørg for at dagen er åpen
+  if (targetDay.classList.contains("rpd-day--collapsed")) {
+    toggleDay(parseInt(targetDay.dataset.day));
+  }
+
+  const dayItems = targetDay.querySelector(".rpd-day-items");
+  if (!dayItems) return;
+
+  const newItem = document.createElement("div");
+  newItem.className = "rpd-item rpd-item--added";
+  newItem.innerHTML = `
+    <span class="rpd-item-emoji">${emoji}</span>
+    <div class="rpd-item-body">
+      <div class="rpd-item-title">${escHtml(title)}</div>
+      <div class="rpd-item-desc">${escHtml(desc)}</div>
+      <div class="rpd-item-meta">
+        <span class="rpd-item-tag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg>
+          ${escHtml(tagLabel)}
+        </span>
+      </div>
+    </div>
+    <div class="rpd-item-actions">
+      <button class="rpd-item-action" title="Fjern" onclick="this.closest('.rpd-item').remove(); updateDayCount();">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  `;
+
+  const addBtn = dayItems.querySelector(".rpd-add-item");
+  if (addBtn) dayItems.insertBefore(newItem, addBtn);
+  else dayItems.appendChild(newItem);
+
+  updateDayCount();
+  showToast(`«${title}» lagt til i dag ${targetDay.dataset.day}`, "success");
+}
+
+// ── Modal init ───────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Lukk-knapp
+  const closeBtn = document.getElementById("glimt-modal-close");
+  if (closeBtn) closeBtn.addEventListener("click", closeGlimtModal);
+
+  // Klikk utenfor modal
+  const overlay = document.getElementById("glimt-modal-overlay");
+  if (overlay) overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeGlimtModal();
+  });
+
+  // Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay && overlay.classList.contains("glimt-modal--visible")) {
+      closeGlimtModal();
+    }
+  });
+
+  // Tab-switcher
+  document.querySelectorAll(".glimt-modal-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".glimt-modal-tab").forEach(t => t.classList.remove("glimt-modal-tab--active"));
+      document.querySelectorAll(".glimt-modal-panel").forEach(p => p.classList.remove("glimt-modal-panel--active"));
+      tab.classList.add("glimt-modal-tab--active");
+      const panelId = `glimt-panel-${tab.dataset.tab}`;
+      document.getElementById(panelId)?.classList.add("glimt-modal-panel--active");
+    });
+  });
+
+  // Init create form
+  initGlimtCreateForm();
+});

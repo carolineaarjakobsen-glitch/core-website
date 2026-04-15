@@ -896,9 +896,9 @@ function loadGuideForEditing(guide) {
     if (saveBtn) saveBtn.click();
   });
 
-  // Sett guide-toggle basert på lagret verdi
+  // Sett reiseplan-toggle basert på lagret verdi
   const guideToggle = document.getElementById("guide-toggle-cb");
-  if (guideToggle && guide.isGuide) {
+  if (guideToggle && (guide.isGuide || guide.isReiseplan)) {
     guideToggle.checked = true;
   }
 
@@ -979,18 +979,19 @@ function saveGuide(e) {
     ? existing.find((g) => g.id === editingGuideId)
     : null;
 
-  // Sjekk om brukeren har huket av «Lagre som guide»
+  // Sjekk om brukeren har huket av «Lagre som reiseplan»
   const guideToggle = document.getElementById("guide-toggle-cb");
-  const isGuide = guideToggle ? guideToggle.checked : false;
+  const isReiseplan = guideToggle ? guideToggle.checked : false;
 
   const guide = {
-    id:        existingGuide ? existingGuide.id : uid(),
-    title:     mainTitle,
-    city:      mainCity,
-    createdAt: existingGuide ? existingGuide.createdAt : new Date().toISOString(),
-    updatedAt: editingGuideId ? new Date().toISOString() : undefined,
-    isGuide:   isGuide,
-    glimts:    filled
+    id:          existingGuide ? existingGuide.id : uid(),
+    title:       mainTitle,
+    city:        mainCity,
+    createdAt:   existingGuide ? existingGuide.createdAt : new Date().toISOString(),
+    updatedAt:   editingGuideId ? new Date().toISOString() : undefined,
+    isGuide:     isReiseplan,   // beholdt for bakoverkompatibilitet
+    isReiseplan: isReiseplan,
+    glimts:      filled
     // Merk: vi dupliserer ikke bildene i en `images`-array lenger.
     // mine-glimt.js leser bildene direkte fra glimts for å spare plass.
   };
@@ -1042,8 +1043,295 @@ function saveGuide(e) {
     }
   }
 
+  // ── Synk med reiseplaner når «Lagre som reiseplan» er på ──
+  syncReiseplan(guide);
+
   // Gå rett til visningen av det nye reisebrevet
   window.location.href = `glimt-detalj.html?id=${encodeURIComponent(guide.id)}`;
+}
+
+// ── Lagret-glimt modal (velg eksisterende glimt) ────────────
+
+function openLagretGlimtModal() {
+  const overlay = document.getElementById("lagret-glimt-overlay");
+  if (!overlay) return;
+  overlay.classList.add("lagret-glimt-overlay--visible");
+  document.body.style.overflow = "hidden";
+  populateLagretGlimtModal();
+}
+
+function closeLagretGlimtModal() {
+  const overlay = document.getElementById("lagret-glimt-overlay");
+  if (!overlay) return;
+  overlay.classList.remove("lagret-glimt-overlay--visible");
+  document.body.style.overflow = "";
+}
+
+function populateLagretGlimtModal() {
+  // Panel 1: Egne opprettede glimt (glimt.myCreatedGlimt)
+  const egnePanel = document.getElementById("lagret-panel-egne");
+  let egne = [];
+  try {
+    const raw = localStorage.getItem("glimt.myCreatedGlimt");
+    if (raw) egne = JSON.parse(raw) || [];
+    if (!Array.isArray(egne)) egne = [];
+  } catch { egne = []; }
+
+  if (egne.length === 0) {
+    egnePanel.innerHTML = `<div class="lg-empty"><div class="lg-empty-icon">✦</div><p>Du har ingen egne glimt ennå.</p></div>`;
+  } else {
+    egnePanel.innerHTML = egne.map(g => buildLgCard(g, "Opprettet av deg")).join("");
+  }
+
+  // Panel 2: Bokmerka glimt fra andre (glimt.savedGlimt)
+  const bokmerketPanel = document.getElementById("lagret-panel-bokmerket");
+  let bokmerket = [];
+  try {
+    const raw = localStorage.getItem("glimt.savedGlimt");
+    if (raw) bokmerket = JSON.parse(raw) || [];
+    if (!Array.isArray(bokmerket)) bokmerket = [];
+  } catch { bokmerket = []; }
+
+  if (bokmerket.length === 0) {
+    bokmerketPanel.innerHTML = `<div class="lg-empty"><div class="lg-empty-icon">🔖</div><p>Ingen bokmerka glimt ennå.</p></div>`;
+  } else {
+    bokmerketPanel.innerHTML = bokmerket.map(g => buildLgCard(g, g.author || "Fra andre")).join("");
+  }
+}
+
+function buildLgCard(g, source) {
+  const title = escHtml(g.title || "Uten tittel");
+  const desc  = escHtml(g.desc || g.description || g.note || "");
+  const city  = escHtml(g.city || "");
+  const img   = g.image || "";
+  const emoji = g.emoji || "✦";
+  const addr  = escHtml(g.sted || g.address || "");
+
+  const thumbHtml = img
+    ? `<div class="lg-card-thumb" style="background-image:url('${img}')"></div>`
+    : `<div class="lg-card-thumb lg-card-thumb--emoji">${emoji}</div>`;
+
+  // Data-attributes for å sende videre til reisebrev-kortet
+  return `
+    <div class="lg-card" onclick="selectLagretGlimt(this)"
+      data-lg-title="${title}"
+      data-lg-address="${addr}"
+      data-lg-city="${city}"
+      data-lg-note="${desc}"
+      data-lg-image="${img}">
+      ${thumbHtml}
+      <div class="lg-card-info">
+        <div class="lg-card-name">${title}</div>
+        <div class="lg-card-sub">${escHtml(source)}${city ? ' · ' + city : ''}</div>
+        ${desc ? `<div class="lg-card-desc">${desc.length > 90 ? desc.slice(0, 90) + '…' : desc}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+function selectLagretGlimt(el) {
+  const title   = el.dataset.lgTitle   || "";
+  const address = el.dataset.lgAddress || "";
+  const city    = el.dataset.lgCity    || "";
+  const note    = el.dataset.lgNote    || "";
+  const image   = el.dataset.lgImage   || "";
+
+  // Opprett et nytt glimt-kort og fyll det med dataene
+  const card = addCard();
+  populateCard(card, { title, address, city, note, image });
+
+  // Sett kortet i visnings-modus ("lagret")
+  const saveBtn = card.querySelector("[data-save]");
+  if (saveBtn) saveBtn.click();
+
+  // Scroll til det nye kortet
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  closeLagretGlimtModal();
+}
+
+function initLagretGlimtModal() {
+  // Åpne-knapp
+  const lagretBtn = document.getElementById("add-glimt-lagret");
+  if (lagretBtn) lagretBtn.addEventListener("click", openLagretGlimtModal);
+
+  // Lukk-knapp
+  const closeBtn = document.getElementById("lagret-glimt-close");
+  if (closeBtn) closeBtn.addEventListener("click", closeLagretGlimtModal);
+
+  // Klikk utenfor
+  const overlay = document.getElementById("lagret-glimt-overlay");
+  if (overlay) {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeLagretGlimtModal();
+    });
+  }
+
+  // Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay && overlay.classList.contains("lagret-glimt-overlay--visible")) {
+      closeLagretGlimtModal();
+    }
+  });
+
+  // Fane-switcher
+  document.querySelectorAll(".lagret-glimt-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".lagret-glimt-tab").forEach(t => t.classList.remove("lagret-glimt-tab--active"));
+      document.querySelectorAll(".lagret-glimt-panel").forEach(p => p.classList.remove("lagret-glimt-panel--active"));
+      tab.classList.add("lagret-glimt-tab--active");
+      const panelId = `lagret-panel-${tab.dataset.ltab}`;
+      document.getElementById(panelId)?.classList.add("lagret-glimt-panel--active");
+    });
+  });
+}
+
+// Hjelpe-funksjon: HTML-escape (brukes av buildLgCard)
+function escHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str || "";
+  return d.innerHTML;
+}
+
+// ── Synkroniser reisebrev → reiseplan ────────────────────────
+// Når «Lagre som reiseplan» er huket av, opprettes/oppdateres
+// en reiseplan-entry i glimt.reiseplaner basert på reisebrevet.
+// Glimtene fra reisebrevet konverteres til dag-items.
+// Hvis toggling av, fjernes den tilhørende planen.
+
+function syncReiseplan(guide) {
+  const RP_KEY = "glimt.reiseplaner";
+  let plans = [];
+  try {
+    const raw = localStorage.getItem(RP_KEY);
+    if (raw) plans = JSON.parse(raw) || [];
+    if (!Array.isArray(plans)) plans = [];
+  } catch { plans = []; }
+
+  // ID-mapping: reisebrev-id → plan-id
+  const planId = "rp-from-" + guide.id;
+
+  if (guide.isReiseplan) {
+    // Opprett eller oppdater reiseplan basert på reisebrevet
+    const existingIdx = plans.findIndex(p => p.id === planId);
+
+    const plan = {
+      id:            planId,
+      name:          guide.title || "Uten tittel",
+      city:          guide.city || "",
+      from:          "",
+      to:            "",
+      glimtCount:    guide.glimts ? guide.glimts.length : 0,
+      eventCount:    0,
+      status:        "mal",
+      sourceType:    "reisebrev",
+      sourceId:      guide.id,
+      createdAt:     existingIdx >= 0 ? plans[existingIdx].createdAt : new Date().toISOString(),
+      updatedAt:     new Date().toISOString()
+    };
+
+    if (existingIdx >= 0) {
+      plans[existingIdx] = plan;
+    } else {
+      plans.push(plan);
+    }
+  } else {
+    // Fjern eventuell eksisterende plan-mal hvis toggle er av
+    plans = plans.filter(p => p.id !== planId);
+  }
+
+  try {
+    localStorage.setItem(RP_KEY, JSON.stringify(plans));
+  } catch (e) {
+    console.warn("Kunne ikke synkronisere reiseplan:", e);
+  }
+}
+
+// ── Mal-definisjoner (strukturerte skjeletter) ──────────────
+const REISEBREV_MALER = {
+  mattur: {
+    name: "Mattur",
+    glimts: [
+      { title: "",  note: "", placeholder: { title: "Frokost", note: "Hvor starter dagen? Beskriv atmosfæren, smakene og det lille som gjør det spesielt." } },
+      { title: "",  note: "", placeholder: { title: "Lunsj / street food", note: "En rask matbit underveis — marked, gatekjøkken eller et lokalt funn." } },
+      { title: "",  note: "", placeholder: { title: "Middag", note: "Kveldens høydepunkt. Hva bestilte du, og hvorfor var det verdt det?" } },
+      { title: "",  note: "", placeholder: { title: "Noe søtt eller en drink", note: "Gelato, bakervare, en aperitivo — den perfekte avrundingen." } }
+    ]
+  },
+  kultur: {
+    name: "Kulturreise",
+    glimts: [
+      { title: "",  note: "", placeholder: { title: "Museum eller galleri", note: "Hva gjorde inntrykk? Et verk, et rom, en følelse." } },
+      { title: "",  note: "", placeholder: { title: "Historisk sted", note: "Ruiner, gamlebyen, en kirke — beskriv hva du så og kjente." } },
+      { title: "",  note: "", placeholder: { title: "Lokal perle", note: "Et sted guidebøkene ikke nevner. Hvordan fant du det?" } },
+      { title: "",  note: "", placeholder: { title: "Utsiktspunkt eller park", note: "Hvor stoppet du opp og bare tok inn utsikten?" } }
+    ]
+  },
+  romantisk: {
+    name: "Romantisk weekend",
+    glimts: [
+      { title: "",  note: "", placeholder: { title: "Solnedgangssted", note: "Hvor så dere solen gå ned? Beskriv lyset og stemningen." } },
+      { title: "",  note: "", placeholder: { title: "Koselig restaurant", note: "Lys, meny, stemning — det perfekte måltidet for to." } },
+      { title: "",  note: "", placeholder: { title: "Rolig øyeblikk", note: "En benk, en park, en utsikt. Det stille øyeblikket dere delte." } }
+    ]
+  },
+  aktivitet: {
+    name: "Aktivitetsreise",
+    glimts: [
+      { title: "",  note: "", placeholder: { title: "Hovedaktivitet", note: "Vandring, sykling, kajakktur — beskriv ruten og opplevelsen." } },
+      { title: "",  note: "", placeholder: { title: "Naturhøydepunkt", note: "Utsikten, vannet, fjellet. Det øyeblikket naturen tok pusten fra deg." } },
+      { title: "",  note: "", placeholder: { title: "Lokal matpause", note: "Hvor stoppet du for å fylle energien? Enkel, god mat." } },
+      { title: "",  note: "", placeholder: { title: "Belønningen", note: "Solnedgangen etter turen, badet etterpå, den kalde drikken." } }
+    ]
+  }
+};
+
+// ── Mal-velger logikk ────────────────────────────────────────
+
+function initMalVelger() {
+  const velger  = document.getElementById("mal-velger");
+  const main    = document.getElementById("opprett-main");
+  if (!velger || !main) return;
+
+  // Klikk på mal-kort
+  velger.querySelectorAll(".mal-kort").forEach(kort => {
+    kort.addEventListener("click", () => {
+      const malId = kort.dataset.mal;
+
+      // Animér ut mal-velgeren
+      velger.classList.add("mal-velger--leaving");
+      setTimeout(() => {
+        velger.style.display = "none";
+        main.style.display = "";
+        applyMal(malId);
+      }, 350);
+    });
+  });
+}
+
+function applyMal(malId) {
+  if (malId === "blank" || !REISEBREV_MALER[malId]) {
+    // Blank — legg til ett tomt kort (standard oppførsel)
+    addCard();
+    return;
+  }
+
+  const mal = REISEBREV_MALER[malId];
+
+  // Opprett ett glimt-kort for hvert skjelett-glimt i malen
+  mal.glimts.forEach((g, i) => {
+    const card = addCard();
+
+    // Sett placeholder-tekst på input-feltene
+    const titleInput = card.querySelector("[data-title]");
+    const noteInput  = card.querySelector("[data-note]");
+
+    if (titleInput && g.placeholder.title) {
+      titleInput.placeholder = `f.eks. ${g.placeholder.title}`;
+    }
+    if (noteInput && g.placeholder.note) {
+      noteInput.placeholder  = g.placeholder.note;
+    }
+  });
 }
 
 // ── Init ─────────────────────────────────────────────────────
@@ -1069,8 +1357,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  if (!loadedExisting) {
-    addCard(); // start med ett tomt glimt
+  const preselectedMal = urlParams.get("mal");
+
+  if (loadedExisting) {
+    // Redigeringsmodus: hopp over mal-velger, vis skjemaet direkte
+    const velger = document.getElementById("mal-velger");
+    const main   = document.getElementById("opprett-main");
+    if (velger) velger.style.display = "none";
+    if (main) main.style.display = "";
+  } else if (preselectedMal) {
+    // Direkte-lenke med ?mal=mattur — hopp over mal-velger
+    const velger = document.getElementById("mal-velger");
+    const main   = document.getElementById("opprett-main");
+    if (velger) velger.style.display = "none";
+    if (main) main.style.display = "";
+    applyMal(preselectedMal);
+  } else {
+    // Nytt reisebrev: vis mal-velger
+    initMalVelger();
   }
 
   addBtn.addEventListener("click", () => {
@@ -1080,6 +1384,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (firstInput) setTimeout(() => firstInput.focus(), 300);
   });
   form.addEventListener("submit", saveGuide);
+
+  // Init lagret-glimt modal
+  initLagretGlimtModal();
 
   // Logg hvilken adresse-provider vi ender opp med
   const announceProvider = () => {

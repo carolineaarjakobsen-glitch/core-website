@@ -221,6 +221,75 @@
 
   </main>
 
+  <!-- ═══════════════════════════════════════════════════
+       GLIMT-VELGER MODAL
+       ═══════════════════════════════════════════════════ -->
+  <div class="glimt-modal-overlay" id="glimt-modal-overlay">
+    <div class="glimt-modal">
+      <div class="glimt-modal-header">
+        <h2 class="glimt-modal-title">Legg til glimt</h2>
+        <button class="glimt-modal-close" id="glimt-modal-close" aria-label="Lukk">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="glimt-modal-tabs">
+        <button class="glimt-modal-tab glimt-modal-tab--active" data-tab="mine">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mine glimt
+        </button>
+        <button class="glimt-modal-tab" data-tab="lagrede">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Lagrede glimt
+        </button>
+        <button class="glimt-modal-tab" data-tab="opprett">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Opprett nytt
+        </button>
+      </div>
+      <div class="glimt-modal-body">
+        <!-- Tab: Mine glimt -->
+        <div class="glimt-modal-panel glimt-modal-panel--active" id="glimt-panel-mine">
+          <div class="glimt-modal-list" id="glimt-list-mine"></div>
+        </div>
+        <!-- Tab: Lagrede glimt -->
+        <div class="glimt-modal-panel" id="glimt-panel-lagrede">
+          <div class="glimt-modal-list" id="glimt-list-lagrede"></div>
+        </div>
+        <!-- Tab: Opprett nytt -->
+        <div class="glimt-modal-panel" id="glimt-panel-opprett">
+          <form class="glimt-modal-form" id="glimt-create-form">
+            <div class="glimt-form-row">
+              <label class="glimt-form-label">Emoji</label>
+              <input type="text" class="glimt-form-input glimt-form-input--emoji" id="glimt-new-emoji" value="📌" maxlength="2" />
+            </div>
+            <div class="glimt-form-row">
+              <label class="glimt-form-label">Tittel</label>
+              <input type="text" class="glimt-form-input" id="glimt-new-title" placeholder="F.eks. Solnedgang fra Pincio" required />
+            </div>
+            <div class="glimt-form-row">
+              <label class="glimt-form-label">Beskrivelse</label>
+              <textarea class="glimt-form-input glimt-form-textarea" id="glimt-new-desc" placeholder="Hva gjør dette glimtet spesielt?" rows="3"></textarea>
+            </div>
+            <div class="glimt-form-row glimt-form-row--inline">
+              <div>
+                <label class="glimt-form-label">Tidspunkt</label>
+                <input type="text" class="glimt-form-input" id="glimt-new-time" placeholder="F.eks. 14:00" />
+              </div>
+              <div>
+                <label class="glimt-form-label">Kostnad</label>
+                <input type="text" class="glimt-form-input" id="glimt-new-cost" placeholder="F.eks. Gratis, $$" />
+              </div>
+            </div>
+            <button type="submit" class="glimt-form-submit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Legg til i dagen
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="firebase-config.js"></script>

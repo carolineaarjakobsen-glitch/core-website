@@ -389,6 +389,11 @@
   letter-spacing: 0.08em;
 }
 
+.rp-plan-draft--mal {
+  background: rgba(234,103,45,0.12);
+  color: var(--coral);
+}
+
 /* ── Glimt grid (saved glimt from others) ─────────────────── */
 .rp-glimt-grid {
   display: grid;

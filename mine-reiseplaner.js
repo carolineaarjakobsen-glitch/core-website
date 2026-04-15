@@ -359,13 +359,16 @@ function renderPlans() {
     const dateStr = plan.from && plan.to
       ? formatRange(plan.from, plan.to)
       : plan.from ? `Fra ${formatDate(plan.from)}` : "Ingen datoer satt";
-    const draftBadge = plan.status === "utkast"
-      ? `<span class="rp-plan-draft">Utkast</span>` : "";
+    const statusBadge = plan.status === "utkast"
+      ? `<span class="rp-plan-draft">Utkast</span>`
+      : plan.status === "mal"
+      ? `<span class="rp-plan-draft rp-plan-draft--mal">Fra reisebrev</span>`
+      : "";
 
     return `
       <a class="rp-plan-card" href="reiseplan-detalj.html?id=${encodeURIComponent(plan.id)}"
         <div class="rp-plan-hero" style="background-image:url('${img}')">
-          ${draftBadge}
+          ${statusBadge}
           <div class="rp-plan-city-pill">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
             ${plan.city}

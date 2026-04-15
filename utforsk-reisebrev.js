@@ -326,7 +326,7 @@ function init() {
       const all = JSON.parse(raw);
       if (Array.isArray(all)) {
         userGuides = all
-          .filter(g => g.isGuide)
+          .filter(g => g.isGuide || g.isReiseplan)
           .map(g => ({
             id:        g.id,
             title:     g.title || "Uten tittel",

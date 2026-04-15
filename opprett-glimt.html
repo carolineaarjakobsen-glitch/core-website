@@ -45,7 +45,89 @@
     </nav>
   </header>
 
-  <main class="opprett-main">
+  <!-- ═══════════════════════════════════════════════════
+       MAL-VELGER – Vises som eget steg før skjemaet
+       ═══════════════════════════════════════════════════ -->
+  <div class="mal-velger" id="mal-velger">
+    <div class="mal-velger-inner">
+      <div class="mal-velger-header">
+        <div class="mal-velger-eyebrow">Nytt reisebrev</div>
+        <h1 class="mal-velger-title">Hvordan vil du starte?</h1>
+        <p class="mal-velger-subtitle">Velg en mal for inspirasjon, eller start med blanke ark.</p>
+      </div>
+
+      <div class="mal-velger-grid">
+
+        <!-- Blank mal -->
+        <button class="mal-kort mal-kort--blank" data-mal="blank">
+          <div class="mal-kort-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </div>
+          <div class="mal-kort-body">
+            <h3 class="mal-kort-name">Start fra bunnen av</h3>
+            <p class="mal-kort-desc">Helt blankt reisebrev — fyll inn akkurat det du vil.</p>
+          </div>
+        </button>
+
+        <!-- Mal 1: Mattur -->
+        <button class="mal-kort" data-mal="mattur">
+          <div class="mal-kort-icon">🍝</div>
+          <div class="mal-kort-body">
+            <h3 class="mal-kort-name">Mattur</h3>
+            <p class="mal-kort-desc">Frokost, lunsj, middag og alt imellom. Perfekt for deg som reiser med magen først.</p>
+            <div class="mal-kort-tags">
+              <span class="mal-kort-tag">4 glimt</span>
+              <span class="mal-kort-tag">Mat & drikke</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Mal 2: Kulturreise -->
+        <button class="mal-kort" data-mal="kultur">
+          <div class="mal-kort-icon">🏛️</div>
+          <div class="mal-kort-body">
+            <h3 class="mal-kort-name">Kulturreise</h3>
+            <p class="mal-kort-desc">Museer, historiske steder og lokale perler. For deg som vil forstå stedet du besøker.</p>
+            <div class="mal-kort-tags">
+              <span class="mal-kort-tag">4 glimt</span>
+              <span class="mal-kort-tag">Kultur & historie</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Mal 3: Romantisk weekend -->
+        <button class="mal-kort" data-mal="romantisk">
+          <div class="mal-kort-icon">💕</div>
+          <div class="mal-kort-body">
+            <h3 class="mal-kort-name">Romantisk weekend</h3>
+            <p class="mal-kort-desc">Solnedganger, koselige restauranter og rolige øyeblikk for to.</p>
+            <div class="mal-kort-tags">
+              <span class="mal-kort-tag">3 glimt</span>
+              <span class="mal-kort-tag">Romantisk</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Mal 4: Aktivitetsreise -->
+        <button class="mal-kort" data-mal="aktivitet">
+          <div class="mal-kort-icon">🥾</div>
+          <div class="mal-kort-body">
+            <h3 class="mal-kort-name">Aktivitetsreise</h3>
+            <p class="mal-kort-desc">Vandring, sykling og utendørs eventyr. For deg som vil oppleve naturen.</p>
+            <div class="mal-kort-tags">
+              <span class="mal-kort-tag">4 glimt</span>
+              <span class="mal-kort-tag">Natur & aktivitet</span>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <main class="opprett-main" id="opprett-main" style="display:none">
 
     <!-- VENSTRE: Storyline -->
     <aside class="opprett-storyline" aria-label="Storyline">
@@ -95,8 +177,8 @@
             <input type="checkbox" id="guide-toggle-cb" class="guide-toggle-input" />
             <span class="guide-toggle-switch"></span>
             <span class="guide-toggle-text">
-              <span class="guide-toggle-label">Lagre som guide</span>
-              <span class="guide-toggle-desc">Synlig for andre reisende i denne byen</span>
+              <span class="guide-toggle-label">Lagre som reiseplan</span>
+              <span class="guide-toggle-desc">Reisebrevet blir en mal i dine reiseplaner, og glimtene dukker opp i «Utforsk glimt»</span>
             </span>
           </label>
         </div>
@@ -122,15 +204,30 @@
           <!-- Glimt-kort legges inn dynamisk av JS -->
         </div>
 
-        <!-- Plusstegn for å legge til nytt glimt -->
-        <button type="button" id="add-glimt-btn" class="add-glimt-btn">
-          <span class="add-glimt-plus">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-          </span>
-          Legg til et nytt glimt
-        </button>
+        <!-- Legg til glimt: velger mellom lagret og nytt -->
+        <div class="add-glimt-velger" id="add-glimt-velger">
+          <div class="add-glimt-velger-label">Legg til glimt</div>
+          <div class="add-glimt-velger-options">
+            <button type="button" class="add-glimt-option" id="add-glimt-lagret">
+              <span class="add-glimt-option-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+              </span>
+              <span class="add-glimt-option-text">
+                <strong>Velg lagret glimt</strong>
+                <small>Fra dine egne eller bokmerka glimt</small>
+              </span>
+            </button>
+            <button type="button" class="add-glimt-option" id="add-glimt-btn">
+              <span class="add-glimt-option-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </span>
+              <span class="add-glimt-option-text">
+                <strong>Opprett nytt glimt</strong>
+                <small>Fyll inn et helt nytt glimt fra bunnen av</small>
+              </span>
+            </button>
+          </div>
+        </div>
 
         <!-- Bunn-knapper -->
         <div class="opprett-actions">
@@ -148,6 +245,28 @@
     </div>
 
   </main>
+
+  <!-- ═══════════════════════════════════════════════════
+       VELG LAGRET GLIMT – Modal
+       ═══════════════════════════════════════════════════ -->
+  <div class="lagret-glimt-overlay" id="lagret-glimt-overlay">
+    <div class="lagret-glimt-modal">
+      <div class="lagret-glimt-header">
+        <h2 class="lagret-glimt-title">Velg glimt</h2>
+        <button class="lagret-glimt-close" id="lagret-glimt-close" aria-label="Lukk">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="lagret-glimt-tabs">
+        <button class="lagret-glimt-tab lagret-glimt-tab--active" data-ltab="egne">Mine glimt</button>
+        <button class="lagret-glimt-tab" data-ltab="bokmerket">Bokmerka glimt</button>
+      </div>
+      <div class="lagret-glimt-body">
+        <div class="lagret-glimt-panel lagret-glimt-panel--active" id="lagret-panel-egne"></div>
+        <div class="lagret-glimt-panel" id="lagret-panel-bokmerket"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- Mal for et glimt-kort (brukes av JS) -->
   <template id="glimt-card-template">

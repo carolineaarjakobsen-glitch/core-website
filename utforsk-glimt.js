@@ -90,6 +90,7 @@ function collectAllGlimt() {
   }
 
   // Fra brukerens egne reisebrev (localStorage)
+  // Viser kun glimt fra reisebrev som er markert som reiseplan/guide
   try {
     const raw = localStorage.getItem("glimt.userGlimts");
     if (raw) {
@@ -97,6 +98,7 @@ function collectAllGlimt() {
       if (Array.isArray(userGlimts)) {
         userGlimts.forEach(reisebrev => {
           if (!reisebrev.glimts) return;
+          if (!reisebrev.isReiseplan && !reisebrev.isGuide) return;
           reisebrev.glimts.forEach((g, idx) => {
             const cat = guessCategory(g.title || "", g.note || "", g.address || "");
             allGlimt.push({
