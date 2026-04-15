@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glimt – Mobil Visuell Testrapport</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf6f1; color: #3a2a1a; line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; color: #5a3a1a; margin-bottom: 0.3rem; }
+  .subtitle { color: #8a6a4a; margin-bottom: 2rem; }
+  .date { font-size: 0.85rem; color: #aaa; margin-bottom: 2rem; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+  .summary-card { background: white; border-radius: 12px; padding: 1.2rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .summary-card .number { font-size: 2rem; font-weight: 700; }
+  .summary-card .label { font-size: 0.8rem; color: #8a6a4a; text-transform: uppercase; letter-spacing: 0.5px; }
+  .green { color: #2d8a4e; }
+  .orange { color: #c4732b; }
+  .red { color: #c44b2b; }
+  .blue { color: #2b6ec4; }
+
+  h2 { font-size: 1.4rem; color: #5a3a1a; margin: 2rem 0 1rem; border-bottom: 2px solid #e8d5c4; padding-bottom: 0.5rem; }
+  h3 { font-size: 1.1rem; color: #6b4a2a; margin: 1.5rem 0 0.5rem; }
+
+  .page-test { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .page-test .page-name { font-weight: 700; font-size: 1.05rem; color: #5a3a1a; }
+  .page-test .page-url { font-size: 0.8rem; color: #aaa; margin-bottom: 0.8rem; }
+
+  .status { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-right: 0.4rem; }
+  .status-ok { background: #d4edda; color: #155724; }
+  .status-warn { background: #fff3cd; color: #856404; }
+  .status-issue { background: #f8d7da; color: #721c24; }
+  .status-info { background: #d1ecf1; color: #0c5460; }
+
+  .findings { margin-top: 0.8rem; }
+  .finding { padding: 0.5rem 0; border-bottom: 1px solid #f0e8e0; font-size: 0.9rem; }
+  .finding:last-child { border-bottom: none; }
+
+  .tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-right: 0.3rem; }
+  .tag-viewport { background: #e8d5f5; color: #5a2d82; }
+  .tag-media { background: #d5e8f5; color: #2d5a82; }
+  .tag-grid { background: #f5e8d5; color: #825a2d; }
+  .tag-touch { background: #d5f5e8; color: #2d825a; }
+  .tag-overflow { background: #f5d5d5; color: #822d2d; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #e8d5c4; font-size: 0.85rem; }
+  th { background: #f5ede5; color: #5a3a1a; font-weight: 600; }
+  tr:hover { background: #fdf8f3; }
+
+  .recommendation { background: #fff8e8; border-left: 4px solid #c4732b; padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 0.8rem; font-size: 0.9rem; }
+  .recommendation strong { color: #8a4a0a; }
+
+  .image-note { background: #e8f4e8; border-left: 4px solid #2d8a4e; padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+
+  @media (max-width: 600px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Mobil Visuell Testrapport</h1>
+<p class="subtitle">Glimt – Din lokale reiseleder</p>
+<p class="date">Utført: 14. april 2026 &nbsp;|&nbsp; Testet mot: iPhone 14 Pro (375×812) &nbsp;|&nbsp; URL: core-website-carolineaarjakobsen-glitchs-projects.vercel.app</p>
+
+<div class="summary-grid">
+  <div class="summary-card"><div class="number green">18</div><div class="label">Sider testet</div></div>
+  <div class="summary-card"><div class="number green">15</div><div class="label">CSS-filer analysert</div></div>
+  <div class="summary-card"><div class="number orange">7</div><div class="label">Advarsler</div></div>
+  <div class="summary-card"><div class="number red">3</div><div class="label">Kritiske funn</div></div>
+</div>
+
+<!-- ===== OVERORDNET ===== -->
+<h2>Overordnet vurdering</h2>
+<p>Nettsiden har et gjennomgående godt responsivt design med viewport meta-tag på alle sider, moderne CSS-teknikker som <code>clamp()</code> for typografi, og grid-layouts som kollapser riktig. Det er likevel noen områder som trenger oppmerksomhet for en optimal mobilopplevelse.</p>
+
+<div class="image-note">
+  <strong>Om bildeopplasting ved opprettelse av glimt:</strong> Ja, det finnes allerede et bildeopplastingsfelt med drag-and-drop i opprett-glimt.html. Bilder komprimeres klient-side (maks 1280px, maks 900 KB) og lagres som base64 i localStorage sammen med resten av glimt-dataene (tittel, adresse, by, koordinater, notat). <strong>NB:</strong> Alt lagres i nettleserens localStorage (~5 MB grense per domene), ikke i en ekstern database. For produksjon bør bildene flyttes til Firebase Storage og glimt-data til Firestore.
+</div>
+
+<!-- ===== KRITISKE FUNN ===== -->
+<h2>Kritiske funn</h2>
+
+<div class="page-test">
+  <div class="page-name">1. Navbar kollapser ikke til hamburgermeny</div>
+  <span class="status status-issue">Kritisk</span> <span class="tag tag-overflow">Overflow</span>
+  <div class="findings">
+    <div class="finding">Alle sider bruker en vanlig horisontal navbar med tekst-lenker ("Mine glimt", "Utforsk glimt", "Logg inn"). På mobil (375px) vil disse elementene enten overlappe eller skape horisontal scrolling. Det finnes ingen hamburgermeny eller mobilnavigasjon.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Implementer en hamburgermeny med ikon (☰) for skjermbredder under 768px. Skjul navigasjonslenker bak menyen og vis dem som en fullskjerm- eller sidepanel-overlay.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">2. Kalender-grid for trangt på mobil</div>
+  <span class="status status-issue">Kritisk</span> <span class="tag tag-grid">Grid</span> <span class="tag tag-touch">Touch</span>
+  <div class="findings">
+    <div class="finding">Både min-kalender.html og calendar.html bruker et fast 7-kolonners grid (<code>repeat(7, 1fr)</code>). På 375px bredde gir dette ca. 48px per celle – under anbefalt trykkmål (44px) med liten margin. Navigasjonsknapper er 36px, under minimum 44px.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Øk celle-padding, bruk horisontal scroll med swipe-indikator, eller vis en forenklet listevisning på mobil. Gjør navigasjonsknapper minimum 44×44px.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">3. Explore-sidebar overflyter på små skjermer</div>
+  <span class="status status-issue">Kritisk</span> <span class="tag tag-overflow">Overflow</span>
+  <div class="findings">
+    <div class="finding">explore.css har <code>.explore-sidebar</code> med fast bredde på 380px. Media query på 900px kollapser til én kolonne, men 380px fast bredde kan likevel forårsake overflow på skjermer smalere enn 400px.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Sett sidebar-bredden til <code>min(380px, 100%)</code> eller bruk <code>width: 100%</code> under 900px breakpoint.</div>
+</div>
+
+<!-- ===== ADVARSLER ===== -->
+<h2>Advarsler (middels alvorlighet)</h2>
+
+<div class="page-test">
+  <div class="page-name">4. Reiseplan-kort med fast høyde</div>
+  <span class="status status-warn">Advarsel</span> <span class="tag tag-grid">Grid</span>
+  <div class="findings">
+    <div class="finding">mine-reiseplaner.css: <code>.rp-plan-card</code> har fast <code>height: 140px</code> som kan kutte innhold på små skjermer med større skriftstørrelse.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Bruk <code>min-height: 140px</code> i stedet for fast høyde.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">5. Toast-meldinger overlapper mobilnavigasjon</div>
+  <span class="status status-warn">Advarsel</span> <span class="tag tag-overflow">Overflow</span>
+  <div class="findings">
+    <div class="finding">saved-glimt.css: Toast-meldinger med <code>bottom: 2rem</code> kan overlappe nettleserens navigasjonsfelt på mobil, spesielt på iOS Safari.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Bruk <code>bottom: max(2rem, env(safe-area-inset-bottom) + 1rem)</code> for å respektere notch-enheter.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">6. Manglende safe-area-inset støtte</div>
+  <span class="status status-warn">Advarsel</span> <span class="tag tag-viewport">Viewport</span>
+  <div class="findings">
+    <div class="finding">Ingen av CSS-filene bruker <code>env(safe-area-inset-*)</code> for å håndtere iPhone-notch og hjemmeindikator. Dette betyr at innhold kan bli skjult bak notch-en i landskapsmodus.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Legg til <code>viewport-fit=cover</code> i viewport meta-tag og bruk safe-area-insets for padding på navbar og bunnlinje.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">7. City-landing mangler by-navn i overskriftene</div>
+  <span class="status status-warn">Advarsel</span> <span class="tag tag-viewport">Viewport</span>
+  <div class="findings">
+    <div class="finding">city-landing.html viser "Mine reiseplaner for" og "Utforsk reisebrev fra" og "Hva skjer i" uten by-navn. Ser ut som JavaScript som fyller inn by-navn ikke fikk lastet riktig, eller det mangler en query-parameter.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Legg til fallback-tekst eller skjul tomme seksjoner dersom by-parameter mangler.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">8. Utforsk-glimt kortbilder vises ikke</div>
+  <span class="status status-warn">Advarsel</span>
+  <div class="findings">
+    <div class="finding">På utforsk-glimt.html har glimt-kortene en beige/brun bakgrunnsfarge uten bilder. Demo-dataen refererer til bilder som ikke finnes, noe som gir et ufullstendig visuelt inntrykk.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Legg til fallback-bilder eller placeholder-grafikk når bilde-URL mangler.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">9. Tabs-scroll mangler visuell indikator</div>
+  <span class="status status-warn">Advarsel</span> <span class="tag tag-touch">Touch</span>
+  <div class="findings">
+    <div class="finding">mine-reiseplaner.css: <code>.rp-tabs</code> har <code>overflow-x: auto</code> men ingen visuell indikator (f.eks. gradient-fade) som signaliserer at det er mer innhold å scrolle til.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Legg til en gradient-skygge på høyre side som forsvinner når brukeren scroller.</div>
+</div>
+
+<div class="page-test">
+  <div class="page-name">10. Forhåndsvisning av bilde vises feil i opprett-glimt</div>
+  <span class="status status-warn">Advarsel</span>
+  <div class="findings">
+    <div class="finding">På opprett-glimt.html vises teksten "Forhåndsvisning" som alt-tekst for et bilde som ikke er lastet opp ennå, med en synlig X-knapp. Denne forhåndsvisnings-seksjonen burde vært skjult inntil et bilde faktisk er valgt.</div>
+  </div>
+  <div class="recommendation"><strong>Anbefaling:</strong> Skjul forhåndsvisnings-containeren med <code>display: none</code> som standard, og vis den kun etter at et bilde er lastet opp.</div>
+</div>
+
+<!-- ===== STYRKER ===== -->
+<h2>Det som fungerer godt</h2>
+
+<table>
+  <thead><tr><th>Styrke</th><th>Detaljer</th></tr></thead>
+  <tbody>
+    <tr><td>Viewport meta-tag</td><td>Alle 18 HTML-sider har korrekt <code>&lt;meta name="viewport"&gt;</code></td></tr>
+    <tr><td>Responsiv typografi</td><td>Utstrakt bruk av <code>clamp()</code> for overskrifter og tekst</td></tr>
+    <tr><td>Grid-kollapsering</td><td>De fleste layouts går korrekt fra flerkolonne til énkolonne</td></tr>
+    <tr><td>Touch-vennlig scrolling</td><td>Riktig bruk av <code>-webkit-overflow-scrolling: touch</code></td></tr>
+    <tr><td>Mobile media queries</td><td>14 av 15 CSS-filer har dedikerte mobile breakpoints</td></tr>
+    <tr><td>Login-side</td><td>Sentrert kort-layout som fungerer perfekt i alle størrelser</td></tr>
+    <tr><td>Fargekonsistens</td><td>Varm, sammenhengene fargepalett gjennom hele appen</td></tr>
+    <tr><td>Tom-tilstand-design</td><td>Gode empty states med CTA-knapper (mine-glimt, mine-enkeltglimt)</td></tr>
+    <tr><td>Bildekomprimering</td><td>Klient-side komprimering til maks 900 KB ved opplasting</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== SIDE-FOR-SIDE ===== -->
+<h2>Side-for-side oversikt</h2>
+
+<table>
+  <thead>
+    <tr><th>Side</th><th>Viewport</th><th>Media queries</th><th>Mobil-vurdering</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>index.html</td><td><span class="status status-ok">OK</span></td><td>768px</td><td><span class="status status-warn">Navbar</span></td></tr>
+    <tr><td>login.html</td><td><span class="status status-ok">OK</span></td><td>480px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>explore.html</td><td><span class="status status-ok">OK</span></td><td>900px</td><td><span class="status status-issue">Sidebar</span></td></tr>
+    <tr><td>opprett-glimt.html</td><td><span class="status status-ok">OK</span></td><td>640px</td><td><span class="status status-warn">Preview-bug</span></td></tr>
+    <tr><td>mine-glimt.html</td><td><span class="status status-ok">OK</span></td><td>720px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>mine-enkeltglimt.html</td><td><span class="status status-ok">OK</span></td><td>720px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>mine-reiseplaner.html</td><td><span class="status status-ok">OK</span></td><td>768px</td><td><span class="status status-warn">Fast høyde</span></td></tr>
+    <tr><td>utforsk-glimt.html</td><td><span class="status status-ok">OK</span></td><td>720px</td><td><span class="status status-warn">Bilder mangler</span></td></tr>
+    <tr><td>utforsk-reisebrev.html</td><td><span class="status status-ok">OK</span></td><td>720px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>glimt-detalj.html</td><td><span class="status status-ok">OK</span></td><td>640px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>reiseplan-detalj.html</td><td><span class="status status-ok">OK</span></td><td>1000px, 600px</td><td><span class="status status-ok">Bra</span></td></tr>
+    <tr><td>city-landing.html</td><td><span class="status status-ok">OK</span></td><td>900px, 600px</td><td><span class="status status-warn">Tom by-tittel</span></td></tr>
+    <tr><td>min-kalender.html</td><td><span class="status status-ok">OK</span></td><td>1100px, 820px</td><td><span class="status status-issue">7-kol grid</span></td></tr>
+    <tr><td>calendar.html</td><td><span class="status status-ok">OK</span></td><td>820px</td><td><span class="status status-issue">7-kol grid</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ===== BILDEOPPLASTING ===== -->
+<h2>Bildeopplasting – nåværende status</h2>
+
+<table>
+  <thead><tr><th>Funksjon</th><th>Status</th><th>Detaljer</th></tr></thead>
+  <tbody>
+    <tr><td>Bildeopplasting i UI</td><td><span class="status status-ok">Finnes</span></td><td>Drag-and-drop + klikk i opprett-glimt.html</td></tr>
+    <tr><td>Bildekomprimering</td><td><span class="status status-ok">Finnes</span></td><td>Maks 1280px, JPEG, 900 KB grense</td></tr>
+    <tr><td>Bildelagring</td><td><span class="status status-warn">localStorage</span></td><td>Base64 data-URL i nettleserens localStorage (~5 MB grense)</td></tr>
+    <tr><td>Firebase Storage</td><td><span class="status status-issue">Ikke aktiv</span></td><td>Storage bucket konfigurert men SDK ikke lastet</td></tr>
+    <tr><td>Backend API</td><td><span class="status status-issue">Finnes ikke</span></td><td>Ingen API-endepunkter for glimt/bilde-lagring</td></tr>
+    <tr><td>Database (Firestore)</td><td><span class="status status-issue">Ikke brukt</span></td><td>Auth-modul lastet, men data lagres kun lokalt</td></tr>
+  </tbody>
+</table>
+
+<div class="recommendation"><strong>For å gjøre bildeopplasting robust:</strong> Aktiver Firebase Storage SDK, last opp bilder dit i stedet for base64-i-localStorage, og migrer glimt-data til Firestore. Dette fjerner 5 MB-begrensningen og gjør dataen tilgjengelig på tvers av enheter.</div>
+
+<p style="text-align: center; color: #aaa; margin-top: 3rem; font-size: 0.8rem;">Rapport generert av Claude – 14. april 2026</p>
+
+</div>
+</body>
+</html>

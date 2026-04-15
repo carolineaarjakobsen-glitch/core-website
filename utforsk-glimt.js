@@ -165,8 +165,8 @@ function buildGlimtCard(g) {
     <article class="ug-card">
       <div class="ug-card-image-wrap">
         ${g.image
-          ? `<img class="ug-card-image" src="${esc(g.image)}" alt="${esc(g.title)}" loading="lazy" />`
-          : `<div class="ug-card-image" style="background:var(--blush-mid);display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:2rem;">&#9733;</div>`
+          ? `<img class="ug-card-image" src="${esc(g.image)}" alt="${esc(g.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="ug-card-image ug-card-placeholder" style="display:none;background:var(--blush-mid);align-items:center;justify-content:center;color:var(--text-light);font-size:2rem;">&#9733;</div>`
+          : `<div class="ug-card-image ug-card-placeholder" style="background:var(--blush-mid);display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:2rem;">&#9733;</div>`
         }
         <span class="ug-card-cat-badge">${g.isUserCreated ? 'Opprettet av deg' : esc(catLabel)}</span>
         <span class="ug-card-city-badge">

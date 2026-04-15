@@ -43,7 +43,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 3rem;
+  padding: 0 max(1.2rem, env(safe-area-inset-left, 0px)) 0 max(3rem, env(safe-area-inset-left, 0px));
+  padding-right: max(3rem, env(safe-area-inset-right, 0px));
   height: 64px;
   background: var(--navy);
   border-bottom: none;
@@ -885,6 +886,111 @@ nav a:hover {
 }
 
 /* =====================
+   HAMBURGER TOGGLE
+   ===================== */
+.nav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 601;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.nav-hamburger span::before,
+.nav-hamburger span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, top 0.25s ease;
+}
+
+.nav-hamburger span::before { top: -7px; }
+.nav-hamburger span::after  { top: 7px; }
+
+/* Kryss-animasjon når åpen */
+.nav-hamburger.open span { background: transparent; }
+.nav-hamburger.open span::before { top: 0; transform: rotate(45deg); }
+.nav-hamburger.open span::after  { top: 0; transform: rotate(-45deg); }
+
+/* Mobilmeny overlay */
+.nav-mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 64px;
+  background: var(--navy);
+  z-index: 500;
+  padding: 1.5rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-mobile-overlay.open {
+  display: flex;
+}
+
+.nav-mobile-overlay a,
+.nav-mobile-overlay button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-mobile-overlay a:hover,
+.nav-mobile-overlay button:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.nav-mobile-section {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  padding: 1rem 1.1rem 0.3rem;
+}
+
+.nav-mobile-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 0.5rem 0;
+}
+
+/* =====================
    RESPONSIV (mobil)
    ===================== */
 @media (max-width: 768px) {
@@ -915,7 +1021,7 @@ nav a:hover {
   }
 
   .navbar {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.2rem;
   }
 
   .logo-text {
@@ -923,5 +1029,7 @@ nav a:hover {
     letter-spacing: 0.28em;
   }
 
-  nav { gap: 1.4rem; }
+  /* Skjul desktop-nav, vis hamburger */
+  nav { display: none !important; }
+  .nav-hamburger { display: flex; }
 }

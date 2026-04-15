@@ -70,6 +70,12 @@ function init() {
   const params   = new URLSearchParams(window.location.search);
   const cityName = params.get("city") || "";
 
+  // Hvis ingen by er valgt, redirect til forsiden
+  if (!cityName) {
+    window.location.href = "index.html";
+    return;
+  }
+
   // Sett sidetittel
   document.title = `Glimt – ${cityName}`;
 

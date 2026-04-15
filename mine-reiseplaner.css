@@ -117,6 +117,38 @@
   box-shadow: 0 2px 12px rgba(30,42,74,0.06);
   margin-bottom: 2rem;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+}
+
+.rp-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gradient-indikator for scrollbart innhold */
+.rp-tabs-wrap {
+  position: relative;
+}
+
+.rp-tabs-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to left, #fff 0%, transparent 100%);
+  border-radius: 0 14px 14px 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+@media (max-width: 768px) {
+  .rp-tabs-wrap::after {
+    opacity: 1;
+  }
 }
 
 .rp-tab {
@@ -261,7 +293,7 @@
 }
 
 .rp-plan-hero {
-  height: 140px;
+  min-height: 140px;
   background-size: cover;
   background-position: center;
   position: relative;

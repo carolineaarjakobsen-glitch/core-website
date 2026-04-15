@@ -686,6 +686,14 @@
   position: relative;
   width: 100%;
   min-height: 200px;
+}
+
+/* Respekter hidden-attributtet */
+.image-drop-preview[hidden] {
+  display: none !important;
+}
+
+.image-drop-preview:not([hidden]) {
   display: flex;
 }
 

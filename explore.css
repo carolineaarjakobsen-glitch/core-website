@@ -10,7 +10,7 @@
 /* ── Layout: sidebar + resultater ─────────────────────────── */
 .explore-main {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: min(380px, 100%) 1fr;
   min-height: calc(100vh - 64px);
   margin-top: 64px;
 }
@@ -467,6 +467,7 @@
   .explore-sidebar {
     min-height: auto;
     padding: 2rem 1.5rem;
+    width: 100%;
   }
   .results-grid {
     grid-template-columns: 1fr;
