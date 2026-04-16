@@ -268,105 +268,194 @@
     </div>
   </div>
 
-  <!-- Mal for et glimt-kort (brukes av JS) -->
-  <template id="glimt-card-template">
-    <div class="glimt-form-card" data-glimt-card>
-      <div class="glimt-form-head">
-        <span class="glimt-form-number">Glimt <span data-glimt-number>1</span></span>
-        <button type="button" class="glimt-remove-btn" data-remove title="Fjern glimt" aria-label="Fjern glimt">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
+  <!-- ═══════════════════════════════════════════════════
+       OPPRETT / REDIGER GLIMT – Popup-modal (fra mine-enkeltglimt)
+       ═══════════════════════════════════════════════════ -->
+  <div class="meg-modal-overlay" id="opprett-glimt-modal" style="display:none">
+    <div class="meg-modal">
+
+      <div class="meg-modal-header">
+        <h2 id="opprett-modal-title">Opprett nytt glimt</h2>
+        <button type="button" class="meg-modal-close" id="opprett-modal-close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
-      <label class="field">
-        <span class="field-label">Glimt</span>
-        <input type="text" class="field-input" data-title placeholder="f.eks. Frokost på Trastevere" />
-      </label>
+      <form class="meg-form" id="opprett-glimt-form">
 
-      <div class="field">
-        <span class="field-label">Adresse</span>
-        <div class="address-autocomplete" data-address-wrapper>
-          <input type="text" class="field-input" data-address
-                 placeholder="Søk etter sted, by eller adresse"
-                 autocomplete="off" spellcheck="false" />
-          <ul class="address-suggestions" data-address-suggestions role="listbox" hidden></ul>
-        </div>
-      </div>
-
-      <label class="field">
-        <span class="field-label">Note</span>
-        <textarea class="field-textarea" data-note rows="4" placeholder="Beskriv hva som gjør dette stedet spesielt…"></textarea>
-      </label>
-
-      <div class="field">
-        <span class="field-label">Legg ved bilde</span>
-        <label class="image-drop" data-image-drop>
-          <input type="file" accept="image/*" class="image-input" data-image hidden />
-          <div class="image-drop-empty" data-image-empty>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="M21 15l-5-5L5 21"/>
-            </svg>
-            <span>Klikk for å velge bilde</span>
-            <small>PNG eller JPG</small>
+        <!-- ── Auto-fyll fra lenke ── -->
+        <div class="meg-autofill">
+          <div class="meg-autofill-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span>Har du en lenke? Lim inn og fyll ut automatisk</span>
           </div>
-          <div class="image-drop-preview" data-image-preview hidden>
-            <img data-image-thumb alt="Forhåndsvisning" />
-            <button type="button" class="image-remove" data-image-remove title="Fjern bilde" aria-label="Fjern bilde">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
+          <div class="meg-autofill-row">
+            <input type="url" class="meg-input meg-autofill-input" id="opprett-url-input" placeholder="https://restaurant.no/meny eller https://events.com/marathon..." />
+            <button type="button" class="meg-autofill-btn" id="opprett-autofill-btn">
+              <span class="meg-autofill-btn-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 21l-4.35-4.35"/><circle cx="11" cy="11" r="8"/></svg>
+                Hent data
+              </span>
+              <span class="meg-autofill-spinner" style="display:none"></span>
             </button>
           </div>
-        </label>
-      </div>
+          <div class="meg-autofill-status" id="opprett-autofill-status" style="display:none"></div>
+        </div>
 
-      <div class="glimt-form-foot">
-        <button type="button" class="btn-save-glimt" data-save>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 6L9 17l-5-5"/>
-          </svg>
-          <span data-save-label>Lagre glimt</span>
+        <hr class="meg-divider" />
+
+        <!-- Tittel -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Tittel <span class="meg-required">*</span>
+          </label>
+          <input type="text" name="title" class="meg-input" placeholder="F.eks. Frokost i Trastevere" required />
+        </div>
+
+        <!-- Beskrivelse -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Beskrivelse <span class="meg-required">*</span>
+          </label>
+          <textarea name="desc" class="meg-textarea" rows="3" placeholder="Fortell om opplevelsen..." required></textarea>
+        </div>
+
+        <!-- Sted / adresse -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Sted / adresse <span class="meg-required">*</span>
+          </label>
+          <input type="text" name="sted" class="meg-input" placeholder="F.eks. Piazza Santa Maria in Trastevere, Roma" required />
+        </div>
+
+        <!-- By -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+            By <span class="meg-required">*</span>
+          </label>
+          <select name="city" class="meg-select" id="opprett-city-select" required>
+            <option value="" disabled selected>Velg by...</option>
+          </select>
+        </div>
+
+        <!-- Tips -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Ditt beste tips
+          </label>
+          <textarea name="tips" class="meg-textarea" rows="2" placeholder="Noe andre bør vite..."></textarea>
+        </div>
+
+        <!-- Bilde-URL -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Bilde (URL)
+          </label>
+          <input type="url" name="image" class="meg-input" placeholder="https://images.unsplash.com/..." />
+        </div>
+
+        <hr class="meg-divider" />
+
+        <!-- ── Filtreringsegenskaper ── -->
+        <h3 class="meg-section-title">Filtreringsegenskaper</h3>
+        <p class="meg-section-desc">Disse feltene gjør at glimtet ditt dukker opp riktig i filtrene.</p>
+
+        <!-- Hvem -->
+        <div class="meg-field">
+          <label class="meg-label">Hvem passer det for?</label>
+          <div class="meg-chips" data-name="hvem">
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="alene" /><span>Alene</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="par" /><span>Par / date</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="venner" /><span>Vennegjeng</span></label>
+            <label class="meg-chip"><input type="checkbox" name="hvem" value="familie" /><span>Familie med barn</span></label>
+          </div>
+        </div>
+
+        <!-- Budsjett -->
+        <div class="meg-field">
+          <label class="meg-label">Budsjett</label>
+          <div class="meg-chips" data-name="budsjett">
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="gratis" /><span>Gratis</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="lav" /><span>$ Lav</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="middels" /><span>$$ Middels</span></label>
+            <label class="meg-chip"><input type="checkbox" name="budsjett" value="høy" /><span>$$$ Høy</span></label>
+          </div>
+        </div>
+
+        <!-- Stemning -->
+        <div class="meg-field">
+          <label class="meg-label">Stemning / type</label>
+          <div class="meg-chips" data-name="stemning">
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="rolig" /><span>Rolig & avslappende</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="aktiv" /><span>Aktiv & sporty</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="kulturell" /><span>Kulturell & historisk</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="mat" /><span>Mat & drikke</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="romantisk" /><span>Romantisk</span></label>
+            <label class="meg-chip"><input type="checkbox" name="stemning" value="eventyr" /><span>Eventyrlig & unik</span></label>
+          </div>
+        </div>
+
+        <!-- Tidspunkt -->
+        <div class="meg-field">
+          <label class="meg-label">Tidspunkt</label>
+          <div class="meg-chips" data-name="tidspunkt">
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="formiddag" /><span>Formiddag</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="ettermiddag" /><span>Ettermiddag</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="kveld" /><span>Kveld</span></label>
+            <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="hel_dag" /><span>Hel dag</span></label>
+          </div>
+        </div>
+
+        <!-- Aktivitetsnivå -->
+        <div class="meg-field">
+          <label class="meg-label">Aktivitetsnivå</label>
+          <div class="meg-chips" data-name="aktivitetsniva">
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="lavt" /><span>Lavt</span></label>
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="middels" /><span>Middels</span></label>
+            <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="høyt" /><span>Høyt</span></label>
+          </div>
+        </div>
+
+        <!-- Varighet -->
+        <div class="meg-field">
+          <label class="meg-label">Varighet</label>
+          <div class="meg-chips" data-name="varighet">
+            <label class="meg-chip"><input type="radio" name="varighet" value="under1" /><span>Under 1 time</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="1-2" /><span>1–2 timer</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="2-4" /><span>2–4 timer</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="halvdag" /><span>Halvdag</span></label>
+            <label class="meg-chip"><input type="radio" name="varighet" value="heldag" /><span>Hel dag</span></label>
+          </div>
+        </div>
+
+        <!-- Kostnad -->
+        <div class="meg-field">
+          <label class="meg-label">Kostnad (fritekst)</label>
+          <input type="text" name="kostnad" class="meg-input" placeholder="F.eks. Gratis, Ca. 15–20 €, 30–50 € per person" />
+        </div>
+
+        <!-- Emoji -->
+        <div class="meg-field">
+          <label class="meg-label">Emoji (valgfritt)</label>
+          <input type="text" name="emoji" class="meg-input meg-input-emoji" placeholder="F.eks. 🍕 🏛️ 🌅" maxlength="4" />
+        </div>
+
+        <!-- Skjult felt for editing-id -->
+        <input type="hidden" name="_editId" id="opprett-edit-id" value="" />
+
+        <button type="submit" class="meg-submit-btn" id="opprett-modal-submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+          <span id="opprett-modal-submit-text">Legg til glimt</span>
         </button>
-      </div>
-
-      <!-- Visning av lagret glimt (vises når kortet er i is-view-modus) -->
-      <div class="glimt-preview" data-preview>
-        <div class="glimt-preview-image" data-preview-image hidden>
-          <img data-preview-img alt="" />
-        </div>
-        <div class="glimt-preview-body">
-          <h3 class="glimt-preview-title" data-preview-title>Uten tittel</h3>
-          <div class="glimt-preview-address" data-preview-address hidden>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-            </svg>
-            <span data-preview-address-text></span>
-          </div>
-          <p class="glimt-preview-note" data-preview-note hidden></p>
-          <div class="glimt-preview-foot">
-            <span class="glimt-preview-status">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
-              Lagret
-            </span>
-            <button type="button" class="btn-edit-glimt" data-edit>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 20h9"/>
-                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
-              </svg>
-              Rediger
-            </button>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
-  </template>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -399,6 +488,7 @@
     })();
   </script>
 
+  <script src="cities.js"></script>
   <script src="opprett-glimt.js"></script>
 <script src="mobile-nav.js"></script>
 </body>
