@@ -131,10 +131,14 @@ let googlePlacesSvc         = null;
 const form            = document.getElementById("guide-form");
 const container       = document.getElementById("glimts-container");
 const addBtn          = document.getElementById("add-glimt-btn");
-const cardTemplate    = document.getElementById("glimt-card-template");
 const storylineList   = document.getElementById("storyline-list");
 const storylineCount  = document.getElementById("storyline-count");
 const storylineEmpty  = document.getElementById("storyline-empty");
+
+// ── Glimt-datalager (array med objekter) ────────────────────
+// Hvert glimt har en unik id og alle feltene fra popup-modal.
+// Preview-kort i DOM refererer til glimtets id via data-glimt-id.
+let glimtItems = [];
 
 // Holder styr på det kortet som er «aktivt» i storyline
 let activeCardId = null;
@@ -536,47 +540,41 @@ function wireAddressAutocomplete(card) {
   });
 }
 
-// ── Oppdater numrene på alle glimt-kort ──────────────────────
-function renumber() {
-  const cards = container.querySelectorAll("[data-glimt-card]");
-  cards.forEach((card, i) => {
-    const num = card.querySelector("[data-glimt-number]");
-    if (num) num.textContent = i + 1;
-  });
+// ══════════════════════════════════════════════════════════════
+//  POPUP-MODAL LOGIKK (erstatter inline kort-skjema)
+// ══════════════════════════════════════════════════════════════
+
+// ── Hjelpefunksjoner ─────────────────────────────────────────
+
+function escHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str || "";
+  return d.innerHTML;
 }
 
 // ── Render storyline-sidebaren ───────────────────────────────
 function renderStoryline() {
   if (!storylineList) return;
-  const cards = Array.from(container.querySelectorAll("[data-glimt-card]"));
 
   // Oppdater teller
-  if (storylineCount) storylineCount.textContent = cards.length;
+  if (storylineCount) storylineCount.textContent = glimtItems.length;
 
   // Vis/skjul tomt-state
   if (storylineEmpty) {
-    storylineEmpty.style.display = cards.length === 0 ? "block" : "none";
+    storylineEmpty.style.display = glimtItems.length === 0 ? "block" : "none";
   }
 
   // Bygg listen på nytt
   storylineList.innerHTML = "";
-  cards.forEach((card, i) => {
-    // Sørg for at hvert kort har en id
-    if (!card.dataset.cardId) {
-      card.dataset.cardId = uid();
-    }
-    const cardId = card.dataset.cardId;
-
-    const titleInput = card.querySelector("[data-title]");
-    const rawTitle   = titleInput ? titleInput.value.trim() : "";
-    const isEmpty    = !rawTitle;
-    const label      = rawTitle || `Glimt ${i + 1}`;
+  glimtItems.forEach((glimt, i) => {
+    const isEmpty = !glimt.title;
+    const label   = glimt.title || `Glimt ${i + 1}`;
 
     const li = document.createElement("li");
     li.className = "storyline-item";
     if (isEmpty) li.classList.add("is-empty");
-    if (cardId === activeCardId) li.classList.add("is-active");
-    li.dataset.target = cardId;
+    if (glimt.id === activeCardId) li.classList.add("is-active");
+    li.dataset.target = glimt.id;
 
     const titleSpan = document.createElement("span");
     titleSpan.className = "storyline-item-title";
@@ -584,14 +582,10 @@ function renderStoryline() {
     li.appendChild(titleSpan);
 
     li.addEventListener("click", () => {
-      const target = container.querySelector(
-        `[data-card-id="${cardId}"]`
-      );
+      const target = container.querySelector(`[data-glimt-id="${glimt.id}"]`);
       if (!target) return;
       target.scrollIntoView({ behavior: "smooth", block: "center" });
-      setActiveCard(cardId);
-      const firstInput = target.querySelector("[data-title]");
-      if (firstInput) setTimeout(() => firstInput.focus(), 350);
+      setActiveCard(glimt.id);
     });
 
     storylineList.appendChild(li);
@@ -607,293 +601,348 @@ function setActiveCard(cardId) {
   });
 }
 
-// ── Les bildefil og returner data-URL ────────────────────────
-function readImageAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
+// ══════════════════════════════════════════════════════════════
+//  OPPRETT/REDIGER GLIMT – POPUP-MODAL
+// ══════════════════════════════════════════════════════════════
+
+const glimtModal     = document.getElementById("opprett-glimt-modal");
+const glimtForm      = document.getElementById("opprett-glimt-form");
+const glimtModalTitle = document.getElementById("opprett-modal-title");
+const glimtEditIdField = document.getElementById("opprett-edit-id");
+const glimtSubmitText  = document.getElementById("opprett-modal-submit-text");
+
+function openGlimtModal(editId) {
+  if (!glimtModal) return;
+
+  // Reset form
+  glimtForm.reset();
+  glimtEditIdField.value = "";
+
+  // Reset autofill status
+  const afStatus = document.getElementById("opprett-autofill-status");
+  if (afStatus) afStatus.style.display = "none";
+
+  if (editId) {
+    // Redigeringsmodus – fyll inn eksisterende data
+    const glimt = glimtItems.find(g => g.id === editId);
+    if (glimt) {
+      glimtEditIdField.value = editId;
+      glimtModalTitle.textContent = "Rediger glimt";
+      glimtSubmitText.textContent = "Oppdater glimt";
+
+      // Fyll inn feltene
+      const f = glimtForm;
+      if (f.title)    f.title.value    = glimt.title || "";
+      if (f.desc)     f.desc.value     = glimt.desc || "";
+      if (f.sted)     f.sted.value     = glimt.sted || glimt.address || "";
+      if (f.city)     f.city.value     = glimt.city || "";
+      if (f.tips)     f.tips.value     = glimt.tips || "";
+      if (f.image)    f.image.value    = glimt.image || "";
+      if (f.kostnad)  f.kostnad.value  = glimt.kostnad || "";
+      if (f.emoji)    f.emoji.value    = glimt.emoji || "";
+
+      // Checkboxer
+      setCheckboxes(f, "hvem",      glimt.hvem || []);
+      setCheckboxes(f, "budsjett",  glimt.budsjett || []);
+      setCheckboxes(f, "stemning",  glimt.stemning || []);
+      setCheckboxes(f, "tidspunkt", glimt.tidspunkt || []);
+
+      // Radioknapper
+      setRadio(f, "aktivitetsniva", glimt.aktivitetsniva || "");
+      setRadio(f, "varighet",       glimt.varighet || "");
+    }
+  } else {
+    glimtModalTitle.textContent = "Opprett nytt glimt";
+    glimtSubmitText.textContent = "Legg til glimt";
+  }
+
+  glimtModal.style.display = "";
+  document.body.style.overflow = "hidden";
+
+  // Fokuser første felt
+  setTimeout(() => {
+    const firstInput = glimtForm.querySelector('input[name="title"]');
+    if (firstInput) firstInput.focus();
+  }, 200);
+}
+
+function closeGlimtModal() {
+  if (!glimtModal) return;
+  glimtModal.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function setCheckboxes(form, name, values) {
+  if (!Array.isArray(values)) return;
+  form.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+    cb.checked = values.includes(cb.value);
   });
 }
 
-// ── Komprimer bilde via canvas ───────────────────────────────
-// Skalerer ned til maks MAX_DIM px på lengste side og lagrer
-// som JPEG med gitt kvalitet. Returnerer ny data-URL.
-const IMAGE_MAX_DIM   = 1280;
-const IMAGE_QUALITY   = 0.82;
-const IMAGE_MAX_BYTES = 900 * 1024; // ~900 KB pr bilde etter komprimering
+function setRadio(form, name, value) {
+  if (!value) return;
+  const radio = form.querySelector(`input[name="${name}"][value="${value}"]`);
+  if (radio) radio.checked = true;
+}
 
-function compressImageFile(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(reader.error);
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error("Kunne ikke laste bilde"));
-      img.onload = () => {
-        try {
-          const { width, height } = img;
-          let targetW = width;
-          let targetH = height;
-          if (Math.max(width, height) > IMAGE_MAX_DIM) {
-            if (width >= height) {
-              targetW = IMAGE_MAX_DIM;
-              targetH = Math.round((height / width) * IMAGE_MAX_DIM);
-            } else {
-              targetH = IMAGE_MAX_DIM;
-              targetW = Math.round((width / height) * IMAGE_MAX_DIM);
-            }
-          }
+// ── Håndter modal-submit ────────────────────────────────────
+function handleGlimtModalSubmit(e) {
+  e.preventDefault();
 
-          const canvas = document.createElement("canvas");
-          canvas.width = targetW;
-          canvas.height = targetH;
-          const ctx = canvas.getContext("2d");
-          // Hvit bakgrunn (i tilfelle bildet har gjennomsiktighet og
-          // vi lagrer som JPEG)
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, targetW, targetH);
-          ctx.drawImage(img, 0, 0, targetW, targetH);
+  const data = new FormData(glimtForm);
+  const editId = data.get("_editId");
 
-          // Reduser kvaliteten gradvis til den er under grensen
-          let quality = IMAGE_QUALITY;
-          let dataUrl = canvas.toDataURL("image/jpeg", quality);
-          // base64 er ~4/3 av binær størrelse
-          const approxBytes = (url) => Math.ceil(url.length * 0.75);
-          let tries = 0;
-          while (approxBytes(dataUrl) > IMAGE_MAX_BYTES && quality > 0.45 && tries < 4) {
-            quality -= 0.12;
-            dataUrl = canvas.toDataURL("image/jpeg", quality);
-            tries += 1;
-          }
-          resolve(dataUrl);
-        } catch (err) {
-          reject(err);
-        }
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
+  const glimtData = {
+    id:             editId || uid(),
+    title:          data.get("title")?.trim() || "",
+    desc:           data.get("desc")?.trim() || "",
+    sted:           data.get("sted")?.trim() || "",
+    address:        data.get("sted")?.trim() || "",  // alias for bakoverkompatibilitet
+    city:           data.get("city") || "",
+    tips:           data.get("tips")?.trim() || "",
+    image:          data.get("image")?.trim() || "",
+    emoji:          data.get("emoji")?.trim() || "",
+    kostnad:        data.get("kostnad")?.trim() || "",
+    varighet:       data.get("varighet") || "",
+    aktivitetsniva: data.get("aktivitetsniva") || "",
+    hvem:           data.getAll("hvem"),
+    budsjett:       data.getAll("budsjett"),
+    stemning:       data.getAll("stemning"),
+    tidspunkt:      data.getAll("tidspunkt"),
+    createdBy:      "user",
+    createdAt:      new Date().toISOString()
+  };
+
+  if (editId) {
+    // Oppdater eksisterende
+    const idx = glimtItems.findIndex(g => g.id === editId);
+    if (idx >= 0) {
+      glimtData.createdAt = glimtItems[idx].createdAt; // behold original
+      glimtItems[idx] = glimtData;
+    }
+  } else {
+    // Nytt glimt
+    glimtItems.push(glimtData);
+  }
+
+  closeGlimtModal();
+  renderPreviewCards();
+  renderStoryline();
+  setActiveCard(glimtData.id);
+
+  // Scroll til det nye/oppdaterte kortet
+  setTimeout(() => {
+    const card = container.querySelector(`[data-glimt-id="${glimtData.id}"]`);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 100);
+}
+
+// ── Autofill fra URL (kopiér fra mine-enkeltglimt) ──────────
+async function handleOpprettAutofill() {
+  const urlInput = document.getElementById("opprett-url-input");
+  const btn      = document.getElementById("opprett-autofill-btn");
+  const btnText  = btn.querySelector(".meg-autofill-btn-text");
+  const btnSpin  = btn.querySelector(".meg-autofill-spinner");
+
+  const url = urlInput?.value?.trim();
+  if (!url) { showOpprettAutofillStatus("Lim inn en URL først.", "error"); return; }
+
+  btn.disabled = true;
+  btnText.style.display = "none";
+  btnSpin.style.display = "";
+  showOpprettAutofillStatus("Henter data fra lenken...", "loading");
+
+  try {
+    const res = await fetch("/api/parse-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const result = await res.json();
+
+    // Fyll inn skjemaet
+    const f = glimtForm;
+    if (result.title && f.title)   f.title.value = result.title;
+    if (result.description && f.desc) f.desc.value = result.description;
+    if (result.address && f.sted)  f.sted.value = result.address;
+    if (result.city && f.city)     f.city.value = result.city;
+    if (result.tips && f.tips)     f.tips.value = result.tips;
+    if (result.image && f.image)   f.image.value = result.image;
+    if (result.emoji && f.emoji)   f.emoji.value = result.emoji;
+    if (result.kostnad && f.kostnad) f.kostnad.value = result.kostnad;
+
+    if (result.hvem)      setCheckboxes(f, "hvem", result.hvem);
+    if (result.budsjett)  setCheckboxes(f, "budsjett", result.budsjett);
+    if (result.stemning)  setCheckboxes(f, "stemning", result.stemning);
+    if (result.tidspunkt) setCheckboxes(f, "tidspunkt", result.tidspunkt);
+    if (result.aktivitetsniva) setRadio(f, "aktivitetsniva", result.aktivitetsniva);
+    if (result.varighet)  setRadio(f, "varighet", result.varighet);
+
+    showOpprettAutofillStatus("Data hentet! Juster feltene om nødvendig.", "success");
+  } catch (err) {
+    const msg = err.message?.includes("Failed to fetch")
+      ? "Kunne ikke nå API-et."
+      : `Feil: ${err.message || "Ukjent feil."}`;
+    showOpprettAutofillStatus(msg, "error");
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = "inline-flex";
+    btnSpin.style.display = "none";
+  }
+}
+
+function showOpprettAutofillStatus(message, type) {
+  const el = document.getElementById("opprett-autofill-status");
+  if (!el) return;
+  el.style.display = "block";
+  el.className = `meg-autofill-status meg-autofill-status--${type}`;
+  el.textContent = message;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PREVIEW-KORT (visningskort i reisebrev-container)
+// ══════════════════════════════════════════════════════════════
+
+function renderPreviewCards() {
+  container.innerHTML = "";
+  glimtItems.forEach((glimt, idx) => {
+    const card = buildPreviewCard(glimt, idx);
+    container.appendChild(card);
   });
 }
 
-// ── Koble opp logikk på et nytt glimt-kort ───────────────────
-function wireCard(card) {
-  // Sørg for at kortet har en unik id (brukes av storylinen)
-  if (!card.dataset.cardId) {
-    card.dataset.cardId = uid();
-  }
+function buildPreviewCard(glimt, index) {
+  const div = document.createElement("div");
+  div.className = "glimt-preview-card";
+  div.dataset.glimtId = glimt.id;
 
-  const imageInput   = card.querySelector("[data-image]");
-  const imageEmpty   = card.querySelector("[data-image-empty]");
-  const imagePreview = card.querySelector("[data-image-preview]");
-  const imageThumb   = card.querySelector("[data-image-thumb]");
-  const imageRemove  = card.querySelector("[data-image-remove]");
-  const removeBtn    = card.querySelector("[data-remove]");
-  const saveBtn      = card.querySelector("[data-save]");
-  const saveLabel    = card.querySelector("[data-save-label]");
-  const titleInput   = card.querySelector("[data-title]");
-  const editBtn      = card.querySelector("[data-edit]");
+  const emoji = glimt.emoji ? `<span class="glimt-preview-card-emoji">${escHtml(glimt.emoji)}</span>` : "";
+  const title = escHtml(glimt.title || "Uten tittel");
+  const desc  = escHtml(glimt.desc || glimt.note || "");
+  const addr  = glimt.sted || glimt.address || "";
+  const city  = glimt.city || "";
+  const image = glimt.image || "";
+  const kostnad = glimt.kostnad || "";
 
-  // Preview-elementer (visningsvinduet)
-  const previewEl         = card.querySelector("[data-preview]");
-  const previewTitle      = card.querySelector("[data-preview-title]");
-  const previewAddressEl  = card.querySelector("[data-preview-address]");
-  const previewAddressTxt = card.querySelector("[data-preview-address-text]");
-  const previewNote       = card.querySelector("[data-preview-note]");
-  const previewImageWrap  = card.querySelector("[data-preview-image]");
-  const previewImg        = card.querySelector("[data-preview-img]");
-
-  // Live-oppdater storylinen når tittelen endres
-  if (titleInput) {
-    titleInput.addEventListener("input", renderStoryline);
-  }
-
-  // Marker kortet som aktivt når brukeren fokuserer i det
-  card.addEventListener("focusin", () => {
-    setActiveCard(card.dataset.cardId);
-  });
-
-  // Koble opp adresse-autocomplete
-  wireAddressAutocomplete(card);
-
-  // Bildeopplasting (med komprimering)
-  imageInput.addEventListener("change", async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    try {
-      // Komprimer først; fall tilbake til rå data-URL hvis noe feiler
-      let dataUrl;
-      try {
-        dataUrl = await compressImageFile(file);
-      } catch (err) {
-        console.warn("Klarte ikke å komprimere bilde, bruker original:", err);
-        dataUrl = await readImageAsDataURL(file);
-      }
-      imageThumb.src = dataUrl;
-      imageEmpty.hidden = true;
-      imagePreview.hidden = false;
-      card.dataset.imageData = dataUrl;
-    } catch (err) {
-      console.error("Kunne ikke lese bilde:", err);
-      alert("Kunne ikke laste opp bildet. Prøv et annet bilde.");
-    }
-  });
-
-  // Fjern bilde
-  imageRemove.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    imageInput.value = "";
-    imageThumb.src = "";
-    imageEmpty.hidden = false;
-    imagePreview.hidden = true;
-    delete card.dataset.imageData;
-  });
-
-  // Fjern helt kort
-  removeBtn.addEventListener("click", () => {
-    const cards = container.querySelectorAll("[data-glimt-card]");
-    if (cards.length <= 1) return; // alltid minst ett
-    if (activeCardId === card.dataset.cardId) {
-      activeCardId = null;
-    }
-    card.remove();
-    renumber();
-    renderStoryline();
-  });
-
-  // Lagre glimt – samle innholdet til et visningsvindu.
-  // Ingenting lagres permanent før hele reisebrevet sendes inn.
-  saveBtn.addEventListener("click", () => {
-    const data = collectCardData(card);
-
-    // Krev minst en tittel eller adresse eller note før vi kan "lagre"
-    if (!data.title && !data.address && !data.note && !data.image) {
-      alert("Fyll inn noe i glimtet før du lagrer det.");
-      titleInput?.focus();
-      return;
-    }
-
-    // Fyll ut preview-innhold
-    if (previewTitle) {
-      previewTitle.textContent = data.title || "Uten tittel";
-    }
-    if (previewAddressEl && previewAddressTxt) {
-      if (data.address) {
-        previewAddressTxt.textContent = data.address;
-        previewAddressEl.hidden = false;
-      } else {
-        previewAddressEl.hidden = true;
-      }
-    }
-    if (previewNote) {
-      if (data.note) {
-        previewNote.textContent = data.note;
-        previewNote.hidden = false;
-      } else {
-        previewNote.textContent = "";
-        previewNote.hidden = true;
-      }
-    }
-    if (previewImageWrap && previewImg) {
-      if (data.image) {
-        previewImg.src = data.image;
-        previewImageWrap.hidden = false;
-      } else {
-        previewImg.removeAttribute("src");
-        previewImageWrap.hidden = true;
-      }
-    }
-
-    // Bytt til visningsmodus
-    card.classList.add("is-saved");
-    card.classList.add("is-view");
-    if (saveLabel) saveLabel.textContent = "Lagre glimt";
-
-    // Oppdater storyline (viser nå tittelen)
-    renderStoryline();
-    setActiveCard(card.dataset.cardId);
-  });
-
-  // Rediger – tilbake til skjema-modus
-  if (editBtn) {
-    editBtn.addEventListener("click", () => {
-      card.classList.remove("is-view");
-      setActiveCard(card.dataset.cardId);
-      // Fokuser på tittelen og scroll kortet inn i visning
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
-      if (titleInput) {
-        setTimeout(() => titleInput.focus(), 250);
-      }
+  // Tags
+  let tagsHtml = "";
+  if (city)    tagsHtml += `<span class="glimt-preview-card-tag glimt-preview-card-tag--city">${escHtml(city)}</span>`;
+  if (kostnad) tagsHtml += `<span class="glimt-preview-card-tag glimt-preview-card-tag--cost">${escHtml(kostnad)}</span>`;
+  if (glimt.varighet) tagsHtml += `<span class="glimt-preview-card-tag">${escHtml(glimt.varighet)}</span>`;
+  if (glimt.stemning && glimt.stemning.length) {
+    glimt.stemning.slice(0, 2).forEach(s => {
+      tagsHtml += `<span class="glimt-preview-card-tag">${escHtml(s)}</span>`;
     });
   }
 
-  // Når brukeren endrer noe, fjern «lagret»-stilen (men la is-view være)
-  card.querySelectorAll("input, textarea").forEach(inp => {
-    inp.addEventListener("input", () => card.classList.remove("is-saved"));
+  div.innerHTML = `
+    ${image ? `<div class="glimt-preview-card-image"><img src="${escHtml(image)}" alt="" /></div>` : ""}
+    <div class="glimt-preview-card-body">
+      <div class="glimt-preview-card-top">
+        <span class="glimt-preview-card-number">Glimt ${index + 1}</span>
+        <div class="glimt-preview-card-actions">
+          <button type="button" class="glimt-preview-card-action-btn" data-action="edit" title="Rediger">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+            </svg>
+          </button>
+          <button type="button" class="glimt-preview-card-action-btn glimt-preview-card-action-btn--delete" data-action="delete" title="Fjern">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="glimt-preview-card-title">${emoji} ${title}</div>
+      ${addr ? `
+        <div class="glimt-preview-card-address">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <span>${escHtml(addr)}</span>
+        </div>` : ""}
+      ${desc ? `<p class="glimt-preview-card-desc">${desc}</p>` : ""}
+      ${tagsHtml ? `<div class="glimt-preview-card-tags">${tagsHtml}</div>` : ""}
+    </div>
+    <div class="glimt-preview-card-foot">
+      <span class="glimt-preview-card-status">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        Lagret
+      </span>
+      <button type="button" class="glimt-preview-card-edit" data-action="edit">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+        </svg>
+        Rediger
+      </button>
+    </div>
+  `;
+
+  // Event: klikk på kort (ikke knapper) → rediger
+  div.addEventListener("click", (e) => {
+    // Sjekk om klikk på en action-knapp
+    const actionBtn = e.target.closest("[data-action]");
+    if (actionBtn) {
+      e.stopPropagation();
+      const action = actionBtn.dataset.action;
+      if (action === "edit") {
+        openGlimtModal(glimt.id);
+      } else if (action === "delete") {
+        removeGlimt(glimt.id);
+      }
+      return;
+    }
+    // Klikk på selve kortet → åpne redigering
+    openGlimtModal(glimt.id);
   });
+
+  return div;
 }
 
-// ── Legg til et nytt glimt-kort ──────────────────────────────
-function addCard() {
-  const clone = cardTemplate.content.firstElementChild.cloneNode(true);
-  container.appendChild(clone);
-  wireCard(clone);
-  renumber();
-  setActiveCard(clone.dataset.cardId);
+function removeGlimt(id) {
+  glimtItems = glimtItems.filter(g => g.id !== id);
+  renderPreviewCards();
   renderStoryline();
-  return clone;
 }
 
-// ── Populér et kort med eksisterende data (brukt i edit-modus) ─
-function populateCard(card, data) {
-  if (!card || !data) return;
-  const titleInput   = card.querySelector("[data-title]");
-  const addressInput = card.querySelector("[data-address]");
-  const noteInput    = card.querySelector("[data-note]");
-  const imageEmpty   = card.querySelector("[data-image-empty]");
-  const imagePreview = card.querySelector("[data-image-preview]");
-  const imageThumb   = card.querySelector("[data-image-thumb]");
+// ══════════════════════════════════════════════════════════════
+//  LAGRE REISEBREV (samle glimt fra datalageret)
+// ══════════════════════════════════════════════════════════════
 
-  if (titleInput)   titleInput.value   = data.title   || "";
-  if (addressInput) addressInput.value = data.address || "";
-  if (noteInput)    noteInput.value    = data.note    || "";
-
-  // Lagre adresse-metadata på kortet
-  if (data.address) card.dataset.addressDisplay = data.address;
-  if (data.city)    card.dataset.addressCity    = data.city;
-  if (Number.isFinite(data.lat)) card.dataset.addressLat = data.lat;
-  if (Number.isFinite(data.lon)) card.dataset.addressLon = data.lon;
-  if (data.placeId) card.dataset.addressPlaceId = data.placeId;
-
-  // Bilde
-  if (data.image) {
-    card.dataset.imageData = data.image;
-    if (imageThumb) imageThumb.src = data.image;
-    if (imageEmpty) imageEmpty.hidden = true;
-    if (imagePreview) imagePreview.hidden = false;
-  }
-}
-
-// ── Last et eksisterende reisebrev inn i skjemaet (edit-modus) ─
+// ── Last et eksisterende reisebrev inn for redigering ────────
 function loadGuideForEditing(guide) {
   if (!guide || !Array.isArray(guide.glimts) || guide.glimts.length === 0) {
     return false;
   }
 
-  // Tøm container (addCard() har allerede blitt kalt i init med ett kort)
-  container.innerHTML = "";
-
-  // Lag ett kort per glimt og fyll ut data
-  guide.glimts.forEach((glimtData) => {
-    const card = addCard();
-    populateCard(card, glimtData);
-    // Legg kortet direkte i visnings-modus så brukeren ser det som
-    // et ferdig glimt med "Rediger"-knapp
-    const saveBtn = card.querySelector("[data-save]");
-    if (saveBtn) saveBtn.click();
+  // Konverter gamle glimt-format til nytt format med alle feltene
+  guide.glimts.forEach((g) => {
+    glimtItems.push({
+      id:             g.id || uid(),
+      title:          g.title || "",
+      desc:           g.desc || g.note || "",
+      sted:           g.sted || g.address || "",
+      address:        g.sted || g.address || "",
+      city:           g.city || "",
+      tips:           g.tips || "",
+      image:          g.image || "",
+      emoji:          g.emoji || "",
+      kostnad:        g.kostnad || "",
+      varighet:       g.varighet || "",
+      aktivitetsniva: g.aktivitetsniva || "",
+      hvem:           g.hvem || [],
+      budsjett:       g.budsjett || [],
+      stemning:       g.stemning || [],
+      tidspunkt:      g.tidspunkt || [],
+      createdBy:      g.createdBy || "user",
+      createdAt:      g.createdAt || new Date().toISOString()
+    });
   });
 
   // Sett reiseplan-toggle basert på lagret verdi
@@ -915,41 +964,18 @@ function loadGuideForEditing(guide) {
     submitBtn.childNodes[0].nodeValue = "Oppdater reisebrev ";
   }
 
-  renumber();
+  renderPreviewCards();
   renderStoryline();
   return true;
-}
-
-// ── Hent data fra et kort ────────────────────────────────────
-function collectCardData(card) {
-  const lat = card.dataset.addressLat
-    ? parseFloat(card.dataset.addressLat)
-    : null;
-  const lon = card.dataset.addressLon
-    ? parseFloat(card.dataset.addressLon)
-    : null;
-  return {
-    title:   card.querySelector("[data-title]").value.trim(),
-    address: card.querySelector("[data-address]").value.trim(),
-    city:    card.dataset.addressCity || "",
-    lat:     Number.isFinite(lat) ? lat : null,
-    lon:     Number.isFinite(lon) ? lon : null,
-    placeId: card.dataset.addressPlaceId || null,
-    note:    card.querySelector("[data-note]").value.trim(),
-    image:   card.dataset.imageData || ""
-  };
 }
 
 // ── Lagre hele reisebrevet i localStorage ────────────────────
 function saveGuide(e) {
   e.preventDefault();
 
-  const cards  = container.querySelectorAll("[data-glimt-card]");
-  const glimts = Array.from(cards).map(collectCardData);
-
-  // Fjern tomme glimt (uten tittel, adresse, note og bilde)
-  const filled = glimts.filter(g =>
-    g.title || g.address || g.note || g.image
+  // Bruk glimtItems direkte (all data er der allerede)
+  const filled = glimtItems.filter(g =>
+    g.title || g.address || g.sted || g.desc || g.image
   );
 
   if (filled.length === 0) {
@@ -957,14 +983,21 @@ function saveGuide(e) {
     return;
   }
 
+  // Konverter til bakoverkompatibelt format for lagring
+  const glimtsForStorage = filled.map(g => ({
+    ...g,
+    note:    g.desc || "",         // bakoverkompatibilitet
+    address: g.sted || g.address || ""
+  }));
+
   // Første glimt med tittel brukes som tittel på reisebrevet
   const mainTitle =
     filled.find(g => g.title)?.title || "Mitt reisebrev";
 
-  // Bruk normalisert by fra glimt-kortene (faller tilbake til adressen)
-  const mainCity = filled.map(g => g.city).find(c => c) || filled[0].address || "";
+  // By
+  const mainCity = filled.map(g => g.city).find(c => c) || filled[0].sted || filled[0].address || "";
 
-  // Les eksisterende glimt før vi bestemmer ID og createdAt
+  // Les eksisterende reisebrev
   let existing = [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -974,12 +1007,10 @@ function saveGuide(e) {
     }
   } catch (_) {}
 
-  // I redigeringsmodus beholder vi samme id og createdAt
   const existingGuide = editingGuideId
     ? existing.find((g) => g.id === editingGuideId)
     : null;
 
-  // Sjekk om brukeren har huket av «Lagre som reiseplan»
   const guideToggle = document.getElementById("guide-toggle-cb");
   const isReiseplan = guideToggle ? guideToggle.checked : false;
 
@@ -989,68 +1020,49 @@ function saveGuide(e) {
     city:        mainCity,
     createdAt:   existingGuide ? existingGuide.createdAt : new Date().toISOString(),
     updatedAt:   editingGuideId ? new Date().toISOString() : undefined,
-    isGuide:     isReiseplan,   // beholdt for bakoverkompatibilitet
+    isGuide:     isReiseplan,
     isReiseplan: isReiseplan,
-    glimts:      filled
-    // Merk: vi dupliserer ikke bildene i en `images`-array lenger.
-    // mine-glimt.js leser bildene direkte fra glimts for å spare plass.
+    glimts:      glimtsForStorage
   };
 
   if (editingGuideId && existingGuide) {
-    // Erstatt den eksisterende guiden på samme plass
     existing = existing.map((g) => (g.id === editingGuideId ? guide : g));
   } else {
     existing.unshift(guide);
   }
 
-  // Forsøk å lagre; håndter kvoteoverskridelse spesifikt
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
   } catch (err) {
     console.error("Kunne ikke lagre reisebrev:", err);
-
-    const isQuota =
-      err && (
-        err.name === "QuotaExceededError" ||
-        err.code === 22 ||
-        err.code === 1014 ||
-        /quota/i.test(err.message || "")
-      );
+    const isQuota = err && (
+      err.name === "QuotaExceededError" ||
+      err.code === 22 ||
+      err.code === 1014 ||
+      /quota/i.test(err.message || "")
+    );
 
     if (isQuota) {
-      // Prøv å frigjøre plass ved å droppe eldre egne reisebrev
-      // (behold bare det nyeste) og prøve på nytt
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify([guide]));
-        alert(
-          "Nettleseren er tom for plass. Vi måtte fjerne eldre reisebrev for å lagre det nye."
-        );
+        alert("Nettleseren er tom for plass. Vi måtte fjerne eldre reisebrev for å lagre det nye.");
       } catch (err2) {
-        console.error("Fortsatt ikke plass etter rensing:", err2);
-        alert(
-          "Nettleseren har ikke plass til å lagre reisebrevet. " +
-          "Prøv å bruke et mindre bilde eller færre glimt."
-        );
+        alert("Nettleseren har ikke plass til å lagre reisebrevet. Prøv færre glimt.");
         return;
       }
     } else {
-      alert(
-        "Kunne ikke lagre reisebrevet: " +
-        (err && err.message ? err.message : "ukjent feil") +
-        ". Prøv igjen."
-      );
+      alert("Kunne ikke lagre reisebrevet: " + (err.message || "ukjent feil") + ". Prøv igjen.");
       return;
     }
   }
 
-  // ── Synk med reiseplaner når «Lagre som reiseplan» er på ──
   syncReiseplan(guide);
-
-  // Gå rett til visningen av det nye reisebrevet
   window.location.href = `glimt-detalj.html?id=${encodeURIComponent(guide.id)}`;
 }
 
-// ── Lagret-glimt modal (velg eksisterende glimt) ────────────
+// ══════════════════════════════════════════════════════════════
+//  LAGRET-GLIMT MODAL (velg eksisterende glimt)
+// ══════════════════════════════════════════════════════════════
 
 function openLagretGlimtModal() {
   const overlay = document.getElementById("lagret-glimt-overlay");
@@ -1068,7 +1080,6 @@ function closeLagretGlimtModal() {
 }
 
 function populateLagretGlimtModal() {
-  // Panel 1: Egne opprettede glimt (glimt.myCreatedGlimt)
   const egnePanel = document.getElementById("lagret-panel-egne");
   let egne = [];
   try {
@@ -1083,7 +1094,6 @@ function populateLagretGlimtModal() {
     egnePanel.innerHTML = egne.map(g => buildLgCard(g, "Opprettet av deg")).join("");
   }
 
-  // Panel 2: Bokmerka glimt fra andre (glimt.savedGlimt)
   const bokmerketPanel = document.getElementById("lagret-panel-bokmerket");
   let bokmerket = [];
   try {
@@ -1111,14 +1121,18 @@ function buildLgCard(g, source) {
     ? `<div class="lg-card-thumb" style="background-image:url('${img}')"></div>`
     : `<div class="lg-card-thumb lg-card-thumb--emoji">${emoji}</div>`;
 
-  // Data-attributes for å sende videre til reisebrev-kortet
   return `
     <div class="lg-card" onclick="selectLagretGlimt(this)"
       data-lg-title="${title}"
       data-lg-address="${addr}"
       data-lg-city="${city}"
       data-lg-note="${desc}"
-      data-lg-image="${img}">
+      data-lg-image="${img}"
+      data-lg-emoji="${escHtml(g.emoji || "")}"
+      data-lg-tips="${escHtml(g.tips || "")}"
+      data-lg-kostnad="${escHtml(g.kostnad || "")}"
+      data-lg-varighet="${escHtml(g.varighet || "")}"
+      data-lg-aktivitetsniva="${escHtml(g.aktivitetsniva || "")}">
       ${thumbHtml}
       <div class="lg-card-info">
         <div class="lg-card-name">${title}</div>
@@ -1128,37 +1142,48 @@ function buildLgCard(g, source) {
     </div>`;
 }
 
+// Brukt av lagret-glimt modal: legg valgt glimt til som preview-kort
 function selectLagretGlimt(el) {
-  const title   = el.dataset.lgTitle   || "";
-  const address = el.dataset.lgAddress || "";
-  const city    = el.dataset.lgCity    || "";
-  const note    = el.dataset.lgNote    || "";
-  const image   = el.dataset.lgImage   || "";
+  const newGlimt = {
+    id:             uid(),
+    title:          el.dataset.lgTitle   || "",
+    desc:           el.dataset.lgNote    || "",
+    sted:           el.dataset.lgAddress || "",
+    address:        el.dataset.lgAddress || "",
+    city:           el.dataset.lgCity    || "",
+    tips:           el.dataset.lgTips    || "",
+    image:          el.dataset.lgImage   || "",
+    emoji:          el.dataset.lgEmoji   || "",
+    kostnad:        el.dataset.lgKostnad || "",
+    varighet:       el.dataset.lgVarighet || "",
+    aktivitetsniva: el.dataset.lgAktivitetsniva || "",
+    hvem:           [],
+    budsjett:       [],
+    stemning:       [],
+    tidspunkt:      [],
+    createdBy:      "user",
+    createdAt:      new Date().toISOString()
+  };
 
-  // Opprett et nytt glimt-kort og fyll det med dataene
-  const card = addCard();
-  populateCard(card, { title, address, city, note, image });
-
-  // Sett kortet i visnings-modus ("lagret")
-  const saveBtn = card.querySelector("[data-save]");
-  if (saveBtn) saveBtn.click();
-
-  // Scroll til det nye kortet
-  card.scrollIntoView({ behavior: "smooth", block: "center" });
-
+  glimtItems.push(newGlimt);
+  renderPreviewCards();
+  renderStoryline();
+  setActiveCard(newGlimt.id);
   closeLagretGlimtModal();
+
+  setTimeout(() => {
+    const card = container.querySelector(`[data-glimt-id="${newGlimt.id}"]`);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 100);
 }
 
 function initLagretGlimtModal() {
-  // Åpne-knapp
   const lagretBtn = document.getElementById("add-glimt-lagret");
   if (lagretBtn) lagretBtn.addEventListener("click", openLagretGlimtModal);
 
-  // Lukk-knapp
   const closeBtn = document.getElementById("lagret-glimt-close");
   if (closeBtn) closeBtn.addEventListener("click", closeLagretGlimtModal);
 
-  // Klikk utenfor
   const overlay = document.getElementById("lagret-glimt-overlay");
   if (overlay) {
     overlay.addEventListener("click", (e) => {
@@ -1166,14 +1191,12 @@ function initLagretGlimtModal() {
     });
   }
 
-  // Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && overlay && overlay.classList.contains("lagret-glimt-overlay--visible")) {
       closeLagretGlimtModal();
     }
   });
 
-  // Fane-switcher
   document.querySelectorAll(".lagret-glimt-tab").forEach(tab => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".lagret-glimt-tab").forEach(t => t.classList.remove("lagret-glimt-tab--active"));
@@ -1185,18 +1208,9 @@ function initLagretGlimtModal() {
   });
 }
 
-// Hjelpe-funksjon: HTML-escape (brukes av buildLgCard)
-function escHtml(str) {
-  const d = document.createElement("div");
-  d.textContent = str || "";
-  return d.innerHTML;
-}
-
-// ── Synkroniser reisebrev → reiseplan ────────────────────────
-// Når «Lagre som reiseplan» er huket av, opprettes/oppdateres
-// en reiseplan-entry i glimt.reiseplaner basert på reisebrevet.
-// Glimtene fra reisebrevet konverteres til dag-items.
-// Hvis toggling av, fjernes den tilhørende planen.
+// ══════════════════════════════════════════════════════════════
+//  SYNKRONISERING REISEBREV → REISEPLAN
+// ══════════════════════════════════════════════════════════════
 
 function syncReiseplan(guide) {
   const RP_KEY = "glimt.reiseplaner";
@@ -1207,13 +1221,10 @@ function syncReiseplan(guide) {
     if (!Array.isArray(plans)) plans = [];
   } catch { plans = []; }
 
-  // ID-mapping: reisebrev-id → plan-id
   const planId = "rp-from-" + guide.id;
 
   if (guide.isReiseplan) {
-    // Opprett eller oppdater reiseplan basert på reisebrevet
     const existingIdx = plans.findIndex(p => p.id === planId);
-
     const plan = {
       id:            planId,
       name:          guide.title || "Uten tittel",
@@ -1228,14 +1239,12 @@ function syncReiseplan(guide) {
       createdAt:     existingIdx >= 0 ? plans[existingIdx].createdAt : new Date().toISOString(),
       updatedAt:     new Date().toISOString()
     };
-
     if (existingIdx >= 0) {
       plans[existingIdx] = plan;
     } else {
       plans.push(plan);
     }
   } else {
-    // Fjern eventuell eksisterende plan-mal hvis toggle er av
     plans = plans.filter(p => p.id !== planId);
   }
 
@@ -1246,58 +1255,56 @@ function syncReiseplan(guide) {
   }
 }
 
-// ── Mal-definisjoner (strukturerte skjeletter) ──────────────
+// ══════════════════════════════════════════════════════════════
+//  MAL-VELGER + MAL-DEFINISJONER
+// ══════════════════════════════════════════════════════════════
+
 const REISEBREV_MALER = {
   mattur: {
     name: "Mattur",
     glimts: [
-      { title: "",  note: "", placeholder: { title: "Frokost", note: "Hvor starter dagen? Beskriv atmosfæren, smakene og det lille som gjør det spesielt." } },
-      { title: "",  note: "", placeholder: { title: "Lunsj / street food", note: "En rask matbit underveis — marked, gatekjøkken eller et lokalt funn." } },
-      { title: "",  note: "", placeholder: { title: "Middag", note: "Kveldens høydepunkt. Hva bestilte du, og hvorfor var det verdt det?" } },
-      { title: "",  note: "", placeholder: { title: "Noe søtt eller en drink", note: "Gelato, bakervare, en aperitivo — den perfekte avrundingen." } }
+      { title: "Frokost",               desc: "Hvor starter dagen? Beskriv atmosfæren, smakene og det lille som gjør det spesielt." },
+      { title: "Lunsj / street food",    desc: "En rask matbit underveis — marked, gatekjøkken eller et lokalt funn." },
+      { title: "Middag",                desc: "Kveldens høydepunkt. Hva bestilte du, og hvorfor var det verdt det?" },
+      { title: "Noe søtt eller en drink", desc: "Gelato, bakervare, en aperitivo — den perfekte avrundingen." }
     ]
   },
   kultur: {
     name: "Kulturreise",
     glimts: [
-      { title: "",  note: "", placeholder: { title: "Museum eller galleri", note: "Hva gjorde inntrykk? Et verk, et rom, en følelse." } },
-      { title: "",  note: "", placeholder: { title: "Historisk sted", note: "Ruiner, gamlebyen, en kirke — beskriv hva du så og kjente." } },
-      { title: "",  note: "", placeholder: { title: "Lokal perle", note: "Et sted guidebøkene ikke nevner. Hvordan fant du det?" } },
-      { title: "",  note: "", placeholder: { title: "Utsiktspunkt eller park", note: "Hvor stoppet du opp og bare tok inn utsikten?" } }
+      { title: "Museum eller galleri", desc: "Hva gjorde inntrykk? Et verk, et rom, en følelse." },
+      { title: "Historisk sted",       desc: "Ruiner, gamlebyen, en kirke — beskriv hva du så og kjente." },
+      { title: "Lokal perle",          desc: "Et sted guidebøkene ikke nevner. Hvordan fant du det?" },
+      { title: "Utsiktspunkt eller park", desc: "Hvor stoppet du opp og bare tok inn utsikten?" }
     ]
   },
   romantisk: {
     name: "Romantisk weekend",
     glimts: [
-      { title: "",  note: "", placeholder: { title: "Solnedgangssted", note: "Hvor så dere solen gå ned? Beskriv lyset og stemningen." } },
-      { title: "",  note: "", placeholder: { title: "Koselig restaurant", note: "Lys, meny, stemning — det perfekte måltidet for to." } },
-      { title: "",  note: "", placeholder: { title: "Rolig øyeblikk", note: "En benk, en park, en utsikt. Det stille øyeblikket dere delte." } }
+      { title: "Solnedgangssted",    desc: "Hvor så dere solen gå ned? Beskriv lyset og stemningen." },
+      { title: "Koselig restaurant",  desc: "Lys, meny, stemning — det perfekte måltidet for to." },
+      { title: "Rolig øyeblikk",      desc: "En benk, en park, en utsikt. Det stille øyeblikket dere delte." }
     ]
   },
   aktivitet: {
     name: "Aktivitetsreise",
     glimts: [
-      { title: "",  note: "", placeholder: { title: "Hovedaktivitet", note: "Vandring, sykling, kajakktur — beskriv ruten og opplevelsen." } },
-      { title: "",  note: "", placeholder: { title: "Naturhøydepunkt", note: "Utsikten, vannet, fjellet. Det øyeblikket naturen tok pusten fra deg." } },
-      { title: "",  note: "", placeholder: { title: "Lokal matpause", note: "Hvor stoppet du for å fylle energien? Enkel, god mat." } },
-      { title: "",  note: "", placeholder: { title: "Belønningen", note: "Solnedgangen etter turen, badet etterpå, den kalde drikken." } }
+      { title: "Hovedaktivitet",   desc: "Vandring, sykling, kajakktur — beskriv ruten og opplevelsen." },
+      { title: "Naturhøydepunkt",  desc: "Utsikten, vannet, fjellet. Det øyeblikket naturen tok pusten fra deg." },
+      { title: "Lokal matpause",   desc: "Hvor stoppet du for å fylle energien? Enkel, god mat." },
+      { title: "Belønningen",      desc: "Solnedgangen etter turen, badet etterpå, den kalde drikken." }
     ]
   }
 };
-
-// ── Mal-velger logikk ────────────────────────────────────────
 
 function initMalVelger() {
   const velger  = document.getElementById("mal-velger");
   const main    = document.getElementById("opprett-main");
   if (!velger || !main) return;
 
-  // Klikk på mal-kort
   velger.querySelectorAll(".mal-kort").forEach(kort => {
     kort.addEventListener("click", () => {
       const malId = kort.dataset.mal;
-
-      // Animér ut mal-velgeren
       velger.classList.add("mal-velger--leaving");
       setTimeout(() => {
         velger.style.display = "none";
@@ -1310,33 +1317,57 @@ function initMalVelger() {
 
 function applyMal(malId) {
   if (malId === "blank" || !REISEBREV_MALER[malId]) {
-    // Blank — legg til ett tomt kort (standard oppførsel)
-    addCard();
+    // Blank — ingen forhåndsutfylte glimt, bare vis tomt
     return;
   }
 
   const mal = REISEBREV_MALER[malId];
 
-  // Opprett ett glimt-kort for hvert skjelett-glimt i malen
-  mal.glimts.forEach((g, i) => {
-    const card = addCard();
-
-    // Sett placeholder-tekst på input-feltene
-    const titleInput = card.querySelector("[data-title]");
-    const noteInput  = card.querySelector("[data-note]");
-
-    if (titleInput && g.placeholder.title) {
-      titleInput.placeholder = `f.eks. ${g.placeholder.title}`;
-    }
-    if (noteInput && g.placeholder.note) {
-      noteInput.placeholder  = g.placeholder.note;
-    }
+  // Opprett et glimt for hvert skjelett i malen
+  mal.glimts.forEach((g) => {
+    glimtItems.push({
+      id:             uid(),
+      title:          g.title || "",
+      desc:           g.desc || "",
+      sted:           "",
+      address:        "",
+      city:           "",
+      tips:           "",
+      image:          "",
+      emoji:          "",
+      kostnad:        "",
+      varighet:       "",
+      aktivitetsniva: "",
+      hvem:           [],
+      budsjett:       [],
+      stemning:       [],
+      tidspunkt:      [],
+      createdBy:      "user",
+      createdAt:      new Date().toISOString()
+    });
   });
+
+  renderPreviewCards();
+  renderStoryline();
 }
 
-// ── Init ─────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Sjekk om vi er i redigeringsmodus via ?edit=<guideId>
+  // Populate by-velger i modal
+  const citySelect = document.getElementById("opprett-city-select");
+  if (citySelect && typeof CITIES !== "undefined") {
+    CITIES.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.name;
+      opt.textContent = c.name;
+      citySelect.appendChild(opt);
+    });
+  }
+
+  // Sjekk redigeringsmodus
   const urlParams = new URLSearchParams(window.location.search);
   const editId = urlParams.get("edit");
   let loadedExisting = false;
@@ -1360,50 +1391,55 @@ document.addEventListener("DOMContentLoaded", () => {
   const preselectedMal = urlParams.get("mal");
 
   if (loadedExisting) {
-    // Redigeringsmodus: hopp over mal-velger, vis skjemaet direkte
     const velger = document.getElementById("mal-velger");
     const main   = document.getElementById("opprett-main");
     if (velger) velger.style.display = "none";
     if (main) main.style.display = "";
   } else if (preselectedMal) {
-    // Direkte-lenke med ?mal=mattur — hopp over mal-velger
     const velger = document.getElementById("mal-velger");
     const main   = document.getElementById("opprett-main");
     if (velger) velger.style.display = "none";
     if (main) main.style.display = "";
     applyMal(preselectedMal);
   } else {
-    // Nytt reisebrev: vis mal-velger
     initMalVelger();
   }
 
+  // «Opprett nytt glimt»-knappen → åpne popup-modal
   addBtn.addEventListener("click", () => {
-    const card = addCard();
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
-    const firstInput = card.querySelector("[data-title]");
-    if (firstInput) setTimeout(() => firstInput.focus(), 300);
+    openGlimtModal();
   });
+
+  // «Lagre reisebrev»-knappen
   form.addEventListener("submit", saveGuide);
+
+  // Popup-modal: submit
+  if (glimtForm) {
+    glimtForm.addEventListener("submit", handleGlimtModalSubmit);
+  }
+
+  // Popup-modal: lukk
+  const modalCloseBtn = document.getElementById("opprett-modal-close");
+  if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeGlimtModal);
+
+  // Popup-modal: klikk utenfor
+  if (glimtModal) {
+    glimtModal.addEventListener("click", (e) => {
+      if (e.target === glimtModal) closeGlimtModal();
+    });
+  }
+
+  // Popup-modal: Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && glimtModal && glimtModal.style.display !== "none") {
+      closeGlimtModal();
+    }
+  });
+
+  // Autofill-knapp i modal
+  const autofillBtn = document.getElementById("opprett-autofill-btn");
+  if (autofillBtn) autofillBtn.addEventListener("click", handleOpprettAutofill);
 
   // Init lagret-glimt modal
   initLagretGlimtModal();
-
-  // Logg hvilken adresse-provider vi ender opp med
-  const announceProvider = () => {
-    console.info(
-      "Glimt adressesøk bruker:",
-      isGoogleReady() ? "Google Places" : "OpenStreetMap/Nominatim"
-    );
-  };
-  if (isGoogleReady()) {
-    announceProvider();
-  } else {
-    document.addEventListener("glimt:google-ready", announceProvider, {
-      once: true
-    });
-    // Sørg for at vi vet etter en kort ventetid hvis eventet ikke kommer
-    setTimeout(() => {
-      if (!isGoogleReady()) announceProvider();
-    }, 3000);
-  }
 });
