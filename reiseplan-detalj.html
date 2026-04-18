@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Glimt – Reiseplan</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mine-enkeltglimt.css" />
   <link rel="stylesheet" href="reiseplan-detalj.css" />
   <link rel="stylesheet" href="saved-glimt.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet" />
@@ -277,32 +278,130 @@
         </div>
         <!-- Tab: Opprett nytt -->
         <div class="glimt-modal-panel" id="glimt-panel-opprett">
-          <form class="glimt-modal-form" id="glimt-create-form">
-            <div class="glimt-form-row">
-              <label class="glimt-form-label">Emoji</label>
-              <input type="text" class="glimt-form-input glimt-form-input--emoji" id="glimt-new-emoji" value="📌" maxlength="2" />
+          <form class="meg-form" id="rpd-opprett-form" style="padding:16px 20px;max-height:70vh;overflow-y:auto">
+
+            <!-- Reiseplan-spesifikk: klokkeslett -->
+            <div class="meg-field">
+              <label class="meg-label">Klokkeslett i dagen (valgfritt)</label>
+              <input type="text" name="time" id="rpd-opprett-time" class="meg-input" placeholder="F.eks. 14:00" />
             </div>
-            <div class="glimt-form-row">
-              <label class="glimt-form-label">Tittel</label>
-              <input type="text" class="glimt-form-input" id="glimt-new-title" placeholder="F.eks. Solnedgang fra Pincio" required />
+
+            <hr class="meg-divider" />
+
+            <!-- Tittel -->
+            <div class="meg-field">
+              <label class="meg-label">Tittel <span class="meg-required">*</span></label>
+              <input type="text" name="title" class="meg-input" placeholder="F.eks. Frokost i Trastevere" required />
             </div>
-            <div class="glimt-form-row">
-              <label class="glimt-form-label">Beskrivelse</label>
-              <textarea class="glimt-form-input glimt-form-textarea" id="glimt-new-desc" placeholder="Hva gjør dette glimtet spesielt?" rows="3"></textarea>
+
+            <!-- Beskrivelse -->
+            <div class="meg-field">
+              <label class="meg-label">Beskrivelse <span class="meg-required">*</span></label>
+              <textarea name="desc" class="meg-textarea" rows="3" placeholder="Fortell om opplevelsen..." required></textarea>
             </div>
-            <div class="glimt-form-row glimt-form-row--inline">
-              <div>
-                <label class="glimt-form-label">Tidspunkt</label>
-                <input type="text" class="glimt-form-input" id="glimt-new-time" placeholder="F.eks. 14:00" />
+
+            <!-- Sted / adresse -->
+            <div class="meg-field">
+              <label class="meg-label">Sted / adresse</label>
+              <input type="text" name="sted" class="meg-input" placeholder="F.eks. Piazza Santa Maria in Trastevere, Roma" />
+            </div>
+
+            <!-- By -->
+            <div class="meg-field">
+              <label class="meg-label">By</label>
+              <select name="city" class="meg-select" id="rpd-opprett-city">
+                <option value="">Velg by (valgfritt)...</option>
+              </select>
+            </div>
+
+            <!-- Tips -->
+            <div class="meg-field">
+              <label class="meg-label">Tips (valgfritt)</label>
+              <textarea name="tips" class="meg-textarea" rows="2" placeholder="Noe andre bør vite..."></textarea>
+            </div>
+
+            <!-- Hvem passer det for -->
+            <div class="meg-field">
+              <label class="meg-label">Hvem passer det for?</label>
+              <div class="meg-chips" data-name="hvem">
+                <label class="meg-chip"><input type="checkbox" name="hvem" value="alene" /><span>Alene</span></label>
+                <label class="meg-chip"><input type="checkbox" name="hvem" value="par" /><span>Par / date</span></label>
+                <label class="meg-chip"><input type="checkbox" name="hvem" value="venner" /><span>Vennegjeng</span></label>
+                <label class="meg-chip"><input type="checkbox" name="hvem" value="familie" /><span>Familie med barn</span></label>
               </div>
-              <div>
-                <label class="glimt-form-label">Kostnad</label>
-                <input type="text" class="glimt-form-input" id="glimt-new-cost" placeholder="F.eks. Gratis, $$" />
+            </div>
+
+            <!-- Budsjett -->
+            <div class="meg-field">
+              <label class="meg-label">Budsjett</label>
+              <div class="meg-chips" data-name="budsjett">
+                <label class="meg-chip"><input type="checkbox" name="budsjett" value="gratis" /><span>Gratis</span></label>
+                <label class="meg-chip"><input type="checkbox" name="budsjett" value="lav" /><span>$ Lav</span></label>
+                <label class="meg-chip"><input type="checkbox" name="budsjett" value="middels" /><span>$$ Middels</span></label>
+                <label class="meg-chip"><input type="checkbox" name="budsjett" value="høy" /><span>$$$ Høy</span></label>
               </div>
             </div>
-            <button type="submit" class="glimt-form-submit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-              Legg til i dagen
+
+            <!-- Stemning / type -->
+            <div class="meg-field">
+              <label class="meg-label">Stemning / type</label>
+              <div class="meg-chips" data-name="stemning">
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="avslappet" /><span>Avslappet</span></label>
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="festlig" /><span>Festlig</span></label>
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="kulturelt" /><span>Kulturelt</span></label>
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="eventyrlig" /><span>Eventyrlig</span></label>
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="romantisk" /><span>Romantisk</span></label>
+                <label class="meg-chip"><input type="checkbox" name="stemning" value="naturnært" /><span>Naturnært</span></label>
+              </div>
+            </div>
+
+            <!-- Tidspunkt (kategori) -->
+            <div class="meg-field">
+              <label class="meg-label">Tid på dagen</label>
+              <div class="meg-chips" data-name="tidspunkt">
+                <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="formiddag" /><span>Formiddag</span></label>
+                <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="ettermiddag" /><span>Ettermiddag</span></label>
+                <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="kveld" /><span>Kveld</span></label>
+                <label class="meg-chip"><input type="checkbox" name="tidspunkt" value="hel_dag" /><span>Hel dag</span></label>
+              </div>
+            </div>
+
+            <!-- Aktivitetsnivå -->
+            <div class="meg-field">
+              <label class="meg-label">Aktivitetsnivå</label>
+              <div class="meg-chips" data-name="aktivitetsniva">
+                <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="lavt" /><span>Lavt</span></label>
+                <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="middels" /><span>Middels</span></label>
+                <label class="meg-chip"><input type="radio" name="aktivitetsniva" value="høyt" /><span>Høyt</span></label>
+              </div>
+            </div>
+
+            <!-- Varighet -->
+            <div class="meg-field">
+              <label class="meg-label">Varighet</label>
+              <div class="meg-chips" data-name="varighet">
+                <label class="meg-chip"><input type="radio" name="varighet" value="under1" /><span>Under 1 time</span></label>
+                <label class="meg-chip"><input type="radio" name="varighet" value="1-2" /><span>1–2 timer</span></label>
+                <label class="meg-chip"><input type="radio" name="varighet" value="2-4" /><span>2–4 timer</span></label>
+                <label class="meg-chip"><input type="radio" name="varighet" value="halvdag" /><span>Halvdag</span></label>
+                <label class="meg-chip"><input type="radio" name="varighet" value="heldag" /><span>Hel dag</span></label>
+              </div>
+            </div>
+
+            <!-- Kostnad fritekst -->
+            <div class="meg-field">
+              <label class="meg-label">Kostnad (fritekst)</label>
+              <input type="text" name="kostnad" class="meg-input" placeholder="F.eks. Gratis, Ca. 15–20 €" />
+            </div>
+
+            <!-- Emoji -->
+            <div class="meg-field">
+              <label class="meg-label">Emoji (valgfritt)</label>
+              <input type="text" name="emoji" class="meg-input meg-input-emoji" placeholder="F.eks. 🍕 🏛️ 🌅" maxlength="4" />
+            </div>
+
+            <button type="submit" class="meg-submit-btn" style="margin-top:12px">
+              <span>Legg til i dagen</span>
             </button>
           </form>
         </div>
@@ -369,6 +468,95 @@
     new MutationObserver(function(){ clearTimeout(t); t = setTimeout(function(){ updateCities(); applyFilter(); updateFilterVisibility(); }, 50); })
       .observe(modalBody, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     updateCities(); applyFilter(); updateFilterVisibility();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+<script>
+(function(){
+  function init() {
+    var form = document.getElementById('rpd-opprett-form');
+    var citySel = document.getElementById('rpd-opprett-city');
+    if (!form || !citySel) return;
+    
+    // Fyll by-dropdown fra eksisterende glimt-picker-cards
+    function populateCities() {
+      var cards = document.querySelectorAll('.glimt-picker-card');
+      var cities = new Set();
+      cards.forEach(function(c){
+        var city = (c.getAttribute('data-glimt-city') || '').trim();
+        if (city) cities.add(city);
+      });
+      var current = citySel.value;
+      var sorted = Array.from(cities).sort(function(a,b){return a.localeCompare(b,'no');});
+      citySel.innerHTML = '<option value="">Velg by (valgfritt)...</option>' +
+        sorted.map(function(c){
+          var esc = c.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+          return '<option value="'+esc+'">'+esc+'</option>';
+        }).join('');
+      if (sorted.indexOf(current) !== -1) citySel.value = current;
+    }
+    
+    // Observer for å oppdatere bylistefnår glimt-cards lastes inn
+    var body = document.querySelector('.glimt-modal-body');
+    if (body) {
+      var t;
+      new MutationObserver(function(){
+        clearTimeout(t);
+        t = setTimeout(populateCities, 50);
+      }).observe(body, { childList: true, subtree: true });
+    }
+    populateCities();
+    
+    // Chip toggling (som meg-chips i andre skjemaer)
+    form.querySelectorAll('.meg-chip input').forEach(function(inp){
+      var chip = inp.closest('.meg-chip');
+      var sync = function(){ chip.classList.toggle('meg-chip--active', inp.checked); };
+      inp.addEventListener('change', sync);
+      sync();
+    });
+    
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var fd = new FormData(form);
+      var title = (fd.get('title') || '').trim();
+      var desc = (fd.get('desc') || '').trim();
+      var sted = (fd.get('sted') || '').trim();
+      var by = (fd.get('city') || '').trim();
+      var tips = (fd.get('tips') || '').trim();
+      var kostnad = (fd.get('kostnad') || '').trim();
+      var emoji = (fd.get('emoji') || '').trim() || '📌';
+      var time = (fd.get('time') || '').trim();
+      
+      if (!title || !desc) return;
+      
+      // Bygg full beskrivelse med relevant meta
+      var parts = [desc];
+      var metaBits = [];
+      if (sted) metaBits.push('📍 ' + sted);
+      if (by) metaBits.push(by);
+      if (kostnad) metaBits.push('💰 ' + kostnad);
+      if (tips) parts.push('💡 ' + tips);
+      if (metaBits.length) parts.push(metaBits.join(' · '));
+      var tagBits = [];
+      if (time) tagBits.push(time);
+      var fullDesc = parts.filter(Boolean).join('\n');
+      if (tagBits.length) fullDesc = tagBits.join(' · ') + '\n' + fullDesc;
+      
+      if (typeof addGlimtItemToDay === 'function') {
+        addGlimtItemToDay(emoji, title, fullDesc, 'Nytt glimt');
+      } else {
+        alert('Kunne ikke legge til glimt - funksjon mangler.');
+        return;
+      }
+      
+      form.reset();
+      form.querySelectorAll('.meg-chip').forEach(function(c){ c.classList.remove('meg-chip--active'); });
+      var overlay = document.getElementById('glimt-modal-overlay');
+      if (overlay) overlay.classList.remove('glimt-modal-overlay--visible');
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
