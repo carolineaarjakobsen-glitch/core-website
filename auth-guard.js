@@ -32,11 +32,11 @@
       + ".glimt-auth-card h2 { margin: 0 0 6px; font-family: 'DM Sans', 'Poppins', sans-serif;"
       + "  font-size: 17px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.01em; }"
       + ".glimt-auth-card p  { margin: 0 0 18px; color: #666; line-height: 1.5; font-size: 13.5px; }"
-      + ".glimt-auth-btn { display: block; width: 100%; background: #EA672D; color: #fff;"
+      + ".glimt-auth-btn { display: block; width: 100%; background: #5D372A; color: #fff;"
       + "  border: none; padding: 11px; border-radius: 8px; font-family: inherit;"
       + "  font-size: 14px; font-weight: 500; cursor: pointer;"
       + "  transition: background 0.15s; }"
-      + ".glimt-auth-btn:hover  { background: #d15a24; }"
+      + ".glimt-auth-btn:hover  { background: #4a2a1f; }"
       + ".glimt-auth-link { display: block; text-align: center; margin-top: 10px; color: #999;"
       + "  font-size: 12.5px; text-decoration: none; }"
       + ".glimt-auth-link:hover { color: #1a1a1a; }";
