@@ -73,9 +73,9 @@
       +       "<path d=\"M8 11V7a4 4 0 0 1 8 0v4\"/>"
       +     "</svg>"
       +   "</div>"
-      +   "<h2 id=\"glimt-auth-title\">Logg inn for aa fortsette</h2>"
-      +   "<p>Du maa vaere innlogget for aa bruke denne siden. "
-      +     "Logg inn eller opprett en konto for aa komme i gang.</p>"
+      +   "<h2 id=\"glimt-auth-title\">Logg inn for å fortsette</h2>"
+      +   "<p>Du må være innlogget for å bruke denne siden. "
+      +     "Logg inn eller opprett en konto for å komme i gang.</p>"
       +   "<button type=\"button\" class=\"glimt-auth-btn\" id=\"glimt-auth-login-btn\">Logg inn</button>"
       +   "<a class=\"glimt-auth-link\" href=\"index.html\">Tilbake til forsiden</a>"
       + "</div>";
