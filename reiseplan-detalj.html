@@ -8,6 +8,17 @@
   <link rel="stylesheet" href="reiseplan-detalj.css" />
   <link rel="stylesheet" href="saved-glimt.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet" />
+
+<style id="glimt-filterbar-style">
+.glimt-filterbar { display: flex; gap: 8px; padding: 10px 20px 12px; border-bottom: 1px solid #f0f0f0; background: #fff; }
+.glimt-filterbar-search { flex: 1; position: relative; }
+.glimt-filterbar-search input { width: 100%; padding: 9px 12px 9px 34px; border: 1px solid #e4e4e4; border-radius: 8px; font: 500 13.5px 'Poppins', sans-serif; background: #fafafa; color: #1a1a1a; box-sizing: border-box; }
+.glimt-filterbar-search input:focus { outline: none; border-color: #5D372A; background: #fff; }
+.glimt-filterbar-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none; }
+.glimt-filterbar-city { padding: 9px 12px; border: 1px solid #e4e4e4; border-radius: 8px; font: 500 13.5px 'Poppins', sans-serif; background: #fafafa; color: #1a1a1a; min-width: 140px; cursor: pointer; }
+.glimt-filterbar-city:focus { outline: none; border-color: #5D372A; }
+.glimt-filterbar--hidden { display: none !important; }
+</style>
 </head>
 <body class="rpd-body">
 
@@ -246,6 +257,15 @@
           Opprett nytt
         </button>
       </div>
+            <div class="glimt-filterbar" id="gm-filterbar">
+        <div class="glimt-filterbar-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="gm-filter-search" placeholder="Søk i glimt..." />
+        </div>
+        <select class="glimt-filterbar-city" id="gm-filter-city">
+          <option value="">Alle byer</option>
+        </select>
+      </div>
       <div class="glimt-modal-body">
         <!-- Tab: Mine glimt -->
         <div class="glimt-modal-panel glimt-modal-panel--active" id="glimt-panel-mine">
@@ -299,5 +319,60 @@
   <script src="saved-glimt.js"></script>
   <script src="reiseplan-detalj.js"></script>
 <script src="mobile-nav.js"></script>
+
+<script>
+(function(){
+  function init() {
+    var searchInput = document.getElementById('gm-filter-search');
+    var citySelect = document.getElementById('gm-filter-city');
+    var modalBody = document.querySelector('.glimt-modal-body');
+    var filterbar = document.getElementById('gm-filterbar');
+    if (!searchInput || !citySelect || !modalBody) return;
+    function updateCities(){
+      var cards = modalBody.querySelectorAll('.glimt-picker-card');
+      var cities = new Set();
+      cards.forEach(function(c){
+        var city = (c.getAttribute('data-glimt-city') || '').trim();
+        if (city) cities.add(city);
+      });
+      var current = citySelect.value;
+      var sorted = Array.from(cities).sort(function(a,b){return a.localeCompare(b,'no');});
+      citySelect.innerHTML = '<option value="">Alle byer</option>' +
+        sorted.map(function(c){
+          var esc = c.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+          return '<option value="'+esc+'">'+esc+'</option>';
+        }).join('');
+      if (sorted.indexOf(current) !== -1) citySelect.value = current;
+    }
+    function applyFilter(){
+      var q = searchInput.value.trim().toLowerCase();
+      var city = citySelect.value;
+      modalBody.querySelectorAll('.glimt-picker-card').forEach(function(c){
+        var t = (c.getAttribute('data-glimt-title')||'').toLowerCase();
+        var d = (c.getAttribute('data-glimt-desc')||'').toLowerCase();
+        var cc = (c.getAttribute('data-glimt-city')||'').trim();
+        var ms = !q || t.indexOf(q)!==-1 || d.indexOf(q)!==-1 || cc.toLowerCase().indexOf(q)!==-1;
+        var mc = !city || cc === city;
+        c.style.display = (ms && mc) ? '' : 'none';
+      });
+    }
+    function updateFilterVisibility(){
+      var opprettActive = document.querySelector('#glimt-panel-opprett.glimt-modal-panel--active');
+      if (filterbar) filterbar.classList.toggle('glimt-filterbar--hidden', !!opprettActive);
+    }
+    searchInput.addEventListener('input', applyFilter);
+    citySelect.addEventListener('change', applyFilter);
+    document.querySelectorAll('.glimt-modal-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){ setTimeout(updateFilterVisibility, 30); });
+    });
+    var t;
+    new MutationObserver(function(){ clearTimeout(t); t = setTimeout(function(){ updateCities(); applyFilter(); updateFilterVisibility(); }, 50); })
+      .observe(modalBody, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    updateCities(); applyFilter(); updateFilterVisibility();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 </body>
 </html>
