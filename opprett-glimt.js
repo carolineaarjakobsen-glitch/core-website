@@ -1014,9 +1014,13 @@ function saveGuide(e) {
   const guideToggle = document.getElementById("guide-toggle-cb");
   const isReiseplan = guideToggle ? guideToggle.checked : false;
 
+  const customTitle = ((document.getElementById("guide-title-input") || {}).value || "").trim();
+  const customSubtitle = ((document.getElementById("guide-subtitle-input") || {}).value || "").trim();
+
   const guide = {
     id:          existingGuide ? existingGuide.id : uid(),
-    title:       mainTitle,
+    title:       customTitle || mainTitle,
+    subtitle:    customSubtitle,
     city:        mainCity,
     spotifyUrl:  (document.getElementById("guide-spotify-url") || {}).value || "",
     createdAt:   existingGuide ? existingGuide.createdAt : new Date().toISOString(),
@@ -1444,3 +1448,34 @@ document.addEventListener("DOMContentLoaded", () => {
   // Init lagret-glimt modal
   initLagretGlimtModal();
 });
+
+
+// ── Robust edit-mode init (title/subtitle/spotify) ────────────
+// robust-edit-init
+(function () {
+  function runInit() {
+    var params = new URLSearchParams(window.location.search);
+    var editId = params.get("edit");
+    if (!editId) return;
+    try {
+      var raw = localStorage.getItem("glimt.userGlimts");
+      if (!raw) return;
+      var list = JSON.parse(raw);
+      var guide = list.find(function (g) { return g.id === editId; });
+      if (!guide) return;
+      var ti = document.getElementById("guide-title-input");
+      var si = document.getElementById("guide-subtitle-input");
+      var sp = document.getElementById("guide-spotify-url");
+      var prev = document.getElementById("spotify-embed-preview");
+      if (ti && !ti.value) ti.value = guide.title || "";
+      if (si && !si.value) si.value = guide.subtitle || "";
+      if (sp && !sp.value) sp.value = guide.spotifyUrl || "";
+      if (sp && prev && window.renderSpotifyEmbed) window.renderSpotifyEmbed(sp.value, prev);
+    } catch (e) { console.warn("Edit-mode init failed:", e); }
+  }
+  // Kjør flere ganger for å fange forskjellige load-tidspunkter
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", runInit);
+  else runInit();
+  setTimeout(runInit, 300);
+  setTimeout(runInit, 1000);
+})();

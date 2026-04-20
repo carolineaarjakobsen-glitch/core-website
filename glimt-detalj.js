@@ -269,7 +269,8 @@ function renderGuide(guide) {
   main.innerHTML = `
     <section class="detalj-header">
       <div class="detalj-eyebrow">Reisebrev</div>
-      <h1 class="detalj-title">${escapeHtml(guide.title || "Uten tittel")}</h1>
+      <h1 class="detalj-title" data-edit-field="title" data-owner="${isOwner ? '1' : '0'}">${escapeHtml(guide.title || "Uten tittel")}</h1>
+      <p class="detalj-subtitle" data-edit-field="subtitle" data-owner="${isOwner ? '1' : '0'}" data-empty="${guide.subtitle ? '0' : '1'}">${escapeHtml(guide.subtitle || (isOwner ? 'Legg til en undertekst...' : ''))}</p>
       <div class="detalj-meta">
         <span>${escapeHtml(formatDate(guide.createdAt))}</span>
         <span class="detalj-meta-dot"></span>
@@ -374,3 +375,70 @@ document.addEventListener("DOMContentLoaded", () => {
   document.title = `Glimt – ${guide.title || "Reisebrev"}`;
   renderGuide(guide);
 });
+
+
+// ── Inline edit for tittel + undertekst ────────────────────────
+function initInlineEdit(guideId) {
+  var fields = document.querySelectorAll('[data-edit-field][data-owner="1"]');
+  fields.forEach(function (el) {
+    el.contentEditable = "true";
+    el.setAttribute("spellcheck", "false");
+    // Fjern placeholder-tekst ved fokus hvis undertekst er tom
+    el.addEventListener("focus", function () {
+      if (el.dataset.empty === "1") {
+        el.textContent = "";
+        el.dataset.empty = "0";
+      }
+    });
+    el.addEventListener("blur", function () {
+      var field = el.dataset.editField;
+      var newVal = el.textContent.trim();
+      // Unngå å lagre placeholder-tekst
+      if (field === "title" && !newVal) {
+        el.textContent = "Uten tittel";
+      }
+      if (field === "subtitle" && !newVal) {
+        el.dataset.empty = "1";
+        el.textContent = "Legg til en undertekst...";
+      }
+      // Hent guide fra storage og oppdater
+      try {
+        var all = (typeof loadGuides === "function") ? loadGuides() : [];
+        var idx = all.findIndex(function (g) { return g.id === guideId; });
+        if (idx < 0) return;
+        var currentVal = (all[idx][field] || "").trim();
+        if (field === "title" && newVal === "Uten tittel") newVal = "";
+        if (field === "subtitle" && newVal === "Legg til en undertekst...") newVal = "";
+        if (newVal === currentVal) return;
+        all[idx][field] = newVal;
+        all[idx].updatedAt = new Date().toISOString();
+        if (typeof saveGuides === "function") saveGuides(all);
+      } catch (e) { console.error("Kunne ikke lagre:", e); }
+    });
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); el.blur(); }
+      if (e.key === "Escape") { el.blur(); }
+    });
+  });
+}
+
+// Hook inn init ved render
+(function () {
+  var origRender = window.renderGuide;
+  if (typeof origRender === "function") {
+    window.renderGuide = function (guide) {
+      var r = origRender.apply(this, arguments);
+      if (guide && guide.id) setTimeout(function () { initInlineEdit(guide.id); }, 50);
+      return r;
+    };
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      setTimeout(function () {
+        var titleEl = document.querySelector('[data-edit-field="title"]');
+        var params = new URLSearchParams(window.location.search);
+        var id = params.get("id");
+        if (titleEl && id) initInlineEdit(id);
+      }, 200);
+    });
+  }
+})();
