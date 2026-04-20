@@ -701,6 +701,7 @@ function handleGlimtModalSubmit(e) {
     city:           data.get("city") || "",
     tips:           data.get("tips")?.trim() || "",
     image:          data.get("image")?.trim() || "",
+    image2:         data.get("image2")?.trim() || "",
     emoji:          data.get("emoji")?.trim() || "",
     kostnad:        data.get("kostnad")?.trim() || "",
     varighet:       data.get("varighet") || "",
@@ -932,6 +933,7 @@ function loadGuideForEditing(guide) {
       city:           g.city || "",
       tips:           g.tips || "",
       image:          g.image || "",
+      image2:         g.image2 || "",
       emoji:          g.emoji || "",
       kostnad:        g.kostnad || "",
       varighet:       g.varighet || "",
@@ -1133,6 +1135,7 @@ function buildLgCard(g, source) {
       data-lg-city="${city}"
       data-lg-note="${desc}"
       data-lg-image="${img}"
+      data-lg-image2="${escHtml(g.image2 || "")}"
       data-lg-emoji="${escHtml(g.emoji || "")}"
       data-lg-tips="${escHtml(g.tips || "")}"
       data-lg-kostnad="${escHtml(g.kostnad || "")}"
@@ -1158,6 +1161,7 @@ function selectLagretGlimt(el) {
     city:           el.dataset.lgCity    || "",
     tips:           el.dataset.lgTips    || "",
     image:          el.dataset.lgImage   || "",
+    image2:         el.dataset.lgImage2  || "",
     emoji:          el.dataset.lgEmoji   || "",
     kostnad:        el.dataset.lgKostnad || "",
     varighet:       el.dataset.lgVarighet || "",
@@ -1339,6 +1343,7 @@ function applyMal(malId) {
       city:           "",
       tips:           "",
       image:          "",
+      image2:         "",
       emoji:          "",
       kostnad:        "",
       varighet:       "",

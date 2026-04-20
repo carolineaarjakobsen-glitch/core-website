@@ -73,47 +73,75 @@ function renderNotFound() {
 
 // ── Render ett enkelt glimt ──────────────────────────────────
 function renderGlimt(glimt, index) {
-  const imageHtml = glimt.image
-    ? `<div class="detalj-glimt-image" style="background-image:url('${glimt.image}')"></div>`
-    : "";
+  const img1 = glimt.image || "";
+  const img2 = glimt.image2 || "";
+  const hasAny = !!(img1 || img2);
+  const hasBoth = !!(img1 && img2);
+  const mainImg = img1 || img2;
 
-  const addressHtml = glimt.address
-    ? `<div class="detalj-glimt-address">
-         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  const photosHtml = hasBoth
+    ? `<div class="postcard-photos">
+         <div class="postcard-photo postcard-photo--main" style="background-image:url('${img1}')"></div>
+         <div class="postcard-photo postcard-photo--secondary" style="background-image:url('${img2}')"></div>
+       </div>`
+    : hasAny
+    ? `<div class="postcard-photos postcard-photos--single">
+         <div class="postcard-photo postcard-photo--main" style="background-image:url('${mainImg}')"></div>
+       </div>`
+    : `<div class="postcard-photos postcard-photos--single">
+         <div class="postcard-photo postcard-photo--empty"></div>
+       </div>`;
+
+  const address = glimt.address || glimt.sted || "";
+  const city = glimt.city || "";
+  const title = glimt.title || "Uten tittel";
+  const emoji = glimt.emoji || "✈️";
+  const desc = glimt.desc || glimt.note || "";
+
+  const addressHtml = address
+    ? `<div class="postcard-address">
+         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
            <circle cx="12" cy="9" r="2.5"/>
          </svg>
-         ${escapeHtml(glimt.address)}
+         ${escapeHtml(address)}
        </div>`
     : "";
 
-  const noteHtml = glimt.note
-    ? `<p class="detalj-glimt-note">${escapeHtml(glimt.note)}</p>`
+  const postmarkHtml = city
+    ? `<div class="postcard-postmark">
+         <div class="postcard-postmark-city">${escapeHtml(city)}</div>
+         <div class="postcard-postmark-dots">• • •</div>
+       </div>`
     : "";
 
-  // Lagre-knapp (kun for andre sine reisebrev / demos)
-  const glimtSaveId = `${guideId}-glimt-${index}`;
-  const isSaved = typeof isGlimtSaved === "function" && isGlimtSaved(glimtSaveId);
+  const glimtSaveId = "glimt-" + (glimt.title || "").replace(/\s+/g, "-").toLowerCase() + "-" + index;
+  const isSaved = typeof isGlimtSaved === "function" ? isGlimtSaved(glimtSaveId) : false;
   const saveBtn = `
     <button class="save-glimt-btn ${isSaved ? 'save-glimt-btn--saved' : ''}"
             data-save-id="${glimtSaveId}"
             data-save-title="${escapeHtml(glimt.title || 'Uten tittel')}"
-            data-save-image="${glimt.image || ''}"
-            data-save-note="${escapeHtml(glimt.note || '')}"
+            data-save-image="${img1 || ''}"
+            data-save-note="${escapeHtml(desc)}"
             onclick="toggleSaveGlimtEntry(this)">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       ${isSaved ? 'Lagret' : 'Lagre glimt'}
     </button>`;
 
   return `
-    <article class="detalj-glimt">
-      <div class="detalj-glimt-number">${index + 1}</div>
-      ${imageHtml}
-      <div class="detalj-glimt-content">
-        <h2 class="detalj-glimt-title">${escapeHtml(glimt.title || "Uten tittel")}</h2>
+    <article class="postcard">
+      ${photosHtml}
+      <div class="postcard-content">
+        <div class="postcard-index">N° ${String(index + 1).padStart(2, "0")}</div>
+        <div class="postcard-stamp">
+          <div class="postcard-stamp-inner">${escapeHtml(emoji)}</div>
+        </div>
+        ${postmarkHtml}
+        <h3 class="postcard-title">${escapeHtml(title)}</h3>
         ${addressHtml}
-        ${noteHtml}
-        ${saveBtn}
+        <div class="postcard-divider"></div>
+        <div class="postcard-message">${escapeHtml(desc)}</div>
+        <div class="postcard-footer">${saveBtn}</div>
       </div>
     </article>
   `;

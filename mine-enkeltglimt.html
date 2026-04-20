@@ -247,7 +247,7 @@
           </label>
           <input type="url" name="image" class="meg-input" placeholder="https://images.unsplash.com/..." />
         
-          <div class="img-upload-wrap">
+          <div class="img-upload-wrap" data-target-name="image">
             <input type="file" class="img-upload-file" accept="image/*" hidden />
             <button type="button" class="img-upload-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -264,6 +264,31 @@
             <div class="img-upload-error" hidden></div>
           </div>
 </div>
+        <!-- Bilde 2 -->
+        <div class="meg-field">
+          <label class="meg-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Bilde 2 (valgfritt)
+          </label>
+          <input type="url" name="image2" class="meg-input" placeholder="Ekstra bilde — f.eks. nærbilde eller alternativ vinkel" />
+          <div class="img-upload-wrap" data-target-name="image2">
+            <input type="file" class="img-upload-file" accept="image/*" hidden />
+            <button type="button" class="img-upload-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Last opp bilde fra enhet
+            </button>
+            <div class="img-upload-progress" hidden>
+              <div class="img-upload-progressbar"><div class="img-upload-bar"></div></div>
+              <span class="img-upload-text">0%</span>
+            </div>
+            <div class="img-upload-preview" hidden>
+              <img class="img-upload-thumb" alt="" />
+              <button type="button" class="img-upload-remove" aria-label="Fjern bilde" title="Fjern bilde">×</button>
+            </div>
+            <div class="img-upload-error" hidden></div>
+          </div>
+        </div>
+
 
         <hr class="meg-divider" />
 

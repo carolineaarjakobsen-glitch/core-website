@@ -412,6 +412,7 @@ function handleCreateGlimt(e) {
         city:           data.get("city") || "",
         tips:           data.get("tips")?.trim() || "",
         image:          data.get("image")?.trim() || "",
+        image2:         data.get("image2")?.trim() || "",
         emoji:          data.get("emoji")?.trim() || "",
         kostnad:        data.get("kostnad")?.trim() || "",
         varighet:       data.get("varighet") || "",
@@ -436,6 +437,7 @@ function handleCreateGlimt(e) {
     city:           data.get("city") || "",
     tips:           data.get("tips")?.trim() || "",
     image:          data.get("image")?.trim() || "",
+        image2:         data.get("image2")?.trim() || "",
     emoji:          data.get("emoji")?.trim() || "",
     kostnad:        data.get("kostnad")?.trim() || "",
     varighet:       data.get("varighet") || "",
@@ -476,6 +478,7 @@ function editMyGlimt(id) {
   setVal("city", g.city);
   setVal("tips", g.tips);
   setVal("image", g.image);
+  setVal("image2", g.image2);
   setVal("emoji", g.emoji);
   setVal("kostnad", g.kostnad);
 

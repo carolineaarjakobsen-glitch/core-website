@@ -1,17 +1,23 @@
 // ============================================================
 //  Glimt - image-upload.js (Cloudinary)
-//  Gjenbrukbar opplastingskomponent via Cloudinary unsigned upload.
-//  Finner alle .img-upload-wrap og kobler til nærmeste
-//  input[name='image'] i samme forelder.
+//  Støtter flere bilder per skjema via data-target-name.
 // ============================================================
 
 (function () {
   "use strict";
-
   var CLOUD_NAME    = "dvuhbkzkz";
   var UPLOAD_PRESET = "glimt_uploads";
   var UPLOAD_URL    = "https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/image/upload";
   var MAX_SIZE      = 10 * 1024 * 1024;
+
+  function findTargetInput(wrap) {
+    var targetName = wrap.dataset.targetName;
+    if (targetName) {
+      var form = wrap.closest("form") || document;
+      return form.querySelector("input[name='" + targetName + "']");
+    }
+    return wrap.parentElement && wrap.parentElement.querySelector("input[name='image']");
+  }
 
   function initWidget(wrap) {
     if (wrap.dataset.inited) return;
@@ -25,7 +31,7 @@
     var thumb       = wrap.querySelector(".img-upload-thumb");
     var removeBtn   = wrap.querySelector(".img-upload-remove");
     var errorEl     = wrap.querySelector(".img-upload-error");
-    var urlInput    = wrap.parentElement && wrap.parentElement.querySelector("input[name='image']");
+    var urlInput    = findTargetInput(wrap);
     if (!fileInput || !btn || !urlInput) return;
 
     function showError(m) { if (errorEl) { errorEl.textContent = m; errorEl.hidden = false; } else alert(m); }
@@ -50,15 +56,12 @@
       hideError();
       if (!/^image\//.test(file.type)) { showError("Filen må være et bilde."); fileInput.value = ""; return; }
       if (file.size > MAX_SIZE) { showError("Bildet er for stort (maks 10 MB)."); fileInput.value = ""; return; }
-
       if (progress) progress.hidden = false;
       setProgress(0);
       btn.disabled = true;
-
       var formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", UPLOAD_PRESET);
-
       var xhr = new XMLHttpRequest();
       xhr.open("POST", UPLOAD_URL);
       xhr.upload.addEventListener("progress", function (e) {
@@ -76,7 +79,7 @@
               urlInput.dispatchEvent(new Event("input", { bubbles: true }));
               urlInput.dispatchEvent(new Event("change", { bubbles: true }));
               showPreview(url);
-            } else { showError("Opplastingen returnerte ingen URL."); }
+            } else showError("Opplastingen returnerte ingen URL.");
           } catch (e) { showError("Kunne ikke tolke svar fra Cloudinary."); }
         } else {
           try {
@@ -92,7 +95,6 @@
       });
       xhr.send(formData);
     });
-
     if (urlInput.value) showPreview(urlInput.value);
     urlInput.addEventListener("input", function () {
       if (urlInput.value) showPreview(urlInput.value); else hidePreview();
