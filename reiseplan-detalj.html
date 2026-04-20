@@ -22,6 +22,7 @@
 </style>
 <style id="img-upload-style">
 .img-upload-wrap { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.img-upload-wrap [hidden] { display: none !important; }
 .img-upload-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px dashed #ccc; border-radius: 8px; background: #fafafa; color: #5D372A; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
 .img-upload-btn:hover:not(:disabled) { background: #f0ead8; border-color: #5D372A; }
 .img-upload-btn:disabled { opacity: 0.6; cursor: wait; }
@@ -352,7 +353,7 @@
               <span class="img-upload-text">0%</span>
             </div>
             <div class="img-upload-preview" hidden>
-              <img class="img-upload-thumb" alt="Forhåndsvisning" />
+              <img class="img-upload-thumb" alt="" />
               <button type="button" class="img-upload-remove" aria-label="Fjern bilde" title="Fjern bilde">×</button>
             </div>
             <div class="img-upload-error" hidden></div>
