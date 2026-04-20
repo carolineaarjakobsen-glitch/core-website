@@ -269,8 +269,8 @@ function renderGuide(guide) {
   main.innerHTML = `
     <section class="detalj-header">
       <div class="detalj-eyebrow">Reisebrev</div>
-      <h1 class="detalj-title" data-edit-field="title" data-owner="${isOwner ? '1' : '0'}">${escapeHtml(guide.title || "Uten tittel")}</h1>
-      <p class="detalj-subtitle" data-edit-field="subtitle" data-owner="${isOwner ? '1' : '0'}" data-empty="${guide.subtitle ? '0' : '1'}">${escapeHtml(guide.subtitle || (isOwner ? 'Legg til en undertekst...' : ''))}</p>
+      <h1 class="detalj-title" data-edit-field="title" data-owner="${!isDemo ? '1' : '0'}">${escapeHtml(guide.title || "Uten tittel")}</h1>
+      <p class="detalj-subtitle" data-edit-field="subtitle" data-owner="${!isDemo ? '1' : '0'}" data-empty="${guide.subtitle ? '0' : '1'}">${escapeHtml(guide.subtitle || (!isDemo ? 'Legg til en undertekst...' : ''))}</p>
       <div class="detalj-meta">
         <span>${escapeHtml(formatDate(guide.createdAt))}</span>
         <span class="detalj-meta-dot"></span>
