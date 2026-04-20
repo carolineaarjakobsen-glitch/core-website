@@ -97,6 +97,10 @@ function buildMyGlimtCard(g) {
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
             Legg til i plan
           </button>
+          <button class="meg-card-action meg-card-action--edit" onclick="editMyGlimt('${esc(g.id)}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Rediger
+          </button>
           <button class="meg-card-action meg-card-action--delete" onclick="confirmDeleteGlimt('${esc(g.id)}')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1.5 14a2 2 0 01-2 2h-7a2 2 0 01-2-2L5 6"/></svg>
             Slett
@@ -233,6 +237,14 @@ function closeModal() {
   // Reset form
   const form = document.getElementById("meg-form");
   if (form) form.reset();
+
+  // Reset edit-state
+  const editIdEl = document.getElementById("opprett-edit-id");
+  const titleEl = document.getElementById("opprett-modal-title");
+  const submitTextEl = document.getElementById("opprett-modal-submit-text");
+  if (editIdEl) editIdEl.value = "";
+  if (titleEl) titleEl.textContent = "Opprett nytt glimt";
+  if (submitTextEl) submitTextEl.textContent = "Legg til glimt";
 
   // Reset autofill
   const urlInput = document.getElementById("meg-url-input");
@@ -375,8 +387,8 @@ function showAutofillStatus(message, type) {
 function handleCreateGlimt(e) {
   e.preventDefault();
 
+  const data = new FormData(e.target);
   const form = e.target;
-  const data = new FormData(form);
 
   // Samle checkbox-verdier
   const hvem      = data.getAll("hvem");
@@ -384,6 +396,38 @@ function handleCreateGlimt(e) {
   const stemning  = data.getAll("stemning");
   const tidspunkt = data.getAll("tidspunkt");
 
+  const editId = (document.getElementById("opprett-edit-id") || {}).value || "";
+  const list = loadMyGlimt();
+
+  if (editId) {
+    // ── Rediger eksisterende glimt ──
+    const idx = list.findIndex(x => x.id === editId);
+    if (idx >= 0) {
+      const existing = list[idx];
+      list[idx] = {
+        ...existing,
+        title:          data.get("title")?.trim() || "",
+        desc:           data.get("desc")?.trim() || "",
+        sted:           data.get("sted")?.trim() || "",
+        city:           data.get("city") || "",
+        tips:           data.get("tips")?.trim() || "",
+        image:          data.get("image")?.trim() || "",
+        emoji:          data.get("emoji")?.trim() || "",
+        kostnad:        data.get("kostnad")?.trim() || "",
+        varighet:       data.get("varighet") || "",
+        aktivitetsniva: data.get("aktivitetsniva") || "",
+        hvem, budsjett, stemning, tidspunkt,
+        updatedAt:      new Date().toISOString()
+      };
+      saveMyGlimt(list);
+      closeModal();
+      renderMineTab();
+      showToast("Glimtet ble oppdatert!", "success");
+      return;
+    }
+  }
+
+  // ── Opprett nytt glimt ──
   const glimt = {
     id:             uid(),
     title:          data.get("title")?.trim() || "",
@@ -404,15 +448,58 @@ function handleCreateGlimt(e) {
     createdAt:      new Date().toISOString()
   };
 
-  // Lagre
-  const list = loadMyGlimt();
   list.unshift(glimt);
   saveMyGlimt(list);
 
-  // Lukk modal og oppdater
   closeModal();
   renderMineTab();
   showToast("Glimtet ble opprettet!", "success");
+}
+
+// ── Rediger glimt ───────────────────────────────────────────
+function editMyGlimt(id) {
+  const list = loadMyGlimt();
+  const g = list.find(x => x.id === id);
+  if (!g) return;
+
+  const form = document.getElementById("opprett-glimt-form");
+  const modal = document.getElementById("opprett-glimt-modal");
+  if (!form || !modal) return;
+
+  form.reset();
+
+  // Tekstfelter
+  const setVal = (name, v) => { const el = form.querySelector(`[name="${name}"]`); if (el) el.value = v || ""; };
+  setVal("title", g.title);
+  setVal("desc", g.desc);
+  setVal("sted", g.sted);
+  setVal("city", g.city);
+  setVal("tips", g.tips);
+  setVal("image", g.image);
+  setVal("emoji", g.emoji);
+  setVal("kostnad", g.kostnad);
+
+  // Vis bildeforhåndsvisning hvis det finnes (trigger image-upload widget)
+  const imgInput = form.querySelector('[name="image"]');
+  if (imgInput) imgInput.dispatchEvent(new Event("input", { bubbles: true }));
+
+  // Chips og radioer
+  setCheckboxes(form, "hvem", g.hvem || []);
+  setCheckboxes(form, "budsjett", g.budsjett || []);
+  setCheckboxes(form, "stemning", g.stemning || []);
+  setCheckboxes(form, "tidspunkt", g.tidspunkt || []);
+  setRadio(form, "aktivitetsniva", g.aktivitetsniva || "");
+  setRadio(form, "varighet", g.varighet || "");
+
+  // Sett edit-id og oppdater modal-tittel
+  const editIdEl = document.getElementById("opprett-edit-id");
+  const titleEl = document.getElementById("opprett-modal-title");
+  const submitTextEl = document.getElementById("opprett-modal-submit-text");
+  if (editIdEl) editIdEl.value = id;
+  if (titleEl) titleEl.textContent = "Rediger glimt";
+  if (submitTextEl) submitTextEl.textContent = "Lagre endringer";
+
+  openModal();
 }
 
 // ── Init ────────────────────────────────────────────────────
