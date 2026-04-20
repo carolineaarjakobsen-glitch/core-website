@@ -302,15 +302,15 @@
 
             <!-- Sted / adresse -->
             <div class="meg-field">
-              <label class="meg-label">Sted / adresse</label>
-              <input type="text" name="sted" class="meg-input" placeholder="F.eks. Piazza Santa Maria in Trastevere, Roma" />
+              <label class="meg-label">Sted / adresse <span class="meg-required">*</span></label>
+              <input type="text" name="sted" class="meg-input" placeholder="F.eks. Piazza Santa Maria in Trastevere, Roma" required />
             </div>
 
             <!-- By -->
             <div class="meg-field">
-              <label class="meg-label">By</label>
-              <select name="city" class="meg-select" id="rpd-opprett-city">
-                <option value="">Velg by (valgfritt)...</option>
+              <label class="meg-label">By <span class="meg-required">*</span></label>
+              <select name="city" class="meg-select" id="rpd-opprett-city" required>
+                <option value="" disabled selected>Velg by...</option>
               </select>
             </div>
 
@@ -318,6 +318,13 @@
             <div class="meg-field">
               <label class="meg-label">Tips (valgfritt)</label>
               <textarea name="tips" class="meg-textarea" rows="2" placeholder="Noe andre bør vite..."></textarea>
+            </div>
+
+            
+            <!-- Bildelenke -->
+            <div class="meg-field">
+              <label class="meg-label">Bilde (URL)</label>
+              <input type="url" name="image" class="meg-input" placeholder="https://images.unsplash.com/..." />
             </div>
 
             <!-- Hvem passer det for -->
