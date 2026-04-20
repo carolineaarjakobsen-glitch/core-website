@@ -36,6 +36,33 @@
 .img-upload-remove:hover { background: rgba(0,0,0,0.9); }
 .img-upload-error { color: #c72; font-size: 13px; padding: 6px 10px; background: #fff4e6; border-radius: 6px; }
 </style>
+<style id="spotify-style">
+.spotify-field { background: #fff; border-radius: 14px; padding: 14px 18px; box-shadow: 0 3px 14px rgba(93,55,42,0.06); border: 1px solid rgba(93,55,42,0.08); }
+.spotify-field-label { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 500; color: #5D372A; margin-bottom: 6px; }
+.spotify-field-label svg { color: #1DB954; }
+.spotify-field-input { width: 100%; border: 1px solid #e4e4e4; background: #fafafa; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 0.88rem; color: #1a1a1a; box-sizing: border-box; }
+.spotify-field-input:focus { outline: none; border-color: #5D372A; background: #fff; }
+.spotify-embed-container { margin-top: 10px; }
+.spotify-embed-container iframe { border-radius: 12px; display: block; width: 100%; border: none; }
+.rpd-spotify-section { max-width: 1240px; margin: -30px auto 1.5rem; padding: 0 1.5rem; position: relative; z-index: 5; }
+.rpd-spotify-section .spotify-field { background: rgba(255,255,255,0.96); backdrop-filter: blur(8px); }
+@media (max-width: 900px) { .rpd-spotify-section { margin-top: 0; } }
+</style>
+
+<script>
+window.spotifyToEmbedUrl = function(url) {
+  if (!url) return null;
+  var m = String(url).match(/open\.spotify\.com\/(?:intl-[^/]+\/)?(track|playlist|album|episode|show|artist)\/([a-zA-Z0-9]+)/);
+  if (!m) return null;
+  return "https://open.spotify.com/embed/" + m[1] + "/" + m[2];
+};
+window.renderSpotifyEmbed = function(url, container) {
+  if (!container) return;
+  var embed = window.spotifyToEmbedUrl(url);
+  if (!embed) { container.innerHTML = ""; return; }
+  container.innerHTML = '<iframe src="' + embed + '" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+};
+</script>
 </head>
 <body class="rpd-body">
 
@@ -604,5 +631,37 @@
 </script>
   <script src="image-upload.js"></script>
   <script src="emoji-picker.js"></script>
+
+<script>
+// ── Spotify per-plan: lagres separat per plan-ID i localStorage ──
+(function () {
+  function getPlanId() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get("id") || "default";
+  }
+  function init() {
+    var input = document.getElementById("rpd-spotify-url");
+    var preview = document.getElementById("rpd-spotify-preview");
+    if (!input || !preview) return;
+    var planId = getPlanId();
+    var storageKey = "glimt-spotify-rpd-" + planId;
+    var savedUrl = "";
+    try { savedUrl = localStorage.getItem(storageKey) || ""; } catch (e) {}
+    input.value = savedUrl;
+    if (window.renderSpotifyEmbed) window.renderSpotifyEmbed(savedUrl, preview);
+    var saveTimer;
+    input.addEventListener("input", function () {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(function () {
+        try { localStorage.setItem(storageKey, input.value || ""); } catch (e) {}
+        if (window.renderSpotifyEmbed) window.renderSpotifyEmbed(input.value, preview);
+      }, 400);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+
 </body>
 </html>

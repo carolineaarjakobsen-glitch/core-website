@@ -286,6 +286,10 @@ function renderGuide(guide) {
       ${ownerActionsHtml}
     </section>
 
+    ${guide.spotifyUrl && window.spotifyToEmbedUrl && window.spotifyToEmbedUrl(guide.spotifyUrl)
+      ? '<div class="spotify-hero"><iframe src="' + window.spotifyToEmbedUrl(guide.spotifyUrl) + '" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>'
+      : ''}
+
     ${mapHtml}
 
     <section class="detalj-glimts">

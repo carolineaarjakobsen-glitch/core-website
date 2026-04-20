@@ -1018,6 +1018,7 @@ function saveGuide(e) {
     id:          existingGuide ? existingGuide.id : uid(),
     title:       mainTitle,
     city:        mainCity,
+    spotifyUrl:  (document.getElementById("guide-spotify-url") || {}).value || "",
     createdAt:   existingGuide ? existingGuide.createdAt : new Date().toISOString(),
     updatedAt:   editingGuideId ? new Date().toISOString() : undefined,
     isGuide:     isReiseplan,
