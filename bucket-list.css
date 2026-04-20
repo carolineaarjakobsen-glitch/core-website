@@ -1,0 +1,47 @@
+/* Glimt - bucket-list.css */
+.bucket-body { background: #FFF7E0; min-height: 100vh; color: #5D372A; font-family: 'Poppins', sans-serif; }
+
+.bucket-main { max-width: 760px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
+
+.bucket-hero { text-align: center; padding: 1.5rem 0 2rem; }
+.bucket-eyebrow { color: #EA672D; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; margin-bottom: 0.6rem; }
+.bucket-title { font-family: 'DM Sans', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 500; color: #5D372A; margin: 0 0 0.8rem; letter-spacing: -0.02em; }
+.bucket-subtitle { font-size: 1rem; color: rgba(93,55,42,0.72); max-width: 520px; margin: 0 auto 1.2rem; line-height: 1.55; }
+.bucket-progress { display: inline-block; background: #fff; color: #5D372A; font-weight: 500; font-size: 0.85rem; padding: 0.4rem 0.9rem; border-radius: 999px; border: 1px solid rgba(93,55,42,0.15); }
+
+.bucket-add-section { margin-bottom: 1.5rem; }
+.bucket-add-form { display: flex; gap: 0.6rem; background: #fff; padding: 0.4rem; border-radius: 14px; box-shadow: 0 4px 18px rgba(93,55,42,0.08); border: 1px solid rgba(93,55,42,0.08); }
+.bucket-add-input { flex: 1; border: none; outline: none; background: transparent; font: inherit; font-size: 0.95rem; padding: 0.7rem 0.9rem; color: #1a1a1a; min-width: 0; }
+.bucket-add-input::placeholder { color: rgba(93,55,42,0.5); }
+.bucket-add-btn { display: inline-flex; align-items: center; gap: 0.4rem; border: none; background: #5D372A; color: #fff; font: inherit; font-size: 0.9rem; font-weight: 500; padding: 0.7rem 1.2rem; border-radius: 10px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+.bucket-add-btn:hover { background: #4a2a1f; }
+.bucket-add-btn:active { transform: scale(0.98); }
+
+.bucket-list-section { }
+.bucket-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.bucket-item { display: flex; align-items: center; gap: 0.8rem; background: #fff; border-radius: 12px; padding: 0.9rem 1rem; border: 1px solid rgba(93,55,42,0.08); transition: all 0.15s; }
+.bucket-item:hover { border-color: rgba(93,55,42,0.2); box-shadow: 0 3px 12px rgba(93,55,42,0.06); }
+.bucket-item--done { background: #FFF5D1; }
+.bucket-item--done .bucket-item-title { text-decoration: line-through; color: rgba(93,55,42,0.55); }
+
+.bucket-checkbox { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; min-width: 22px; border: 2px solid rgba(93,55,42,0.35); border-radius: 6px; cursor: pointer; position: relative; flex-shrink: 0; transition: all 0.15s; }
+.bucket-checkbox:hover { border-color: #5D372A; }
+.bucket-checkbox:checked { background: #5D372A; border-color: #5D372A; }
+.bucket-checkbox:checked::after { content: ""; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+
+.bucket-item-title { flex: 1; font-size: 0.98rem; color: #1a1a1a; word-break: break-word; }
+.bucket-item-date { font-size: 0.72rem; color: rgba(93,55,42,0.55); margin-left: auto; padding-left: 0.6rem; white-space: nowrap; }
+.bucket-item-delete { border: none; background: transparent; color: rgba(93,55,42,0.4); cursor: pointer; padding: 4px 6px; border-radius: 6px; font-size: 1.2rem; line-height: 1; transition: all 0.15s; }
+.bucket-item-delete:hover { background: #fff4f0; color: #c72; }
+
+.bucket-empty { text-align: center; padding: 3rem 1.5rem; background: #fff; border-radius: 20px; border: 1px dashed rgba(93,55,42,0.15); margin-top: 0.5rem; }
+.bucket-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; background: #FFEEBC; color: #EA672D; margin-bottom: 1rem; }
+.bucket-empty-icon svg { width: 28px; height: 28px; }
+.bucket-empty h2 { font-family: 'DM Sans', sans-serif; font-size: 1.2rem; font-weight: 500; margin: 0 0 0.5rem; color: #5D372A; }
+.bucket-empty p { margin: 0; color: rgba(93,55,42,0.65); font-size: 0.92rem; line-height: 1.5; max-width: 360px; margin: 0 auto; }
+
+@media (max-width: 560px) {
+  .bucket-add-form { flex-direction: column; }
+  .bucket-add-btn { justify-content: center; }
+}

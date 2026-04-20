@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Glimt – Utforsk reisebrev</title>
+  <title>Glimt – Min bucket list</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="utforsk-reisebrev.css" />
-  <link rel="stylesheet" href="saved-glimt.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="bucket-list.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet" />
 </head>
-<body class="utforsk-body">
+<body class="bucket-body">
 
   <header class="navbar">
     <div class="logo">
@@ -70,53 +69,35 @@
     </nav>
   </header>
 
-  <main class="utforsk-main">
-
-    <!-- Header -->
-    <section class="utforsk-header">
-      <a class="utforsk-back" id="back-link" href="city-landing.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        Tilbake
-      </a>
-      <div class="utforsk-eyebrow">Fra andre reisende</div>
-      <h1 class="utforsk-title">Reisebrev fra <span id="utforsk-city-name"></span></h1>
-      <p class="utforsk-subtitle">
-        Se hvordan andre har utforsket byen – finn inspirasjon til din neste tur.
-      </p>
+  <main class="bucket-main">
+    <section class="bucket-hero">
+      <div class="bucket-eyebrow">DRØMMER OG MÅL</div>
+      <h1 class="bucket-title">Min bucket list</h1>
+      <p class="bucket-subtitle">Opplevelser du vil huke av underveis. Legg til én ting, hele listen din, eller det neste store målet.</p>
+      <div class="bucket-progress" id="bucket-progress"></div>
     </section>
 
-    <!-- Filter-bar -->
-    <section class="utforsk-filters">
-      <button class="filter-chip active" data-filter="alle">Alle</button>
-      <button class="filter-chip" data-filter="nyeste">Nyeste</button>
-      <button class="filter-chip" data-filter="populære">Populære</button>
+    <section class="bucket-add-section">
+      <form class="bucket-add-form" id="bucket-add-form">
+        <input type="text" class="bucket-add-input" id="bucket-add-input" placeholder="Hva vil du oppleve? (f.eks. Se nordlyset, Spise ekte carbonara)" maxlength="200" />
+        <button type="submit" class="bucket-add-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Legg til
+        </button>
+      </form>
     </section>
 
-    <!-- Feed-grid -->
-    <section class="utforsk-feed" id="utforsk-feed"></section>
+    <section class="bucket-list-section">
+      <ul class="bucket-list" id="bucket-list"></ul>
 
-    <!-- Tom tilstand -->
-    <section class="utforsk-empty" id="utforsk-empty" style="display:none">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="M21 21l-4.35-4.35"/>
-        </svg>
+      <div class="bucket-empty" id="bucket-empty" hidden>
+        <div class="bucket-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <h2>Tom bucket list</h2>
+        <p>Legg til ditt første mål i feltet ovenfor — stort eller lite, reise eller hverdag.</p>
       </div>
-      <h2 class="empty-title">Ingen reisebrev ennå</h2>
-      <p class="empty-desc">
-        Det er ingen delte reisebrev fra denne byen ennå. Kanskje du vil bli den første?
-      </p>
-      <a class="empty-cta" href="opprett-glimt.html">
-        Opprett et reisebrev
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
     </section>
-
   </main>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -124,8 +105,7 @@
   <script src="firebase-config.js"></script>
   <script src="auth-guard.js"></script>
   <script src="auth.js"></script>
-  <script src="saved-glimt.js"></script>
-  <script src="utforsk-reisebrev.js"></script>
-<script src="mobile-nav.js"></script>
+  <script src="bucket-list.js"></script>
+  <script src="mobile-nav.js"></script>
 </body>
 </html>
