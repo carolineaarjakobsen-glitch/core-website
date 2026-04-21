@@ -73,24 +73,39 @@ function renderNotFound() {
 
 // ── Render ett enkelt glimt ──────────────────────────────────
 function renderGlimt(glimt, index) {
-  const img1 = glimt.image || "";
-  const img2 = glimt.image2 || "";
-  const hasAny = !!(img1 || img2);
-  const hasBoth = !!(img1 && img2);
-  const mainImg = img1 || img2;
+  const images = [];
+  if (glimt.image) images.push(glimt.image);
+  if (glimt.image2 && glimt.image2 !== glimt.image) images.push(glimt.image2);
+  const hasImages = images.length > 0;
 
-  const photosHtml = hasBoth
-    ? `<div class="postcard-photos">
-         <div class="postcard-photo postcard-photo--main" style="background-image:url('${img1}')"></div>
-         <div class="postcard-photo postcard-photo--secondary" style="background-image:url('${img2}')"></div>
-       </div>`
-    : hasAny
-    ? `<div class="postcard-photos postcard-photos--single">
-         <div class="postcard-photo postcard-photo--main" style="background-image:url('${mainImg}')"></div>
-       </div>`
-    : `<div class="postcard-photos postcard-photos--single">
-         <div class="postcard-photo postcard-photo--empty"></div>
-       </div>`;
+  let photosHtml = "";
+  if (hasImages) {
+    const slidesHtml = images.map(function (url) {
+      return `<div class="postcard-slide" style="background-image:url('${url}')"></div>`;
+    }).join("");
+    const dotsHtml = images.length > 1
+      ? `<div class="postcard-carousel-dots">` +
+          images.map(function (_, i) {
+            return `<button type="button" class="postcard-carousel-dot${i === 0 ? ' postcard-carousel-dot--active' : ''}" data-slide="${i}" aria-label="Bilde ${i + 1}"></button>`;
+          }).join("") +
+        `</div>`
+      : "";
+    const arrowsHtml = images.length > 1
+      ? `<button type="button" class="postcard-carousel-arrow postcard-carousel-arrow--prev" aria-label="Forrige bilde">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+         </button>
+         <button type="button" class="postcard-carousel-arrow postcard-carousel-arrow--next" aria-label="Neste bilde">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+         </button>`
+      : "";
+    photosHtml = `<div class="postcard-photos">
+      <div class="postcard-carousel" data-total="${images.length}">
+        <div class="postcard-slides">${slidesHtml}</div>
+        ${arrowsHtml}
+        ${dotsHtml}
+      </div>
+    </div>`;
+  }
 
   const address = glimt.address || glimt.sted || "";
   const city = glimt.city || "";
@@ -121,7 +136,7 @@ function renderGlimt(glimt, index) {
     <button class="save-glimt-btn ${isSaved ? 'save-glimt-btn--saved' : ''}"
             data-save-id="${glimtSaveId}"
             data-save-title="${escapeHtml(glimt.title || 'Uten tittel')}"
-            data-save-image="${img1 || ''}"
+            data-save-image="${images[0] || ''}"
             data-save-note="${escapeHtml(desc)}"
             onclick="toggleSaveGlimtEntry(this)">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
@@ -129,7 +144,7 @@ function renderGlimt(glimt, index) {
     </button>`;
 
   return `
-    <article class="postcard">
+    <article class="postcard${hasImages ? '' : ' postcard--no-image'}">
       ${photosHtml}
       <div class="postcard-content">
         <div class="postcard-index">N° ${String(index + 1).padStart(2, "0")}</div>
@@ -469,4 +484,46 @@ function initInlineEdit(guideId) {
       }, 200);
     });
   }
+})();
+
+
+// ── Karusell-navigasjon for postkort-bilder ────────────────
+function initPostcardCarousels() {
+  document.querySelectorAll(".postcard-carousel").forEach(function (car) {
+    if (car.dataset.inited) return;
+    car.dataset.inited = "1";
+    var slides = car.querySelector(".postcard-slides");
+    var total = parseInt(car.dataset.total, 10) || 1;
+    if (total <= 1) return;
+    var dots = car.querySelectorAll(".postcard-carousel-dot");
+    var prev = car.querySelector(".postcard-carousel-arrow--prev");
+    var next = car.querySelector(".postcard-carousel-arrow--next");
+    var current = 0;
+    function update() {
+      if (slides) slides.style.transform = "translateX(-" + (current * 100) + "%)";
+      dots.forEach(function (d, i) { d.classList.toggle("postcard-carousel-dot--active", i === current); });
+    }
+    if (prev) prev.addEventListener("click", function () { current = (current - 1 + total) % total; update(); });
+    if (next) next.addEventListener("click", function () { current = (current + 1) % total; update(); });
+    dots.forEach(function (d, i) {
+      d.addEventListener("click", function () { current = i; update(); });
+    });
+  });
+}
+
+// Hook inn karusell-init ved render
+(function () {
+  var origRender = window.renderGuide;
+  if (typeof origRender === "function") {
+    window.renderGuide = function (guide) {
+      var r = origRender.apply(this, arguments);
+      setTimeout(initPostcardCarousels, 100);
+      return r;
+    };
+  }
+  // Initial run
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(initPostcardCarousels, 200); });
+  else setTimeout(initPostcardCarousels, 200);
+  // Observer for nye postkort
+  new MutationObserver(function () { initPostcardCarousels(); }).observe(document.body, { childList: true, subtree: true });
 })();
