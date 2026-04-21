@@ -1,0 +1,40 @@
+/* Glimt - opprett-bucketlist.css */
+.bl-body { background: #FFF7E0; min-height: 100vh; color: #5D372A; font-family: 'Poppins', sans-serif; }
+
+.bl-create-main { max-width: 720px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
+.bl-create-hero { text-align: center; margin-bottom: 2rem; }
+.bl-create-eyebrow { color: #EA672D; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; margin-bottom: 0.6rem; }
+.bl-create-title { font-family: 'DM Sans', sans-serif; font-size: clamp(2rem, 5vw, 2.6rem); font-weight: 500; color: #5D372A; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+.bl-create-subtitle { font-size: 1rem; color: rgba(93,55,42,0.72); max-width: 540px; margin: 0 auto; line-height: 1.55; }
+
+.bl-create-form { background: #fff; border-radius: 18px; padding: 1.8rem 1.6rem; box-shadow: 0 4px 18px rgba(93,55,42,0.08); border: 1px solid rgba(93,55,42,0.08); display: flex; flex-direction: column; gap: 1.4rem; }
+
+.bl-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.bl-label { font-size: 0.85rem; font-weight: 500; color: #5D372A; }
+.bl-required { color: #EA672D; }
+.bl-help { margin: 0; font-size: 0.8rem; color: rgba(93,55,42,0.6); font-style: italic; }
+
+.bl-input { width: 100%; border: 1px solid #e4e4e4; background: #fafafa; border-radius: 10px; padding: 10px 14px; font: inherit; font-size: 0.95rem; color: #1a1a1a; box-sizing: border-box; }
+.bl-input:focus { outline: none; border-color: #5D372A; background: #fff; }
+select.bl-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235D372A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+.bl-image-row, .bl-item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+.bl-image-row .bl-input, .bl-item-row .bl-input { flex: 1; }
+.bl-image-row .img-upload-wrap { margin-top: 0; flex-shrink: 0; }
+.bl-image-row .img-upload-btn { padding: 6px 10px; font-size: 0.78rem; }
+.bl-remove-btn { width: 32px; height: 32px; border: 1px solid #e4e4e4; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(93,55,42,0.55); font-size: 1.1rem; flex-shrink: 0; transition: all 0.15s; }
+.bl-remove-btn:hover { border-color: #c72; color: #c72; background: #fff4f0; }
+
+.bl-add-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 0.4rem; padding: 8px 14px; border: 1px dashed rgba(93,55,42,0.3); border-radius: 8px; background: transparent; color: #5D372A; font: inherit; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
+.bl-add-btn:hover { background: #FFEEBC; border-color: #5D372A; }
+
+.bl-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid rgba(93,55,42,0.1); }
+.bl-cancel-btn { padding: 10px 18px; border: 1px solid rgba(93,55,42,0.2); border-radius: 10px; background: transparent; color: #5D372A; font: inherit; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; transition: all 0.15s; }
+.bl-cancel-btn:hover { background: rgba(93,55,42,0.05); }
+.bl-save-btn { padding: 10px 20px; border: none; background: #5D372A; color: #fff; border-radius: 10px; font: inherit; font-size: 0.92rem; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+.bl-save-btn:hover { background: #4a2a1f; }
+
+@media (max-width: 560px) {
+  .bl-actions { flex-direction: column; }
+  .bl-cancel-btn, .bl-save-btn { width: 100%; text-align: center; justify-content: center; }
+}

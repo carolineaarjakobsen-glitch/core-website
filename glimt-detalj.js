@@ -527,3 +527,119 @@ function initPostcardCarousels() {
   // Observer for nye postkort
   new MutationObserver(function () { initPostcardCarousels(); }).observe(document.body, { childList: true, subtree: true });
 })();
+
+
+// ── Bucketlist-visning ─────────────────────────────────
+function renderBucketlist(guide) {
+  var main = document.getElementById("detalj-main");
+  if (!main) return;
+
+  var images = guide.bucketlistImages || [];
+  var items = guide.glimts || [];
+  var checkedCount = items.filter(function (i) { return i.checked; }).length;
+
+  var carouselHtml = "";
+  if (images.length > 0) {
+    var slidesHtml = images.map(function (url) {
+      return '<div class="bucketlist-slide" style="background-image:url(\'' + escapeHtml(url) + '\')"></div>';
+    }).join("");
+    var dotsHtml = images.length > 1
+      ? '<div class="bucketlist-carousel-dots">' + images.map(function (_, i) {
+          return '<button type="button" class="bucketlist-carousel-dot' + (i === 0 ? ' bucketlist-carousel-dot--active' : '') + '" data-slide="' + i + '"></button>';
+        }).join("") + '</div>'
+      : "";
+    var arrowsHtml = images.length > 1
+      ? '<button type="button" class="bucketlist-carousel-arrow bucketlist-carousel-arrow--prev" aria-label="Forrige"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>' +
+        '<button type="button" class="bucketlist-carousel-arrow bucketlist-carousel-arrow--next" aria-label="Neste"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+      : "";
+    carouselHtml = '<div class="bucketlist-carousel-wrap" data-total="' + images.length + '">' +
+      '<div class="bucketlist-slides">' + slidesHtml + '</div>' +
+      arrowsHtml + dotsHtml +
+    '</div>';
+  }
+
+  var itemsHtml = items.length === 0
+    ? '<div class="bucketlist-empty">Ingen punkter i listen ennå.</div>'
+    : '<ul class="bucketlist-items">' + items.map(function (item, i) {
+        return '<li class="bucketlist-item' + (item.checked ? ' bucketlist-item--checked' : '') + '" data-index="' + i + '">' +
+          '<button type="button" class="bucketlist-check' + (item.checked ? ' bucketlist-check--checked' : '') + '" aria-label="Huk av"></button>' +
+          '<span class="bucketlist-item-text">' + escapeHtml(item.title || "") + '</span>' +
+        '</li>';
+      }).join("") + '</ul>';
+
+  main.innerHTML =
+    '<div class="bucketlist-view">' +
+      '<section class="bucketlist-header">' +
+        '<div class="bucketlist-eyebrow">BUCKETLIST</div>' +
+        '<h1 class="bucketlist-title" data-edit-field="title" data-owner="' + (isDemo ? '0' : '1') + '">' + escapeHtml(guide.title || "Uten tittel") + '</h1>' +
+        (guide.subtitle || !isDemo
+          ? '<p class="bucketlist-subtitle" data-edit-field="subtitle" data-owner="' + (isDemo ? '0' : '1') + '" data-empty="' + (guide.subtitle ? '0' : '1') + '">' + escapeHtml(guide.subtitle || (!isDemo ? 'Legg til en undertekst...' : '')) + '</p>'
+          : "") +
+        '<div class="bucketlist-progress">' + checkedCount + ' av ' + items.length + ' huket av</div>' +
+      '</section>' +
+      carouselHtml +
+      '<section class="bucketlist-paper">' +
+        itemsHtml +
+      '</section>' +
+      '<div class="detalj-actions" style="margin-top:1.5rem;display:flex;justify-content:center">' +
+        '<a href="mine-glimt.html" class="detalj-back">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>' +
+          ' Mine reisebrev' +
+        '</a>' +
+      '</div>' +
+    '</div>';
+
+  // Hook opp avhuk-klikk
+  main.querySelectorAll(".bucketlist-item").forEach(function (li) {
+    li.addEventListener("click", function () {
+      if (isDemo) return;
+      var idx = parseInt(li.dataset.index, 10);
+      if (isNaN(idx)) return;
+      var all = loadGuides();
+      var g = all.find(function (x) { return x.id === guide.id; });
+      if (!g || !g.glimts[idx]) return;
+      g.glimts[idx].checked = !g.glimts[idx].checked;
+      g.updatedAt = new Date().toISOString();
+      saveGuides(all);
+      renderBucketlist(g);
+      if (typeof initInlineEdit === "function") setTimeout(function () { initInlineEdit(g.id); }, 50);
+      initBucketlistCarousel();
+    });
+  });
+
+  initBucketlistCarousel();
+}
+
+function initBucketlistCarousel() {
+  var car = document.querySelector(".bucketlist-carousel-wrap");
+  if (!car || car.dataset.inited) return;
+  car.dataset.inited = "1";
+  var total = parseInt(car.dataset.total, 10) || 1;
+  if (total <= 1) return;
+  var slides = car.querySelector(".bucketlist-slides");
+  var dots = car.querySelectorAll(".bucketlist-carousel-dot");
+  var prev = car.querySelector(".bucketlist-carousel-arrow--prev");
+  var next = car.querySelector(".bucketlist-carousel-arrow--next");
+  var current = 0;
+  function update() {
+    if (slides) slides.style.transform = "translateX(-" + (current * 100) + "%)";
+    dots.forEach(function (d, i) { d.classList.toggle("bucketlist-carousel-dot--active", i === current); });
+  }
+  if (prev) prev.addEventListener("click", function () { current = (current - 1 + total) % total; update(); });
+  if (next) next.addEventListener("click", function () { current = (current + 1) % total; update(); });
+  dots.forEach(function (d, i) { d.addEventListener("click", function () { current = i; update(); }); });
+}
+
+// Hook renderGuide for å route til bucketlist når templateType matcher
+(function () {
+  var origRender = window.renderGuide;
+  if (typeof origRender === "function") {
+    window.renderGuide = function (guide) {
+      if (guide && guide.templateType === "bucketlist") {
+        renderBucketlist(guide);
+        return;
+      }
+      return origRender.apply(this, arguments);
+    };
+  }
+})();

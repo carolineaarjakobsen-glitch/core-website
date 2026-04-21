@@ -109,6 +109,53 @@ window.renderSpotifyEmbed = function(url, container) {
   .postcard-message { font-size: 0.92rem; }
 }
 </style>
+<style id="bucketlist-style">
+.bucketlist-view { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+.bucketlist-hero { margin-bottom: 1.5rem; }
+.bucketlist-header { text-align: center; padding: 1.2rem 1rem; }
+.bucketlist-eyebrow { color: #EA672D; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+.bucketlist-title { font-family: 'DM Sans', sans-serif; font-size: clamp(1.8rem, 4.5vw, 2.4rem); font-weight: 500; color: #5D372A; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+.bucketlist-subtitle { color: rgba(93,55,42,0.72); font-size: 1rem; margin: 0 auto 0.8rem; max-width: 520px; line-height: 1.5; font-style: italic; }
+.bucketlist-progress { display: inline-block; background: #fff; color: #5D372A; font-weight: 500; font-size: 0.85rem; padding: 0.4rem 0.95rem; border-radius: 999px; border: 1px solid rgba(93,55,42,0.15); }
+
+/* Karusell */
+.bucketlist-carousel-wrap { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(93,55,42,0.14); margin-bottom: 2rem; background: #f2e6d3; aspect-ratio: 16/9; }
+.bucketlist-slides { display: flex; height: 100%; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.bucketlist-slide { flex: 0 0 100%; height: 100%; background-size: cover; background-position: center; background-color: #f2e6d3; }
+.bucketlist-carousel-dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2; }
+.bucketlist-carousel-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.6); border: none; cursor: pointer; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: background 0.2s, transform 0.2s; }
+.bucketlist-carousel-dot--active { background: #fff; transform: scale(1.25); }
+.bucketlist-carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.9); color: #3d2818; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.18); transition: background 0.15s; opacity: 0.65; }
+.bucketlist-carousel-arrow:hover { background: #fff; opacity: 1; }
+.bucketlist-carousel-arrow--prev { left: 12px; }
+.bucketlist-carousel-arrow--next { right: 12px; }
+
+/* Papirliste */
+.bucketlist-paper { background: #fefbf4; border-radius: 6px; padding: 2rem 1.8rem; position: relative; box-shadow: 0 2px 6px rgba(93,55,42,0.12), 0 15px 40px rgba(93,55,42,0.15); background-image: repeating-linear-gradient(transparent 0, transparent 32px, rgba(93,55,42,0.08) 32px, rgba(93,55,42,0.08) 33px); border: 1px solid rgba(93,55,42,0.12); }
+.bucketlist-paper::before { content: ""; position: absolute; left: 42px; top: 0; bottom: 0; width: 2px; background: rgba(220, 80, 40, 0.25); }
+
+.bucketlist-items { list-style: none; padding: 0 0 0 28px; margin: 0; }
+.bucketlist-item { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.6rem 0; min-height: 32px; cursor: pointer; transition: opacity 0.2s; }
+.bucketlist-item:hover .bucketlist-check { background: #FFEEBC; border-color: #5D372A; }
+
+.bucketlist-check { flex-shrink: 0; width: 26px; height: 26px; border: 2.5px solid rgba(93,55,42,0.55); border-radius: 4px; position: relative; transition: all 0.2s; margin-top: 2px; background: transparent; cursor: pointer; }
+.bucketlist-check--checked { background: #5D372A; border-color: #5D372A; }
+.bucketlist-check--checked::after { content: ""; position: absolute; left: 7px; top: 2px; width: 7px; height: 13px; border: solid #fefbf4; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+
+.bucketlist-item-text { font-family: 'Caveat', 'Special Elite', cursive; font-size: 1.4rem; line-height: 1.3; color: #3d2818; padding-top: 2px; word-break: break-word; flex: 1; }
+.bucketlist-item--checked .bucketlist-item-text { text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: rgba(93,55,42,0.7); color: rgba(93,55,42,0.55); }
+
+.bucketlist-empty { text-align: center; padding: 2rem 1rem; color: rgba(93,55,42,0.6); font-family: 'Caveat', cursive; font-size: 1.3rem; }
+
+@media (max-width: 560px) {
+  .bucketlist-paper { padding: 1.4rem 1rem; }
+  .bucketlist-paper::before { left: 30px; }
+  .bucketlist-items { padding-left: 16px; }
+  .bucketlist-item-text { font-size: 1.2rem; }
+  .bucketlist-carousel-arrow { width: 32px; height: 32px; opacity: 1; }
+}
+</style>
 </head>
 <body class="detalj-body">
 
