@@ -32,5 +32,25 @@ const CITIES = [
     "name": "Gardasjøen",
     "image": "https://images.unsplash.com/photo-1534631006967-ec4c5765fa2b?w=1200&q=80",
     "alt": "Gardasjøens turkise vann og fjellbakgrunn"
+  },
+  {
+    "name": "Edinburgh",
+    "image": "https://images.unsplash.com/photo-1589994160957-0e9e9e6faddf?w=1200&q=80",
+    "alt": "Edinburgh Castle og Royal Mile i tåke"
+  },
+  {
+    "name": "Milano",
+    "image": "https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?w=1200&q=80",
+    "alt": "Milanos gotiske Duomo og Galleria Vittorio Emanuele"
+  },
+  {
+    "name": "Oslo",
+    "image": "https://images.unsplash.com/photo-1601907264884-4de24aaf65b0?w=1200&q=80",
+    "alt": "Operahuset og Oslofjorden"
+  },
+  {
+    "name": "Paris",
+    "image": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&q=80",
+    "alt": "Eiffeltårnet og Pariserbulevardene"
   }
 ];

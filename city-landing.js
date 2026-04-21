@@ -60,7 +60,11 @@ const CITY_INTROS = {
   "København": "Skandinavias kosmopolitiske perle – en by som forener fargerike havnehus, verdensledende gastronomi og en avslappet sykkelkultur. Fra Nyhavn til Vesterbros hippe kafeer er København en fest for sansene.",
   "Stockholm": "Bygget på fjorten øyer der Mälaren møter Østersjøen – en by med majestetisk arkitektur, grønne parker og et pulserende designmiljø. Gammelstans brostein og Södermalms kreative sjel venter på deg.",
   "Dublin": "Irlands hjerte og sjel – en by med litterær arv, levende puber og varm gjestfrihet. Fra Temple Bars brostein til Phoenixparkens grønne vidder byr Dublin på opplevelser du sent vil glemme.",
-  "Gardasjøen": "Italias største innsjø omringet av dramatiske fjelltopper, sitronlunder og pastellfargede landsbyer. Fra Malcesines middelalderslott til Limones hengende stier over vannet – Gardasjøen er stedet der norditaliens dolce vita møter alpene."
+  "Gardasjøen": "Italias største innsjø omringet av dramatiske fjelltopper, sitronlunder og pastellfargede landsbyer. Fra Malcesines middelalderslott til Limones hengende stier over vannet – Gardasjøen er stedet der norditaliens dolce vita møter alpene.",
+  "Edinburgh": "Skotlands historiske hovedstad — en by av litteratur, whisky og gotiske spir. Fra Royal Miles brostein til Arthur's Seats vindblåste topp byr Edinburgh på en magisk blanding av middelaldersk mystikk og livlig festivalkultur.",
+  "Milano": "Italias motehovedstad og designmetropol — en by som forener gotisk arkitektur, Leonardos kunst og Europas mest stilbevisste gater. Fra Duomos spir til Navigli-kanalenes aperitivo-liv byr Milano på kultur og livsnytelse.",
+  "Oslo": "Den grønne nordiske hovedstaden — hvor fjord møter skog og moderne arkitektur løfter seg mot himmelen. Fra Operahusets hvite marmor til Vigelandsparkens skulpturer viser Oslo frem naturnære byromopplevelser og rik kulturarv.",
+  "Paris": "Lysets by — der Haussmanns brede boulevarder møter sjarmerende bakgater med boulangerier og bokhandlere. Fra Eiffeltårnets jernspir til Montmartres kunstnerkvarter byr Paris på tidløs romantikk og urban kultur i hver krok."
 };
 
 // =====================
