@@ -1,0 +1,57 @@
+{
+  "name": "Glimt – Din lokale reiseleder",
+  "short_name": "Glimt",
+  "description": "Samle, del og gjenoppleve reiseøyeblikk. Lag reisebrev, reiseplaner og bucketlister.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7E0",
+  "theme_color": "#5D372A",
+  "lang": "no",
+  "dir": "ltr",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Opprett reisebrev",
+      "url": "/opprett-glimt.html",
+      "description": "Start et nytt reisebrev"
+    },
+    {
+      "name": "Mine reisebrev",
+      "url": "/mine-glimt.html",
+      "description": "Se alle dine reisebrev"
+    },
+    {
+      "name": "Mine reiseplaner",
+      "url": "/mine-reiseplaner.html",
+      "description": "Se alle dine reiseplaner"
+    }
+  ]
+}
