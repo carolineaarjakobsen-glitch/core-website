@@ -38,3 +38,13 @@ select.bl-input { cursor: pointer; appearance: none; background-image: url("data
   .bl-actions { flex-direction: column; }
   .bl-cancel-btn, .bl-save-btn { width: 100%; text-align: center; justify-content: center; }
 }
+
+
+/* ── Bilde per item ── */
+.bl-item-row { align-items: flex-start; }
+.bl-item-main { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.bl-item-image-area { display: flex; }
+.bl-item-upload { margin-top: 0; flex-direction: row; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bl-item-upload .img-upload-btn { padding: 6px 10px; font-size: 0.78rem; }
+.bl-item-upload .img-upload-thumb { max-width: 64px; max-height: 64px; }
+.bl-item-upload .img-upload-progress { flex-basis: 100%; }

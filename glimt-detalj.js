@@ -564,6 +564,7 @@ function renderBucketlist(guide) {
         return '<li class="bucketlist-item' + (item.checked ? ' bucketlist-item--checked' : '') + '" data-index="' + i + '">' +
           '<button type="button" class="bucketlist-check' + (item.checked ? ' bucketlist-check--checked' : '') + '" aria-label="Huk av"></button>' +
           '<span class="bucketlist-item-text">' + escapeHtml(item.title || "") + '</span>' +
+          (item.image ? '<div class="bucketlist-item-photo"><img src="' + escapeHtml(item.image) + '" alt="" loading="lazy" /></div>' : '') +
         '</li>';
       }).join("") + '</ul>';
 
@@ -643,3 +644,30 @@ function initBucketlistCarousel() {
     };
   }
 })();
+
+
+// ── Bucketlist photo lightbox ──────────────────────────
+document.addEventListener("click", function (e) {
+  var photo = e.target.closest(".bucketlist-item-photo");
+  if (photo) {
+    e.stopPropagation();
+    var img = photo.querySelector("img");
+    if (!img || !img.src) return;
+    var lb = document.createElement("div");
+    lb.className = "bucketlist-item-lightbox";
+    lb.innerHTML = '<img src="' + img.src + '" alt="" />';
+    lb.addEventListener("click", function () { lb.remove(); });
+    document.body.appendChild(lb);
+    return;
+  }
+  if (e.target.closest(".bucketlist-item-lightbox")) {
+    var existing = document.querySelector(".bucketlist-item-lightbox");
+    if (existing) existing.remove();
+  }
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    var lb = document.querySelector(".bucketlist-item-lightbox");
+    if (lb) lb.remove();
+  }
+});

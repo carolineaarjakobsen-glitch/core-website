@@ -34,10 +34,26 @@
     '</div>';
   }
 
-  function itemRowHtml(val) {
+  function itemRowHtml(val, imgVal) {
     val = val || "";
+    imgVal = imgVal || "";
     return '<div class="bl-item-row">' +
-      '<input type="text" class="bl-input" placeholder="F.eks. Se Colosseum, Spise ekte carbonara..." value="' + val.replace(/"/g, "&quot;") + '" maxlength="160" />' +
+      '<div class="bl-item-main">' +
+        '<input type="text" class="bl-input bl-item-title" placeholder="F.eks. Se Colosseum, Spise ekte carbonara..." value="' + val.replace(/"/g, "&quot;") + '" maxlength="160" />' +
+        '<div class="bl-item-image-area">' +
+          '<input type="url" name="image" hidden value="' + imgVal.replace(/"/g, "&quot;") + '" />' +
+          '<div class="img-upload-wrap bl-item-upload">' +
+            '<input type="file" class="img-upload-file" accept="image/*" hidden />' +
+            '<button type="button" class="img-upload-btn">' +
+              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+              ' Bilde' +
+            '</button>' +
+            '<div class="img-upload-progress" hidden><div class="img-upload-progressbar"><div class="img-upload-bar"></div></div><span class="img-upload-text">0%</span></div>' +
+            '<div class="img-upload-preview" hidden><img class="img-upload-thumb" alt="" /><button type="button" class="img-upload-remove" aria-label="Fjern bilde">×</button></div>' +
+            '<div class="img-upload-error" hidden></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
       '<button type="button" class="bl-remove-btn" data-remove="item" aria-label="Fjern">×</button>' +
     '</div>';
   }
@@ -96,9 +112,15 @@
       var images = Array.from(imagesList.querySelectorAll("input[name='image']"))
         .map(function (i) { return i.value.trim(); })
         .filter(function (v) { return v; });
-      var items = Array.from(itemsList.querySelectorAll("input"))
-        .map(function (i) { return i.value.trim(); })
-        .filter(function (v) { return v; });
+      var itemRows = Array.from(itemsList.querySelectorAll(".bl-item-row"));
+      var items = itemRows.map(function (row) {
+        var titleInput = row.querySelector(".bl-item-title");
+        var imageInput = row.querySelector("input[name='image']");
+        return {
+          title: titleInput ? titleInput.value.trim() : "",
+          image: imageInput ? imageInput.value.trim() : ""
+        };
+      }).filter(function (item) { return item.title; });
       if (!title) { alert("Tittel er påkrevd"); return; }
       if (items.length === 0) { alert("Legg til minst ett punkt i listen"); return; }
 
@@ -109,7 +131,7 @@
         city: city,
         templateType: "bucketlist",
         bucketlistImages: images,
-        glimts: items.map(function (t) { return { title: t, checked: false }; }),
+        glimts: items.map(function (item) { return { title: item.title, image: item.image, checked: false }; }),
         isGuide: false,
         isReiseplan: false,
         createdAt: new Date().toISOString()
