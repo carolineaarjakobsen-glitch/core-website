@@ -108,13 +108,20 @@ nav.glimt-bottom-nav {
   padding: 6px 4px;
   text-decoration: none;
   color: rgba(93, 55, 42, 0.6);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   gap: 3px;
   border-radius: 10px;
   transition: color 0.15s, background 0.15s, transform 0.05s;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* På smale telefoner (< 360 px) krymper vi label-størrelsen ekstra
+   slik at alle 5 ikoner får plass uten å overlappe FAB-knappen. */
+@media (max-width: 359px) {
+  .gbn-item { font-size: 0.55rem; padding: 6px 2px; }
+  .gbn-icon { width: 20px; height: 20px; }
 }
 
 .gbn-item:active {

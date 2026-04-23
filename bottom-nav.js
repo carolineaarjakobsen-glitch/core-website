@@ -1,6 +1,6 @@
 // ============================================================
 //  Glimt – bottom-nav.js
-//  Auto-injiserer en mobil bottom navigation bar (4 ikoner) på
+//  Auto-injiserer en mobil bottom navigation bar (5 ikoner) på
 //  alle hovedsider. Vises kun under 768 px (via CSS).
 //  Skjules på login-siden og evt. andre sider via class="gbn-hide" på <html>.
 // ============================================================
@@ -35,6 +35,7 @@
     if (path === "" || path === "index.html" || path.endsWith("/index.html") || path === "/") return "home";
     if (/mine-(glimt|enkeltglimt|reiseplaner)\.html/.test(path) || path === "min-kalender.html") return "mine";
     if (/opprett-(glimt|bucketlist)\.html/.test(path)) return "opprett";
+    if (path === "explore.html" || /utforsk-(glimt|reisebrev)\.html/.test(path) || path === "city-landing.html") return "utforsk";
     if (path === "bucket-list.html") return "bucket";
     return null;
   }
@@ -64,6 +65,12 @@
         label: "Opprett",
         primary: true,
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>'
+      },
+      {
+        id: "utforsk",
+        href: "explore.html",
+        label: "Utforsk",
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'
       },
       {
         id: "bucket",
