@@ -7,7 +7,7 @@
 //   • Cloudinary/Unsplash-bilder caches også (opptil 50)
 // ============================================================
 
-const CACHE_VERSION = "glimt-v1";
+const CACHE_VERSION = "glimt-v2";
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_DYNAMIC = `${CACHE_VERSION}-dynamic`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
