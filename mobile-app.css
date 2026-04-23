@@ -60,7 +60,9 @@
 }
 
 /* ── 3. BOTTOM NAVIGATION BAR (mobil) ──────────────────── */
-.glimt-bottom-nav {
+/* OBS: Bruker nav.glimt-bottom-nav (høyere spesifisitet) for å vinne over
+   style.css sin generelle "nav { display: none !important }" på mobil. */
+nav.glimt-bottom-nav {
   display: none; /* Skjult som standard, vises på mobil via media query */
   position: fixed;
   left: 0;
@@ -76,8 +78,8 @@
 }
 
 @media (max-width: 767px) {
-  .glimt-bottom-nav {
-    display: flex;
+  nav.glimt-bottom-nav {
+    display: flex !important;
     justify-content: space-around;
     align-items: stretch;
   }
@@ -91,7 +93,7 @@
 }
 
 /* Skjul bottom nav på spesifikke sider */
-.gbn-hide .glimt-bottom-nav { display: none !important; }
+.gbn-hide nav.glimt-bottom-nav { display: none !important; }
 @media (max-width: 767px) {
   .gbn-hide body { padding-bottom: 0 !important; }
 }
