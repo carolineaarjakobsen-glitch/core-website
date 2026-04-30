@@ -2,13 +2,23 @@
 //  Glimt – auth-guard.js (standalone)
 //  Sikrer at brukeren er innlogget før en side lastes. Hvis
 //  ikke logget inn, redirectes til login.html med gjeldende
-//  side som ?redirect=... slik at login.js kan sende brukeren
+//  side som ?return=... slik at login.js kan sende brukeren
 //  tilbake etterpå.
 //
-//  Kravene er kun Firebase App + Firebase Auth. Inkluder fila
-//  ETTER firebase-config.js og FØR side-spesifikk JS.
+//  I tillegg lytter guarden kontinuerlig på onAuthStateChanged,
+//  slik at sesjons-utløp midt i bruk også sender brukeren til
+//  login (i stedet for at side-koden plutselig opererer på en
+//  ikke-eksisterende bruker).
 //
-//  Bruk: <script src="auth-guard.js"></script>
+//  Hvis Firebase Firestore + GlimtStore er lastet, starter
+//  guarden også GlimtStore.init() så snart en bruker er kjent.
+//  Dette gjør at lagring/lesing kan begynne tidligst mulig –
+//  og at side-koden trygt kan vente på GlimtStore.onReady()
+//  før Lagre-knappen aktiveres.
+//
+//  Krav: Firebase App + Firebase Auth. (Firestore + glimt-store
+//  er valgfritt, men sterkt anbefalt for sider som lagrer.)
+//  Inkluder fila ETTER firebase-config.js og FØR side-spesifikk JS.
 // ============================================================
 
 (function () {
@@ -40,13 +50,41 @@
     window.location.replace(url);
   }
 
-  // Vent på at Firebase har avgjort auth-tilstanden
-  var unsubscribe = auth.onAuthStateChanged(function (user) {
-    unsubscribe();
+  // Husk hvilken bruker vi har startet GlimtStore.init() for, så
+  // vi ikke kjører den på nytt for samme bruker (init er idempotent
+  // mot samme uid, men vi unngår unødige logger).
+  var initStartedForUid = null;
+
+  function maybeInitStore(user) {
+    if (!user) return;
+    if (typeof window.GlimtStore !== "object") return; // siden bruker ikke storen
+    if (initStartedForUid === user.uid) return;
+    initStartedForUid = user.uid;
+    Promise.resolve()
+      .then(function () { return window.GlimtStore.init(user.uid); })
+      .catch(function (err) {
+        console.error("auth-guard: GlimtStore.init feilet:", err);
+      });
+  }
+
+  // Lytt KONTINUERLIG. Vi unsubscriber ikke etter første callback,
+  // så hvis brukeren logges ut midt i bruk (sesjons-utløp eller
+  // logout fra annen fane), redirecter vi umiddelbart til login.
+  var hasResolvedInitial = false;
+  auth.onAuthStateChanged(function (user) {
     if (!user) {
+      // Ikke innlogget – send til login (også ved sesjons-utløp).
       redirectToLogin();
       return;
     }
-    revealBody();
+
+    // Innlogget. Start GlimtStore (no-op hvis allerede gjort) og
+    // avslør body første gang.
+    maybeInitStore(user);
+
+    if (!hasResolvedInitial) {
+      hasResolvedInitial = true;
+      revealBody();
+    }
   });
 })();

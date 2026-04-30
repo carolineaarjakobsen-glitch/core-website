@@ -29,6 +29,23 @@
 <style id="edit-btn-style">
 .meg-card-action--edit:hover { border-color: #5D372A; color: #5D372A; background: #FFEEBC; }
 </style>
+  <style>
+    .meg-form-error {
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #f5b8b8;
+      background: #fdecec;
+      color: #7a1f1f;
+      border-radius: 6px;
+      font-size: 0.88rem;
+    }
+    .meg-submit-btn[disabled],
+    .meg-submit-btn[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body class="meg-body">
 
@@ -377,17 +394,20 @@
           <input type="text" name="emoji" class="meg-input meg-input-emoji" placeholder="F.eks. 🍕 🏛️ 🌅" maxlength="4" />
         </div>
 
-        <button type="submit" class="meg-submit-btn">
+        <button type="submit" class="meg-submit-btn" id="meg-submit-btn" disabled aria-disabled="true" title="Vent til lageret er klart">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
           Opprett glimt
         </button>
+        <div id="meg-form-error" class="meg-form-error" role="alert" hidden></div>
       </form>
     </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <script src="glimt-store.js"></script>
   <script src="auth-guard.js"></script>
   <script src="auth.js"></script>
   <script src="cities.js"></script>

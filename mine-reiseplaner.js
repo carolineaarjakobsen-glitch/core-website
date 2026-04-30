@@ -1,9 +1,11 @@
 // ============================================================
 //  Glimt – Mine Reiseplaner
-//  Lagrer reiseplaner i localStorage under "glimt.reiseplaner"
+//  Lagrer reiseplaner via GlimtStore (Firestore). Lagre-knappen
+//  i "Ny plan"-modalen aktiveres først når både Firebase Auth
+//  og GlimtStore.init() er ferdig.
 // ============================================================
 
-const RP_STORAGE_KEY = "glimt.reiseplaner";
+const RP_STORAGE_KEY = "glimt.reiseplaner"; // beholdt kun som cache-fallback før migrering
 const MKAL_KEY       = "glimt.myCalendar";
 
 // ── By-filter fra URL-param ──────────────────────────────
@@ -12,7 +14,24 @@ let FILTER_CITY = RP_PARAMS.get("city") || "";
 
 // ── Hjelpefunksjoner ──────────────────────────────────────
 
+function isStoreReady() {
+  return (
+    typeof firebase !== "undefined" &&
+    firebase.auth &&
+    !!firebase.auth().currentUser &&
+    typeof GlimtStore !== "undefined" &&
+    GlimtStore.isReady &&
+    GlimtStore.isReady()
+  );
+}
+
 function loadPlans() {
+  // Foretrukket: les fra GlimtStore-cachen (synkron). Fall tilbake til
+  // localStorage hvis storen ikke er klar (gir oss noe å rendre mens
+  // vi venter på onReady).
+  if (typeof GlimtStore !== "undefined" && GlimtStore.isReady && GlimtStore.isReady()) {
+    return GlimtStore.getPlans();
+  }
   try {
     const raw = localStorage.getItem(RP_STORAGE_KEY);
     if (!raw) return [];
@@ -21,17 +40,46 @@ function loadPlans() {
   } catch { return []; }
 }
 
-function savePlans(plans) {
-  localStorage.setItem(RP_STORAGE_KEY, JSON.stringify(plans));
-}
-
 function loadCalendarEvents() {
+  if (typeof GlimtStore !== "undefined" && GlimtStore.isReady && GlimtStore.isReady()) {
+    return GlimtStore.getCalendarEvents();
+  }
   try {
     const raw = localStorage.getItem(MKAL_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch { return []; }
+}
+
+// ── Hjelpere: feilvisning + knappe-aktivering ────────────
+function showRpError(msg) {
+  const el = document.getElementById("rp-modal-error");
+  if (el) {
+    el.textContent = msg;
+    el.hidden = false;
+  } else {
+    alert(msg);
+  }
+}
+function hideRpError() {
+  const el = document.getElementById("rp-modal-error");
+  if (el) {
+    el.hidden = true;
+    el.textContent = "";
+  }
+}
+function tryEnableRpSubmit() {
+  const btn = document.getElementById("rp-modal-submit-btn");
+  if (!btn) return;
+  if (isStoreReady()) {
+    btn.disabled = false;
+    btn.removeAttribute("aria-disabled");
+    btn.removeAttribute("title");
+  } else {
+    btn.disabled = true;
+    btn.setAttribute("aria-disabled", "true");
+  }
 }
 
 function cityImage(cityName) {
@@ -176,10 +224,34 @@ document.addEventListener("DOMContentLoaded", () => {
   initCityFilter();
   initTabs();
   initModal();
+  // Initial render basert på det vi vet nå (kan være tom liste).
   renderPlans();
   renderGlimt();
   renderEvents();
   renderMaler();
+
+  // Auth-state styrer om submit-knappen er aktiv. Disabled hvis
+  // brukeren forsvinner (sesjons-utløp).
+  if (typeof firebase !== "undefined" && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (!user) {
+        const btn = document.getElementById("rp-modal-submit-btn");
+        if (btn) btn.disabled = true;
+        return;
+      }
+      tryEnableRpSubmit();
+    });
+  }
+
+  // Når GlimtStore er klar: aktiver knappen og re-render fra cache.
+  if (typeof GlimtStore !== "undefined" && GlimtStore.onReady) {
+    GlimtStore.onReady(function () {
+      tryEnableRpSubmit();
+      renderPlans();
+      renderGlimt();
+      renderEvents();
+    });
+  }
 });
 
 // ── By-filter chips ──────────────────────────────────────
@@ -295,17 +367,26 @@ function initModal() {
     if (e.target === overlay) overlay.style.display = "none";
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    hideRpError();
+
+    if (!isStoreReady()) {
+      showRpError("Lager ikke klart ennå. Vent et øyeblikk og prøv igjen.");
+      return;
+    }
+
     const name = document.getElementById("rp-modal-name").value.trim();
     const city = document.getElementById("rp-modal-city").value;
     const from = document.getElementById("rp-modal-from").value;
     const to   = document.getElementById("rp-modal-to").value;
 
-    if (!name) return;
+    if (!name) {
+      showRpError("Plan-navn må fylles ut.");
+      return;
+    }
 
-    const plans = loadPlans();
-    plans.push({
+    const plan = {
       id: "plan-" + Date.now(),
       name,
       city,
@@ -313,13 +394,31 @@ function initModal() {
       to,
       glimtCount: 0,
       eventCount: 0,
-      status: "utkast"
-    });
-    savePlans(plans);
-    renderPlans();
+      status: "utkast",
+      createdAt: new Date().toISOString()
+    };
 
+    const submitBtn = document.getElementById("rp-modal-submit-btn");
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      await GlimtStore.savePlan(plan);
+    } catch (err) {
+      console.error("Kunne ikke lagre reiseplan:", err);
+      showRpError(
+        "Kunne ikke opprette reiseplan: " +
+        (err && err.message ? err.message : "ukjent feil") +
+        ". Prøv igjen."
+      );
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
+
+    // Lukk modal og oppdater liste først NÅ – etter at promise er resolvet
+    renderPlans();
     form.reset();
     overlay.style.display = "none";
+    if (submitBtn) submitBtn.disabled = false;
   });
 }
 
@@ -331,10 +430,11 @@ function renderPlans() {
 
   let plans = loadPlans();
 
-  // Seed demo plans if empty
+  // Tidligere ble DEMO_PLANS persistert i localStorage hvis cachen var
+  // tom – det fyller Firestore med demo-data og er ikke lenger ønsket.
+  // Vis dem kun visuelt hvis brukeren ikke har egne planer ennå.
   if (plans.length === 0) {
     plans = DEMO_PLANS;
-    savePlans(plans);
   }
 
   // Filtrer på by hvis satt
@@ -399,12 +499,12 @@ function renderGlimt() {
   const empty = document.getElementById("rp-glimt-empty");
   const count = document.getElementById("glimt-count");
 
-  // Les ekte data fra localStorage, seed demo hvis tom
+  // Les ekte data; vis demo-glimt visuelt hvis cachen er tom (de
+  // persisteres ikke lenger – det ville krevd Auth+Store og fylt
+  // Firestore med demo-data).
   let glimt = loadSavedGlimt();
   if (glimt.length === 0) {
-    // Seed demo-data
-    DEMO_SAVED_GLIMT.forEach(g => addSavedGlimt({ ...g, type: "glimt", savedAt: new Date().toISOString() }));
-    glimt = loadSavedGlimt();
+    glimt = DEMO_SAVED_GLIMT.map(g => ({ ...g, type: "glimt" }));
   }
 
   // Filtrer på by

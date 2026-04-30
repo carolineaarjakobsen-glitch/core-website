@@ -69,6 +69,26 @@ window.renderSpotifyEmbed = function(url, container) {
 .guide-meta-input:focus { outline: none; border-color: #5D372A; background: #fff; }
 </style>
 <style>.mal-kort--link { text-decoration: none; color: inherit; }</style>
+  <style>
+    /* Synlig feilmelding når lagring feiler. Plassert ved bunnen
+       av skjemaet rett under Lagre-knappen. */
+    .opprett-form-error {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #f5b8b8;
+      background: #fdecec;
+      color: #7a1f1f;
+      border-radius: 6px;
+      font-size: 0.92rem;
+    }
+    /* Disabled-styling for primær-knappen mens lageret laster */
+    .btn-primary[disabled],
+    .btn-primary[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body class="opprett-body">
 
@@ -329,13 +349,16 @@ window.renderSpotifyEmbed = function(url, container) {
         <!-- Bunn-knapper -->
         <div class="opprett-actions">
           <a href="mine-glimt.html" class="btn-ghost">Avbryt</a>
-          <button type="submit" class="btn-primary">
+          <button type="submit" class="btn-primary" id="opprett-submit-btn" disabled aria-disabled="true" title="Vent til lageret er klart">
             Lagre reisebrev
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </button>
         </div>
+
+        <!-- Synlig feilmelding ved feilet lagring -->
+        <div id="opprett-form-error" class="opprett-form-error" role="alert" hidden></div>
 
       </form>
 
@@ -607,7 +630,9 @@ window.renderSpotifyEmbed = function(url, container) {
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <script src="glimt-store.js"></script>
   <script src="auth-guard.js"></script>
   <script src="auth.js"></script>
 

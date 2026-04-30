@@ -2,11 +2,11 @@
 //  Glimt – mine-enkeltglimt.js
 //  Lar brukeren opprette egne enkelt-glimt med alle filter-
 //  egenskaper, vise dem, og se lagrede glimt fra andre.
-//  Brukeropprettede glimt lagres i localStorage under
-//  "glimt.myCreatedGlimt".
+//  Brukeropprettede glimt lagres via GlimtStore (Firestore).
+//  Lagre-knappen aktiveres først når både Auth og Store er klare.
 // ============================================================
 
-const MY_GLIMT_KEY = "glimt.myCreatedGlimt";
+const MY_GLIMT_KEY = "glimt.myCreatedGlimt"; // beholdt kun for fallback før migrering
 
 // ── Varighet-labels ─────────────────────────────────────────
 const VARIGHET_LABELS = {
@@ -17,8 +17,54 @@ const VARIGHET_LABELS = {
   "heldag":   "Hel dag"
 };
 
+// ── Hjelpere: ready-sjekk + UI-feil + knappe-aktivering ────
+function isStoreReady() {
+  return (
+    typeof firebase !== "undefined" &&
+    firebase.auth &&
+    !!firebase.auth().currentUser &&
+    typeof GlimtStore !== "undefined" &&
+    GlimtStore.isReady &&
+    GlimtStore.isReady()
+  );
+}
+
+function showMegError(msg) {
+  const el = document.getElementById("meg-form-error");
+  if (el) {
+    el.textContent = msg;
+    el.hidden = false;
+  } else {
+    alert(msg);
+  }
+}
+function hideMegError() {
+  const el = document.getElementById("meg-form-error");
+  if (el) {
+    el.hidden = true;
+    el.textContent = "";
+  }
+}
+function tryEnableMegSubmit() {
+  const btn = document.getElementById("meg-submit-btn");
+  if (!btn) return;
+  if (isStoreReady()) {
+    btn.disabled = false;
+    btn.removeAttribute("aria-disabled");
+    btn.removeAttribute("title");
+  } else {
+    btn.disabled = true;
+    btn.setAttribute("aria-disabled", "true");
+  }
+}
+
 // ── CRUD ────────────────────────────────────────────────────
 function loadMyGlimt() {
+  // Foretrukket: les fra GlimtStore-cachen. Fall tilbake til localStorage
+  // før storen er klar (gir oss noe å rendre umiddelbart).
+  if (typeof GlimtStore !== "undefined" && GlimtStore.isReady && GlimtStore.isReady()) {
+    return GlimtStore.getMyCreatedGlimt();
+  }
   try {
     const raw = localStorage.getItem(MY_GLIMT_KEY);
     if (!raw) return [];
@@ -27,13 +73,18 @@ function loadMyGlimt() {
   } catch { return []; }
 }
 
-function saveMyGlimt(list) {
-  localStorage.setItem(MY_GLIMT_KEY, JSON.stringify(list));
-}
-
-function deleteMyGlimt(id) {
-  const list = loadMyGlimt().filter(g => g.id !== id);
-  saveMyGlimt(list);
+async function deleteMyGlimt(id) {
+  if (!isStoreReady()) {
+    showToast("Lager ikke klart – prøv igjen om litt", "remove");
+    return;
+  }
+  try {
+    await GlimtStore.deleteMyCreatedGlimt(id);
+  } catch (err) {
+    console.error("Kunne ikke slette glimt:", err);
+    showToast("Kunne ikke slette glimt", "remove");
+    return;
+  }
   renderMineTab();
 }
 
@@ -384,8 +435,14 @@ function showAutofillStatus(message, type) {
 }
 
 // ── Opprett glimt ───────────────────────────────────────────
-function handleCreateGlimt(e) {
+async function handleCreateGlimt(e) {
   e.preventDefault();
+  hideMegError();
+
+  if (!isStoreReady()) {
+    showMegError("Lager ikke klart ennå. Vent et øyeblikk og prøv igjen.");
+    return;
+  }
 
   const data = new FormData(e.target);
   const form = e.target;
@@ -397,14 +454,14 @@ function handleCreateGlimt(e) {
   const tidspunkt = data.getAll("tidspunkt");
 
   const editId = (document.getElementById("opprett-edit-id") || {}).value || "";
-  const list = loadMyGlimt();
 
   if (editId) {
     // ── Rediger eksisterende glimt ──
-    const idx = list.findIndex(x => x.id === editId);
-    if (idx >= 0) {
-      const existing = list[idx];
-      list[idx] = {
+    const existing = (typeof GlimtStore !== "undefined" && GlimtStore.getMyCreatedGlimt)
+      ? GlimtStore.getMyCreatedGlimt().find(x => x.id === editId)
+      : null;
+    if (existing) {
+      const updated = {
         ...existing,
         title:          data.get("title")?.trim() || "",
         desc:           data.get("desc")?.trim() || "",
@@ -420,10 +477,24 @@ function handleCreateGlimt(e) {
         hvem, budsjett, stemning, tidspunkt,
         updatedAt:      new Date().toISOString()
       };
-      saveMyGlimt(list);
+      const editBtn = document.getElementById("meg-submit-btn");
+      if (editBtn) editBtn.disabled = true;
+      try {
+        await GlimtStore.saveMyCreatedGlimt(updated);
+      } catch (err) {
+        console.error("Kunne ikke oppdatere glimt:", err);
+        showMegError(
+          "Kunne ikke oppdatere glimtet: " +
+          (err && err.message ? err.message : "ukjent feil") +
+          ". Prøv igjen."
+        );
+        if (editBtn) editBtn.disabled = false;
+        return;
+      }
       closeModal();
       renderMineTab();
       showToast("Glimtet ble oppdatert!", "success");
+      if (editBtn) editBtn.disabled = false;
       return;
     }
   }
@@ -450,12 +521,27 @@ function handleCreateGlimt(e) {
     createdAt:      new Date().toISOString()
   };
 
-  list.unshift(glimt);
-  saveMyGlimt(list);
+  const submitBtn = document.getElementById("meg-submit-btn");
+  if (submitBtn) submitBtn.disabled = true;
 
+  try {
+    await GlimtStore.saveMyCreatedGlimt(glimt);
+  } catch (err) {
+    console.error("Kunne ikke lagre glimt:", err);
+    showMegError(
+      "Kunne ikke lagre glimtet: " +
+      (err && err.message ? err.message : "ukjent feil") +
+      ". Prøv igjen."
+    );
+    if (submitBtn) submitBtn.disabled = false;
+    return;
+  }
+
+  // Lukk modal og oppdater først NÅ – etter at promise er resolvet
   closeModal();
   renderMineTab();
   showToast("Glimtet ble opprettet!", "success");
+  if (submitBtn) submitBtn.disabled = false;
 }
 
 // ── Rediger glimt ───────────────────────────────────────────
@@ -562,6 +648,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("meg-form");
   if (form) form.addEventListener("submit", handleCreateGlimt);
 
-  // Initial render
+  // Initial render basert på det vi vet nå (kan være tom liste).
   renderMineTab();
+
+  // Auth-state styrer om submit-knappen er aktiv. Disabled hvis
+  // brukeren forsvinner (sesjons-utløp).
+  if (typeof firebase !== "undefined" && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (!user) {
+        const btn = document.getElementById("meg-submit-btn");
+        if (btn) btn.disabled = true;
+        return;
+      }
+      tryEnableMegSubmit();
+    });
+  }
+
+  // Når GlimtStore er klar: aktiver knappen og re-render fra cache.
+  if (typeof GlimtStore !== "undefined" && GlimtStore.onReady) {
+    GlimtStore.onReady(function () {
+      tryEnableMegSubmit();
+      renderMineTab();
+      // Hvis brukeren står i "Lagrede"-fanen, oppdater den også
+      const lagredeTab = document.querySelector('.meg-tab[data-tab="lagrede"]');
+      if (lagredeTab && lagredeTab.classList.contains("active")) {
+        renderLagredeTab();
+      }
+    });
+  }
 });
