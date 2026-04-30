@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Mockup: Fifth Sip-palett</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ====== FIFTH SIP-INSPIRERT PALETT ====== */
+    :root {
+      /* Bistre brukes som primær mørk farge (navbar, overskrifter) */
+      /* Flame — primæraksent (knapper, aktive pills, valgt dato, CTA) */
+      --flame-bg:     #fdf0ea;
+      --flame-mid:    #f5c9af;
+      --flame:        #EA672D;
+      --flame-dark:   #d05520;
+      /* Columbia Blue — sekundæraksent (tags, kategori-badges, bilder) */
+      --blue-bg:      #e8f1fd;
+      --blue-mid:     #D2E8FF;
+      --blue:         #7ba8d4;
+      --blue-dark:    #5a8bbd;
+      /* Vanilla — varm bakgrunn */
+      --vanilla:      #FFEEBC;
+      --vanilla-light:#fff7e0;
+      --vanilla-mid:  #f0dfa0;
+      /* Bistre — sekundær mørk, tekst */
+      --bistre:       #5D372A;
+      --bistre-light: #7a5044;
+      /* Nøytrale */
+      --sand-bg:      #fdf9f0;
+      --sand-mid:     #e8dfcc;
+      --text-dark:    #5D372A;
+      --text-mid:     #5D372A;
+      --text-light:   #9a8a7a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--sand-bg); color: var(--text-dark); }
+
+    /* ====== PALETTE STRIP ====== */
+    .palette-strip {
+      max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 0;
+      display: flex; gap: 0.6rem; flex-wrap: wrap;
+    }
+    .ps { width: 100px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .ps-color { height: 52px; display: flex; align-items: flex-end; padding: 0.3rem 0.5rem; }
+    .ps-color span { font-size: 0.55rem; font-weight: 500; color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .ps-color.light span { color: #5D372A; text-shadow: none; }
+    .ps-info { background: #fff; padding: 0.35rem 0.5rem; }
+    .ps-name { font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 600; color: #5D372A; }
+    .ps-role { font-size: 0.5rem; color: #9a8a7a; }
+
+    /* ====== SECTION LABELS ====== */
+    .section-label {
+      display: block; max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 2rem 0.8rem;
+      font-family: 'Poppins', sans-serif; font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--flame);
+    }
+
+    /* ====== NAVBAR ====== */
+    .navbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; height: 64px; background: var(--bistre); }
+    .logo { display: flex; align-items: center; }
+    .logo-word { display: inline-flex; align-items: center; gap: 0.55rem; text-decoration: none; }
+    .logo-o { width: 28px; height: 20px; }
+    .logo-wordmark { font-family: 'Poppins', sans-serif; font-size: 1.05rem; font-weight: 500; color: rgba(255,255,255,0.92); letter-spacing: 0.06em; }
+    .nav-links { display: flex; gap: 0.4rem; align-items: center; }
+    .nav-links a { text-decoration: none; font-size: 0.85rem; font-weight: 400; color: rgba(255,255,255,0.72); padding: 0.45rem 1.1rem; border-radius: 4px; transition: all 0.2s; }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .nav-login-btn { border: 1px solid rgba(255,255,255,0.35) !important; margin-left: 0.4rem; }
+    .nav-login-btn:hover { background: var(--flame) !important; border-color: var(--flame) !important; color: #fff !important; }
+    .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--flame); color: #fff; font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.25); margin-left: 0.8rem; }
+
+    /* ====== HERO ====== */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 85vh; }
+    .hero-image { position: relative; overflow: hidden; background: var(--blue-mid); }
+    .hero-image .overlay { position: absolute; inset: 0; background: linear-gradient(to right, transparent 55%, var(--vanilla-light) 100%); }
+    .hero-text { display: flex; align-items: center; padding: 4rem 5rem 4rem 3.5rem; background: var(--vanilla-light); }
+    .hero-content { max-width: 460px; }
+    .brand-badge { display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid var(--vanilla-mid); border-radius: 50px; padding: 0.4rem 1rem 0.4rem 0.7rem; margin-bottom: 1.8rem; background: #fff; }
+    .brand-badge svg { width: 28px; height: 20px; }
+    .brand-badge span { font-size: 0.72rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bistre); }
+    .headline { font-family: 'Poppins', sans-serif; font-size: clamp(2.2rem,3.5vw,3.4rem); font-weight: 600; line-height: 1.2; color: var(--bistre); margin-bottom: 1.6rem; }
+    .city-highlight { color: var(--flame); font-weight: 700; }
+    .description { font-size: 0.95rem; line-height: 1.8; color: var(--bistre-light); font-weight: 300; margin-bottom: 2.8rem; max-width: 380px; }
+    .cta-button { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.95rem 2.2rem; background: var(--bistre); color: #fff; border: 2px solid var(--bistre); border-radius: 50px; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: all 0.25s; }
+    .cta-button:hover { background: var(--flame); border-color: var(--flame); transform: translateY(-2px); }
+    .stats-bar { display: flex; gap: 2rem; margin-top: 2.8rem; align-items: center; }
+    .stat-number { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--bistre); display: block; }
+    .stat-label { font-size: 0.72rem; color: var(--text-light); }
+    .stat-divider { width: 1px; height: 32px; background: var(--vanilla-mid); }
+    .city-indicators { display: flex; gap: 0.55rem; justify-content: center; padding: 1.2rem; background: var(--vanilla-light); }
+    .indicator { width: 7px; height: 7px; border-radius: 50%; background: var(--vanilla-mid); border: 1.5px solid var(--text-light); }
+    .indicator.active { background: var(--flame); border-color: var(--flame); transform: scale(1.4); }
+
+    /* ====== KALENDER ====== */
+    .cal-city-filter { max-width: 1100px; margin: 0 auto; padding: 1rem 2rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .cal-city-pill { font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 0.4rem 1.1rem; border-radius: 50px; border: 1.5px solid var(--sand-mid); background: #fff; color: var(--bistre); cursor: pointer; transition: all 0.2s; }
+    .cal-city-pill:hover { border-color: var(--flame); color: var(--flame); }
+    .cal-city-pill.active { background: var(--flame); border-color: var(--flame); color: #fff; }
+
+    .cal-layout { max-width: 1100px; margin: 0 auto; padding: 1.2rem 2rem 3rem; display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
+    .cal-card { background: var(--blue-bg); border-radius: 20px; padding: 2rem; box-shadow: 0 4px 24px rgba(93,55,42,0.07); }
+
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.8rem; flex-wrap: wrap; gap: 0.8rem; }
+    .cal-city-label { font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue-dark); background: rgba(123,168,212,0.15); padding: 0.3rem 0.8rem; border-radius: 50px; }
+    .cal-add-btn { font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 0.35rem 1rem; border-radius: 50px; border: 1.5px solid var(--flame); background: transparent; color: var(--flame); cursor: pointer; transition: all 0.2s; }
+    .cal-add-btn:hover { background: var(--flame); color: #fff; }
+    .cal-month { font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 600; color: var(--bistre); display: flex; align-items: center; gap: 1rem; }
+    .cal-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--blue-mid); background: #fff; color: var(--bistre); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.2s; }
+    .cal-nav-btn:hover { border-color: var(--blue-dark); color: var(--blue-dark); }
+
+    .weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.2rem; margin-bottom: 0.3rem; }
+    .weekdays span { font-size: 0.68rem; font-weight: 500; color: var(--text-light); text-align: center; text-transform: uppercase; letter-spacing: 0.06em; }
+    .grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.2rem; }
+    .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--text-dark); gap: 2px; cursor: pointer; transition: background 0.15s; }
+    .day:hover { background: var(--vanilla); }
+    .day.e { visibility: hidden; }
+    .day.today { background: var(--bistre); color: #fff; }
+    .day.sel { background: var(--flame); color: #fff; }
+    .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--flame); }
+    .day.today .dot, .day.sel .dot { background: rgba(255,255,255,0.6); }
+
+    /* Sidebar */
+    .sidebar { background: #fff; border-radius: 20px; padding: 1.6rem; box-shadow: 0 4px 24px rgba(93,55,42,0.07); }
+    .sidebar-date { font-family: 'Poppins', sans-serif; font-size: 0.92rem; font-weight: 600; color: var(--bistre); margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--sand-mid); }
+    .sidebar-cards { display: flex; flex-direction: column; gap: 0.8rem; }
+
+    .event-card { display: flex; gap: 0.8rem; padding: 0.8rem 1rem; border-radius: 12px; background: var(--blue-bg); border: 1.5px solid var(--blue-mid); }
+    .event-emoji { font-size: 1.3rem; flex-shrink: 0; }
+    .event-title { font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--bistre); margin-bottom: 0.15rem; }
+    .event-desc { font-size: 0.72rem; color: var(--bistre-light); line-height: 1.45; }
+    .event-tags { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
+    .etag { font-size: 0.6rem; font-weight: 500; padding: 0.12rem 0.5rem; border-radius: 50px; }
+    .etag-blue { background: rgba(123,168,212,0.15); color: var(--blue-dark); }
+    .etag-flame { background: rgba(234,103,45,0.12); color: var(--flame-dark); }
+    .etag-bistre { background: rgba(93,55,42,0.1); color: var(--bistre); }
+    .etag-tm { background: rgba(93,55,42,0.08); color: var(--bistre); }
+
+    /* ====== UTFORSK-KORT ====== */
+    .explore-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 3rem; }
+    .explore-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .explore-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(93,55,42,0.06); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .explore-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(93,55,42,0.12); }
+    .explore-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .explore-body { padding: 1.2rem; }
+    .explore-cat { font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bistre); margin-bottom: 0.4rem; }
+    .explore-title { font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--bistre); margin-bottom: 0.35rem; }
+    .explore-excerpt { font-size: 0.78rem; color: var(--bistre-light); line-height: 1.5; }
+    .explore-footer { display: flex; align-items: center; justify-content: space-between; padding: 0 1.2rem 1rem; }
+    .explore-author { display: flex; align-items: center; gap: 0.4rem; }
+    .explore-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--blue-dark); color: #fff; font-size: 0.55rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .explore-name { font-size: 0.68rem; color: var(--text-light); }
+    .explore-city-tag { font-size: 0.58rem; font-weight: 500; padding: 0.15rem 0.5rem; border-radius: 50px; background: var(--flame-bg); border: 1px solid var(--flame-mid); color: var(--flame-dark); }
+
+    /* ====== MIN KALENDER PREVIEW ====== */
+    .minkal-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 3rem; }
+    .minkal-card { background: var(--blue-bg); border-radius: 20px; padding: 2rem; box-shadow: 0 4px 24px rgba(93,55,42,0.07); }
+    .minkal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .minkal-title { font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 600; color: var(--bistre); }
+    .minkal-add { font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 0.4rem 1.2rem; border-radius: 50px; border: 1.5px solid var(--flame); background: transparent; color: var(--flame); cursor: pointer; }
+    .minkal-add:hover { background: var(--flame); color: #fff; }
+    .minkal-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .minkal-event { display: flex; gap: 0.7rem; padding: 1rem; border-radius: 14px; border: 1.5px solid var(--blue-mid); background: #fff; }
+    .minkal-emoji { font-size: 1.5rem; }
+    .minkal-ev-title { font-family: 'Poppins', sans-serif; font-size: 0.82rem; font-weight: 600; color: var(--bistre); }
+    .minkal-ev-date { font-size: 0.7rem; color: var(--text-light); margin-top: 0.15rem; }
+    .minkal-ev-tags { display: flex; gap: 0.25rem; margin-top: 0.4rem; }
+
+    /* ====== FOOTER ====== */
+    .footer { background: var(--bistre); padding: 2.5rem; text-align: center; }
+    .footer-text { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+    .footer-text a { color: var(--vanilla); text-decoration: none; }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-image { min-height: 300px; }
+      .hero-text { padding: 2rem; }
+      .cal-layout { grid-template-columns: 1fr; }
+      .explore-grid { grid-template-columns: 1fr; }
+      .minkal-events { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============== PALETT-OVERSIKT =============== -->
+  <div class="palette-strip">
+    <div class="ps"><div class="ps-color" style="background:#5D372A"><span>#5D372A</span></div><div class="ps-info"><div class="ps-name">Bistre</div><div class="ps-role">Navbar, overskrifter, tekst</div></div></div>
+    <div class="ps"><div class="ps-color" style="background:#EA672D"><span>#EA672D</span></div><div class="ps-info"><div class="ps-name">Flame</div><div class="ps-role">Primær aksent</div></div></div>
+    <div class="ps"><div class="ps-color light" style="background:#D2E8FF"><span>#D2E8FF</span></div><div class="ps-info"><div class="ps-name">Columbia Blue</div><div class="ps-role">Kalender, tags, bilder</div></div></div>
+    <div class="ps"><div class="ps-color light" style="background:#FFEEBC"><span>#FFEEBC</span></div><div class="ps-info"><div class="ps-name">Vanilla</div><div class="ps-role">Kort, hero-bg, varm grunn</div></div></div>
+  </div>
+
+  <!-- =============== NAVBAR =============== -->
+  <div class="section-label">1 &mdash; Navbar</div>
+  <nav class="navbar">
+    <div class="logo">
+      <span class="logo-word">
+        <svg class="logo-o" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="42" height="30" rx="5" fill="#FFEEBC" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M1 4 L22 18 L43 4" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M1 29 L15 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M43 29 L29 17.5" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="22" cy="17" r="4" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="10.5" x2="22" y2="12"/><line x1="22" y1="22" x2="22" y2="23.5"/><line x1="15.5" y1="17" x2="17" y2="17"/><line x1="27" y1="17" x2="28.5" y2="17"/><line x1="17.4" y1="12.4" x2="18.5" y2="13.5"/><line x1="25.5" y1="20.5" x2="26.6" y2="21.6"/><line x1="17.4" y1="21.6" x2="18.5" y2="20.5"/><line x1="25.5" y1="13.5" x2="26.6" y2="12.4"/></g>
+        </svg>
+        <span class="logo-wordmark">glimt</span>
+      </span>
+    </div>
+    <div class="nav-links">
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Mine glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="mine-glimt.html">Mine reisebrev</a>
+          <a href="mine-reiseplaner.html">Mine reiseplaner</a>
+          <a href="min-kalender.html">Min kalender</a>
+        </div>
+      </div>
+      <div class="nav-dropdown-group">
+        <button class="nav-dropdown-trigger">
+          Utforsk glimt
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="utforsk-reisebrev.html">Utforsk reisebrev</a>
+          <a href="explore.html">Skreddersy glimt</a>
+          <a href="calendar.html">Utforsk kalender</a>
+        </div>
+      </div>
+      <a href="#" class="nav-login-btn">Logg inn</a>
+      <div class="nav-avatar">CJ</div>
+    </div>
+  </nav>
+
+  <!-- =============== 2. HERO / FORSIDE =============== -->
+  <div class="section-label">2 &mdash; Forside (Hero)</div>
+
+  <section class="hero">
+    <div class="hero-image">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#5a8bbd 0%,#D2E8FF 50%,#FFEEBC 100%);display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:5rem;opacity:0.25;">🏛️</span>
+      </div>
+      <div class="overlay"></div>
+    </div>
+    <div class="hero-text">
+      <div class="hero-content">
+        <div class="brand-badge">
+          <svg viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.8" y="0.8" width="26.4" height="19.4" rx="1.8" stroke="#5D372A" stroke-width="1.5"/>
+            <path d="M0.8 2.5 L14 12 L27.2 2.5" stroke="#5D372A" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="14" cy="12" r="2.5" fill="#EA672D"/><g stroke="#EA672D" stroke-width="1.2" stroke-linecap="round"><line x1="14" y1="7.5" x2="14" y2="8.5"/><line x1="14" y1="15.5" x2="14" y2="16.5"/><line x1="9.5" y1="12" x2="10.5" y2="12"/><line x1="17.5" y1="12" x2="18.5" y2="12"/><line x1="10.8" y1="8.8" x2="11.5" y2="9.5"/><line x1="16.5" y1="14.5" x2="17.2" y2="15.2"/><line x1="10.8" y1="15.2" x2="11.5" y2="14.5"/><line x1="16.5" y1="9.5" x2="17.2" y2="8.8"/></g>
+          </svg>
+          <span>Din lokale guide</span>
+        </div>
+        <h1 class="headline">Helgetur til<br/><em class="city-highlight" style="font-style:normal">Roma</em></h1>
+        <p class="description">Glimt gir deg det innbyggerne vet – autentiske opplevelser, skjulte perler og praktiske tips. Alt samlet på ett sted.</p>
+        <button class="cta-button">
+          Utforsk byen din
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <div class="stats-bar">
+          <div><span class="stat-number">20+</span><span class="stat-label">Byer</span></div>
+          <div class="stat-divider"></div>
+          <div><span class="stat-number">500+</span><span class="stat-label">Glimt</span></div>
+          <div class="stat-divider"></div>
+          <div><span class="stat-number">1 200</span><span class="stat-label">Reisende</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="city-indicators">
+    <div class="indicator active"></div>
+    <div class="indicator"></div>
+    <div class="indicator"></div>
+    <div class="indicator"></div>
+  </div>
+
+  <!-- =============== 3. BY-KALENDER =============== -->
+  <div class="section-label">3 &mdash; By-kalender (Finn ditt glimt)</div>
+
+  <div class="cal-city-filter">
+    <button class="cal-city-pill active">København</button>
+    <button class="cal-city-pill">Roma</button>
+    <button class="cal-city-pill">Stockholm</button>
+    <button class="cal-city-pill">Dublin</button>
+  </div>
+
+  <div class="cal-layout">
+    <div class="cal-card">
+      <div class="cal-header">
+        <span class="cal-city-label">København</span>
+        <button class="cal-add-btn">+ Nytt glimt</button>
+        <div class="cal-month">
+          <button class="cal-nav-btn">&lsaquo;</button>
+          <span>April 2026</span>
+          <button class="cal-nav-btn">&rsaquo;</button>
+        </div>
+      </div>
+
+      <div class="weekdays"><span>Man</span><span>Tir</span><span>Ons</span><span>Tor</span><span>Fre</span><span>Lør</span><span>Søn</span></div>
+      <div class="grid">
+        <div class="day e"></div><div class="day e"></div>
+        <div class="day">1<div class="dot"></div></div><div class="day">2<div class="dot"></div></div><div class="day">3<div class="dot"></div></div><div class="day">4<div class="dot"></div></div><div class="day">5</div>
+        <div class="day">6<div class="dot"></div></div><div class="day">7</div><div class="day">8<div class="dot"></div></div><div class="day">9</div><div class="day">10<div class="dot"></div></div><div class="day">11</div><div class="day today">12<div class="dot"></div></div>
+        <div class="day">13</div><div class="day">14</div><div class="day sel">15<div class="dot"></div></div><div class="day">16</div><div class="day">17<div class="dot"></div></div><div class="day">18</div><div class="day">19</div>
+        <div class="day">20<div class="dot"></div></div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24<div class="dot"></div></div><div class="day">25</div><div class="day">26</div>
+        <div class="day">27</div><div class="day">28</div><div class="day">29<div class="dot"></div></div><div class="day">30</div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-date">Onsdag 15. april 2026</div>
+      <div class="sidebar-cards">
+        <div class="event-card">
+          <div class="event-emoji">🎵</div>
+          <div>
+            <div class="event-title">Jazz i Nyhavn</div>
+            <div class="event-desc">Live jazzkonsert ved kanalen kl. 20:00</div>
+            <div class="event-tags">
+              <span class="etag etag-blue">Konsert</span>
+              <span class="etag etag-flame">Mitt glimt</span>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-emoji">🚲</div>
+          <div>
+            <div class="event-title">Sykling langs kanalene</div>
+            <div class="event-desc">Leie sykkel og utforsk Christianshavn</div>
+            <div class="event-tags">
+              <span class="etag etag-blue">Aktivitet</span>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-emoji">🌷</div>
+          <div>
+            <div class="event-title">Tivoli åpner sesongen</div>
+            <div class="event-desc">Blomster og fornøyelser i Tivoli</div>
+            <div class="event-tags">
+              <span class="etag etag-bistre">Sesong</span>
+              <span class="etag etag-tm">Ticketmaster</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============== 4. UTFORSK GLIMT =============== -->
+  <div class="section-label">4 &mdash; Utforsk glimt (reisebrev)</div>
+
+  <section class="explore-section">
+    <div class="explore-grid">
+      <div class="explore-card">
+        <div class="explore-img" style="background:linear-gradient(135deg,#FFEEBC,#f0dfa0)">🍝</div>
+        <div class="explore-body">
+          <div class="explore-cat">Mat & drikke</div>
+          <div class="explore-title">Trasteveres hemmelige trattoria</div>
+          <div class="explore-excerpt">Et lite lokale gjemt bak en bakgård. Bestill cacio e pepe og en carafe husvin.</div>
+        </div>
+        <div class="explore-footer">
+          <div class="explore-author"><div class="explore-avatar">MH</div><span class="explore-name">Maria H.</span></div>
+          <span class="explore-city-tag">Roma</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <div class="explore-img" style="background:linear-gradient(135deg,#5a8bbd,#D2E8FF)">🏰</div>
+        <div class="explore-body">
+          <div class="explore-cat">Kultur</div>
+          <div class="explore-title">Stockholms skjulte kunstscene</div>
+          <div class="explore-excerpt">Galleriene langs Hornsgatan er verdt en hel ettermiddag.</div>
+        </div>
+        <div class="explore-footer">
+          <div class="explore-author"><div class="explore-avatar">EL</div><span class="explore-name">Erik L.</span></div>
+          <span class="explore-city-tag">Stockholm</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <div class="explore-img" style="background:linear-gradient(135deg,#D2E8FF,#e8f1fd)">🍺</div>
+        <div class="explore-body">
+          <div class="explore-cat">Uteliv</div>
+          <div class="explore-title">Dublins beste craft-puber</div>
+          <div class="explore-excerpt">Glem Temple Bar – disse stedene serverer noe langt bedre.</div>
+        </div>
+        <div class="explore-footer">
+          <div class="explore-author"><div class="explore-avatar">AK</div><span class="explore-name">Anna K.</span></div>
+          <span class="explore-city-tag">Dublin</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== 5. MIN KALENDER =============== -->
+  <div class="section-label">5 &mdash; Min kalender (personlige glimt)</div>
+
+  <section class="minkal-section">
+    <div class="minkal-card">
+      <div class="minkal-header">
+        <div class="minkal-title">Min kalender – April 2026</div>
+        <button class="minkal-add">+ Nytt glimt</button>
+      </div>
+      <div class="minkal-events">
+        <div class="minkal-event">
+          <div class="minkal-emoji">🎵</div>
+          <div>
+            <div class="minkal-ev-title">Jazz i Nyhavn</div>
+            <div class="minkal-ev-date">15. april · København</div>
+            <div class="minkal-ev-tags">
+              <span class="etag etag-blue">Konsert</span>
+              <span class="etag etag-flame">Mitt glimt</span>
+            </div>
+          </div>
+        </div>
+        <div class="minkal-event">
+          <div class="minkal-emoji">🏛️</div>
+          <div>
+            <div class="minkal-ev-title">Colosseum-besøk</div>
+            <div class="minkal-ev-date">22. april · Roma</div>
+            <div class="minkal-ev-tags">
+              <span class="etag etag-bistre">Severdighet</span>
+              <span class="etag etag-tm">Ticketmaster</span>
+            </div>
+          </div>
+        </div>
+        <div class="minkal-event">
+          <div class="minkal-emoji">☕</div>
+          <div>
+            <div class="minkal-ev-title">Kafé-runde i Södermalm</div>
+            <div class="minkal-ev-date">28. april · Stockholm</div>
+            <div class="minkal-ev-tags">
+              <span class="etag etag-blue">Mat & drikke</span>
+              <span class="etag etag-flame">Mitt glimt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== FOOTER =============== -->
+  <footer class="footer">
+    <p class="footer-text">&copy; 2026 <a href="#">Glimt</a> – Din lokale reiseleder. Bistre + Flame + Columbia Blue + Vanilla.</p>
+  </footer>
+
+</body>
+</html>

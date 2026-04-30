@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Glimt – Fire designforslag</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy: #1e2a4a;
+  --coral: #d95f5f;
+  --blush-bg: #fdf6f3;
+  --text-mid: #6b7a99;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:#f0ebe6; color:var(--navy); }
+h1 { font-family:'Poppins',sans-serif; text-align:center; padding:3rem 2rem 0.5rem; font-size:2rem; font-weight:600; }
+.intro { text-align:center; color:var(--text-mid); max-width:600px; margin:0 auto 3rem; font-size:0.95rem; line-height:1.6; padding:0 2rem; }
+.proposals { display:flex; flex-direction:column; gap:4rem; max-width:1200px; margin:0 auto; padding:0 2rem 5rem; }
+
+/* ── Proposal Card ── */
+.proposal {
+  background:#fff;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 8px 40px rgba(30,42,74,0.08);
+}
+.proposal-header {
+  padding:2.5rem 3rem 0;
+  display:flex; align-items:baseline; gap:1rem;
+}
+.proposal-num {
+  font-family:'Poppins',sans-serif;
+  font-size:0.72rem; font-weight:600;
+  letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--coral);
+  background:rgba(217,95,95,0.08);
+  border:1px solid rgba(217,95,95,0.25);
+  border-radius:999px; padding:0.3rem 0.9rem;
+}
+.proposal-name {
+  font-family:'Poppins',sans-serif;
+  font-size:1.45rem; font-weight:600; color:var(--navy);
+}
+.proposal-desc {
+  padding:0.8rem 3rem 2rem;
+  color:var(--text-mid); font-size:0.9rem; line-height:1.65;
+  max-width:700px;
+}
+.proposal-sections {
+  display:flex; flex-direction:column; gap:0;
+}
+.section-label {
+  padding:0.8rem 3rem;
+  background:var(--navy);
+  color:rgba(255,255,255,0.5);
+  font-size:0.68rem; font-weight:500;
+  letter-spacing:0.14em; text-transform:uppercase;
+}
+
+/* ── Wireframe styles ── */
+.wireframe {
+  padding:2rem 3rem 2.5rem;
+  background:var(--blush-bg);
+  min-height:200px;
+}
+
+/* === FORSLAG 1: Luftig grid === */
+.w-grid-loose {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;
+}
+.w-panel-v {
+  border-radius:16px;
+  overflow:hidden;
+  aspect-ratio:3/4;
+  position:relative;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-panel-v:hover { transform:translateY(-4px); }
+.w-panel-v .bg {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, #2a3a5c 0%, #1e2a4a 100%);
+}
+.w-panel-v .bg.g { background:linear-gradient(135deg, #1a3530 0%, #0d2620 100%); }
+.w-panel-v .bg.p { background:linear-gradient(135deg, #2e1840 0%, #1e0f30 100%); }
+.w-panel-v .content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:1.8rem;
+  background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  color:#fff;
+}
+.w-panel-v .eyebrow { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:0.4rem; }
+.w-panel-v h3 { font-family:'Poppins',sans-serif; font-size:1.1rem; font-weight:600; line-height:1.2; }
+.w-panel-v h3 em { font-style:normal; color:var(--coral); }
+
+/* Mine glimt - større kort, 2 per rad */
+.w-glimt-2col {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2rem;
+}
+.w-glimt-card {
+  aspect-ratio:4/5;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-glimt-card:hover { transform:translateY(-4px); }
+.w-glimt-card .mosaic {
+  position:absolute; inset:0;
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:3px;
+  background:var(--navy);
+}
+.w-glimt-card .mosaic div {
+  background:linear-gradient(135deg, #3a4a6a 0%, #2a3a5c 100%);
+}
+.w-glimt-card .mosaic div:nth-child(2) { background:linear-gradient(135deg, #4a5a7a 0%, #3a4a6a 100%); }
+.w-glimt-card .mosaic div:nth-child(3) { background:linear-gradient(135deg, #2a3a5c 0%, #1a2a4c 100%); }
+.w-glimt-card .overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(20,18,40,0.85) 0%, transparent 60%);
+}
+.w-glimt-card .info {
+  position:absolute; bottom:0; left:0; right:0; padding:1.8rem; color:#fff;
+}
+.w-glimt-card .info .meta { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:0.5rem; }
+.w-glimt-card .info h3 { font-family:'Poppins',sans-serif; font-size:1.5rem; font-weight:500; }
+
+/* Explore - 2 kolonner med mer padding */
+.w-explore-2col {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.5rem;
+}
+.w-act-card {
+  background:#fff;
+  border-radius:16px;
+  padding:1.8rem;
+  display:flex; flex-direction:column; gap:0.7rem;
+  box-shadow:0 2px 12px rgba(30,42,74,0.06);
+  border:1.5px solid transparent;
+  transition:border-color 0.2s, transform 0.2s;
+  cursor:pointer;
+}
+.w-act-card:hover { border-color:var(--coral); transform:translateY(-2px); }
+.w-act-card .emoji { font-size:1.8rem; }
+.w-act-card .title { font-family:'Poppins',sans-serif; font-size:0.95rem; font-weight:600; color:var(--navy); }
+.w-act-card .desc { font-size:0.78rem; color:var(--text-mid); line-height:1.6; }
+.w-act-card .tags { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.w-act-card .tag { padding:0.22rem 0.6rem; background:var(--blush-bg); border-radius:50px; font-size:0.65rem; color:var(--text-mid); }
+
+/* === FORSLAG 2: Horisontale kort === */
+.w-horiz-stack {
+  display:flex; flex-direction:column; gap:1.2rem;
+}
+.w-panel-h {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:200px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-panel-h:hover { transform:translateY(-3px); }
+.w-panel-h .img {
+  background:linear-gradient(135deg, #2a3a5c 0%, #1e2a4a 100%);
+  min-height:200px;
+}
+.w-panel-h .img.g { background:linear-gradient(135deg, #1a3530 0%, #0d2620 100%); }
+.w-panel-h .img.p { background:linear-gradient(135deg, #2e1840 0%, #1e0f30 100%); }
+.w-panel-h .text {
+  background:var(--navy);
+  padding:2rem 2.2rem;
+  display:flex; flex-direction:column; justify-content:flex-end; color:#fff;
+}
+.w-panel-h .text .eyebrow { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:0.5rem; }
+.w-panel-h .text h3 { font-family:'Poppins',sans-serif; font-size:1.25rem; font-weight:600; line-height:1.2; margin-bottom:0.5rem; }
+.w-panel-h .text h3 em { font-style:normal; color:var(--coral); }
+.w-panel-h .text p { font-size:0.78rem; color:rgba(255,255,255,0.55); line-height:1.6; }
+
+/* Mine glimt horisontalt */
+.w-glimt-horiz {
+  display:flex; flex-direction:column; gap:1.5rem;
+  max-width:800px; margin:0 auto;
+}
+.w-glimt-h {
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  min-height:220px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-glimt-h:hover { transform:translateY(-3px); }
+.w-glimt-h .mosaic {
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:3px;
+  background:var(--navy);
+}
+.w-glimt-h .mosaic div { background:linear-gradient(135deg, #3a4a6a 0%, #2a3a5c 100%); }
+.w-glimt-h .mosaic div:nth-child(2) { background:linear-gradient(135deg, #4a5a7a 0%, #3a4a6a 100%); }
+.w-glimt-h .text {
+  background:linear-gradient(135deg, rgba(20,18,40,0.95), rgba(30,25,55,0.98));
+  padding:2rem 2.2rem;
+  display:flex; flex-direction:column; justify-content:flex-end; color:#fff;
+}
+.w-glimt-h .text .meta { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:0.5rem; }
+.w-glimt-h .text h3 { font-family:'Poppins',sans-serif; font-size:1.6rem; font-weight:500; }
+
+/* Explore - 1 kolonne */
+.w-explore-1col {
+  display:flex; flex-direction:column; gap:1.2rem;
+  max-width:600px; margin:0 auto;
+}
+.w-act-wide {
+  background:#fff;
+  border-radius:16px;
+  padding:1.8rem 2rem;
+  display:grid; grid-template-columns:auto 1fr; column-gap:1.4rem; row-gap:0.5rem;
+  box-shadow:0 2px 12px rgba(30,42,74,0.06);
+  border:1.5px solid transparent;
+  transition:border-color 0.2s, transform 0.2s;
+  cursor:pointer;
+}
+.w-act-wide:hover { border-color:var(--coral); transform:translateY(-2px); }
+.w-act-wide .emoji { font-size:2rem; grid-row:1/3; display:flex; align-items:flex-start; justify-content:center; width:52px; height:52px; background:var(--blush-bg); border-radius:14px; padding-top:0.5rem; }
+.w-act-wide .title { font-family:'Poppins',sans-serif; font-size:1rem; font-weight:600; color:var(--navy); align-self:end; }
+.w-act-wide .tags { display:flex; gap:0.4rem; flex-wrap:wrap; align-self:start; }
+.w-act-wide .tag { padding:0.22rem 0.6rem; background:var(--blush-bg); border-radius:50px; font-size:0.65rem; color:var(--text-mid); }
+.w-act-wide .desc { grid-column:1/-1; font-size:0.82rem; color:var(--text-mid); line-height:1.65; margin-top:0.3rem; }
+
+/* === FORSLAG 3: Vertikal fullbredde === */
+.w-full-stack {
+  display:flex; flex-direction:column; gap:0;
+}
+.w-panel-full {
+  min-height:260px;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform 0.15s;
+}
+.w-panel-full:first-child { border-radius:16px 16px 0 0; }
+.w-panel-full:last-child { border-radius:0 0 16px 16px; }
+.w-panel-full .bg {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, #2a3a5c 0%, #1e2a4a 100%);
+}
+.w-panel-full .bg.g { background:linear-gradient(135deg, #1a3530 0%, #0d2620 100%); }
+.w-panel-full .bg.p { background:linear-gradient(135deg, #2e1840 0%, #1e0f30 100%); }
+.w-panel-full .content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:3rem 3.5rem;
+  background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  color:#fff;
+}
+.w-panel-full .eyebrow { font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:0.5rem; }
+.w-panel-full h3 { font-family:'Poppins',sans-serif; font-size:1.6rem; font-weight:600; }
+.w-panel-full h3 em { font-style:normal; color:var(--coral); }
+.w-panel-full p { font-size:0.82rem; color:rgba(255,255,255,0.55); line-height:1.6; margin-top:0.6rem; max-width:500px; }
+.w-sep { height:2px; background:rgba(255,255,255,0.1); }
+
+/* Mine glimt - listevisning */
+.w-glimt-list {
+  display:flex; flex-direction:column; gap:0.8rem;
+  max-width:700px; margin:0 auto;
+}
+.w-glimt-list-item {
+  display:grid;
+  grid-template-columns:80px 1fr auto;
+  gap:1.2rem;
+  align-items:center;
+  padding:1rem 1.4rem;
+  background:#fff;
+  border-radius:14px;
+  cursor:pointer;
+  transition:transform 0.2s, box-shadow 0.2s;
+  box-shadow:0 2px 10px rgba(30,42,74,0.05);
+}
+.w-glimt-list-item:hover { transform:translateX(4px); box-shadow:0 4px 16px rgba(30,42,74,0.1); }
+.w-glimt-list-item .thumb {
+  width:80px; height:60px; border-radius:10px;
+  background:linear-gradient(135deg, #3a4a6a, #2a3a5c);
+}
+.w-glimt-list-item .info h3 { font-family:'Poppins',sans-serif; font-size:1rem; font-weight:500; color:var(--navy); }
+.w-glimt-list-item .info .meta { font-size:0.72rem; color:var(--text-mid); margin-top:0.2rem; }
+.w-glimt-list-item .arrow { color:var(--text-mid); font-size:1.2rem; }
+
+/* === FORSLAG 4: Hybrid "Magazine" === */
+.w-magazine {
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  grid-template-rows:auto auto;
+  gap:1rem;
+}
+.w-mag-hero {
+  grid-row:1/3;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  min-height:380px;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-mag-hero:hover { transform:translateY(-3px); }
+.w-mag-hero .bg {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, #2a3a5c 0%, #1e2a4a 100%);
+}
+.w-mag-hero .content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:2.5rem;
+  background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  color:#fff;
+}
+.w-mag-hero .eyebrow { font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:0.5rem; }
+.w-mag-hero h3 { font-family:'Poppins',sans-serif; font-size:1.8rem; font-weight:600; }
+.w-mag-hero h3 em { font-style:normal; color:var(--coral); }
+.w-mag-side {
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.w-mag-side:hover { transform:translateY(-2px); }
+.w-mag-side .bg {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, #1a3530 0%, #0d2620 100%);
+}
+.w-mag-side .bg.p { background:linear-gradient(135deg, #2e1840 0%, #1e0f30 100%); }
+.w-mag-side .content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:1.5rem;
+  background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  color:#fff;
+}
+.w-mag-side .eyebrow { font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:0.3rem; }
+.w-mag-side h3 { font-family:'Poppins',sans-serif; font-size:1rem; font-weight:600; }
+.w-mag-side h3 em { font-style:normal; color:var(--coral); }
+
+/* Mine glimt - masonry-aktig */
+.w-glimt-masonry {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.5rem;
+}
+.w-glimt-masonry .w-glimt-card:first-child {
+  grid-row:1/3;
+  aspect-ratio:auto;
+}
+
+/* Explore - kompakt uten tips */
+.w-explore-compact {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1rem;
+}
+.w-act-mini {
+  background:#fff;
+  border-radius:14px;
+  padding:1.4rem;
+  display:flex; flex-direction:column; gap:0.5rem;
+  box-shadow:0 2px 10px rgba(30,42,74,0.05);
+  border:1.5px solid transparent;
+  transition:border-color 0.2s, transform 0.2s;
+  cursor:pointer;
+}
+.w-act-mini:hover { border-color:var(--coral); transform:translateY(-2px); }
+.w-act-mini .emoji { font-size:1.6rem; }
+.w-act-mini .title { font-family:'Poppins',sans-serif; font-size:0.88rem; font-weight:600; color:var(--navy); }
+.w-act-mini .tags { display:flex; gap:0.3rem; flex-wrap:wrap; }
+.w-act-mini .tag { padding:0.18rem 0.5rem; background:var(--blush-bg); border-radius:50px; font-size:0.6rem; color:var(--text-mid); }
+</style>
+</head>
+<body>
+
+<h1>Designforslag for Glimt</h1>
+<p class="intro">Her er fire ulike retninger for å gi flisene mer pusterom. Hvert forslag viser hvordan city-landing, mine glimt og explore-siden kan se ut.</p>
+
+<div class="proposals">
+
+<!-- ═══════════════════════════════════════════
+     FORSLAG 1: Luftig grid (nåværende, bare mer spacing)
+     ═══════════════════════════════════════════ -->
+<div class="proposal">
+  <div class="proposal-header">
+    <span class="proposal-num">Forslag 1</span>
+    <h2 class="proposal-name">Luftig grid</h2>
+  </div>
+  <p class="proposal-desc">
+    Beholder dagens layout-struktur, men øker mellomrom, padding og fontstørrelser. Minst dramatisk endring – alt er kjent, bare med mer pusterom. City landing forblir 3 kolonner, mine glimt bruker maks 2 per rad, explore har 2 kolonner med romsligere kort.
+  </p>
+
+  <div class="section-label">City Landing</div>
+  <div class="wireframe">
+    <div class="w-grid-loose">
+      <div class="w-panel-v"><div class="bg"></div><div class="content"><div class="eyebrow">Personlig reiseopplevelse</div><h3>Velg din <em>guide</em></h3></div></div>
+      <div class="w-panel-v"><div class="bg g"></div><div class="content"><div class="eyebrow">Tilpasset for deg</div><h3>Filtrer for <em>aktiviteter</em></h3></div></div>
+      <div class="w-panel-v"><div class="bg p"></div><div class="content"><div class="eyebrow">Denne måneden</div><h3>Hva skjer i <em>byen</em></h3></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Mine Glimt</div>
+  <div class="wireframe">
+    <div class="w-glimt-2col">
+      <div class="w-glimt-card"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="overlay"></div><div class="info"><div class="meta">Roma · 8. apr 2026</div><h3>Helgetur til Roma</h3></div></div>
+      <div class="w-glimt-card"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="overlay"></div><div class="info"><div class="meta">Barcelona · 2. mar 2026</div><h3>Tapas i Barcelona</h3></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Explore</div>
+  <div class="wireframe">
+    <div class="w-explore-2col">
+      <div class="w-act-card"><div class="emoji">🏛️</div><div class="title">Omvisning i Colosseum</div><div class="desc">Guidet tur gjennom amfiteateret med historisk kontekst...</div><div class="tags"><span class="tag">💚 Under 100 kr</span><span class="tag">🕐 2 timer</span></div></div>
+      <div class="w-act-card"><div class="emoji">🍕</div><div class="title">Pizzavandring i Trastevere</div><div class="desc">Smak de beste pizzastedene i det sjarmerende nabolaget...</div><div class="tags"><span class="tag">💛 100–300 kr</span><span class="tag">🕐 3 timer</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FORSLAG 2: Horisontale kort
+     ═══════════════════════════════════════════ -->
+<div class="proposal">
+  <div class="proposal-header">
+    <span class="proposal-num">Forslag 2</span>
+    <h2 class="proposal-name">Horisontale kort</h2>
+  </div>
+  <p class="proposal-desc">
+    Alt legges ut horisontalt – ett kort per rad. Bilde til venstre, innhold til høyre. Gir en rolig, oversiktlig lesbarhet. City landing er stablede horisontale paneler, mine glimt har bilde-mosaikk ved siden av tekst, og explore bruker brede enkeltkort.
+  </p>
+
+  <div class="section-label">City Landing</div>
+  <div class="wireframe">
+    <div class="w-horiz-stack">
+      <div class="w-panel-h"><div class="img"></div><div class="text"><div class="eyebrow">Personlig reiseopplevelse</div><h3>Velg din <em>guide</em></h3><p>Bli koblet med en lokal ekspert som kjenner gatene og hemmelighetene.</p></div></div>
+      <div class="w-panel-h"><div class="img g"></div><div class="text"><div class="eyebrow">Tilpasset for deg</div><h3>Filtrer for <em>aktiviteter</em></h3><p>Fortell oss hvem du er med og hva du har lyst til.</p></div></div>
+      <div class="w-panel-h"><div class="img p"></div><div class="text"><div class="eyebrow">Denne måneden</div><h3>Hva skjer i <em>byen</em></h3><p>Se konserter, markeder og lokale happenings.</p></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Mine Glimt</div>
+  <div class="wireframe">
+    <div class="w-glimt-horiz">
+      <div class="w-glimt-h"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="text"><div class="meta">Roma · 8. apr 2026</div><h3>Helgetur til Roma</h3></div></div>
+      <div class="w-glimt-h"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="text"><div class="meta">Barcelona · 2. mar 2026</div><h3>Tapas i Barcelona</h3></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Explore</div>
+  <div class="wireframe">
+    <div class="w-explore-1col">
+      <div class="w-act-wide"><div class="emoji">🏛️</div><div class="title">Omvisning i Colosseum</div><div class="tags"><span class="tag">💚 Under 100 kr</span><span class="tag">🕐 2 timer</span></div><div class="desc">Guidet tur gjennom det antikke amfiteateret med historisk kontekst og fascinerende fortellinger.</div></div>
+      <div class="w-act-wide"><div class="emoji">🍕</div><div class="title">Pizzavandring i Trastevere</div><div class="tags"><span class="tag">💛 100–300 kr</span><span class="tag">🕐 3 timer</span></div><div class="desc">Smak de beste pizzastedene og opplev det sjarmerende nabolagets atmosfære på kvelden.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FORSLAG 3: Vertikal fullbredde + liste
+     ═══════════════════════════════════════════ -->
+<div class="proposal">
+  <div class="proposal-header">
+    <span class="proposal-num">Forslag 3</span>
+    <h2 class="proposal-name">Fullbredde seksjoner</h2>
+  </div>
+  <p class="proposal-desc">
+    Maksimerer bredden. City landing bruker fullbredde seksjoner stablet vertikalt som en «one-page»-opplevelse. Mine glimt blir en kompakt liste med thumbnails. Explore beholder nåværende 2-kolonne grid. Mest radikalt for landing og mine glimt.
+  </p>
+
+  <div class="section-label">City Landing</div>
+  <div class="wireframe">
+    <div class="w-full-stack">
+      <div class="w-panel-full"><div class="bg"></div><div class="content"><div class="eyebrow">Personlig reiseopplevelse</div><h3>Velg din <em>guide</em></h3><p>Bli koblet med en lokal ekspert som kjenner gatene, historiene og hemmelighetene.</p></div></div>
+      <div class="w-sep"></div>
+      <div class="w-panel-full"><div class="bg g"></div><div class="content"><div class="eyebrow">Tilpasset for deg</div><h3>Filtrer for <em>aktiviteter</em></h3><p>Fortell oss hvem du er med og hva du har lyst til.</p></div></div>
+      <div class="w-sep"></div>
+      <div class="w-panel-full"><div class="bg p"></div><div class="content"><div class="eyebrow">Denne måneden</div><h3>Hva skjer i <em>byen</em></h3><p>Se konserter, markeder, festivaler og lokale happenings denne uken.</p></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Mine Glimt</div>
+  <div class="wireframe">
+    <div class="w-glimt-list">
+      <div class="w-glimt-list-item"><div class="thumb"></div><div class="info"><h3>Helgetur til Roma</h3><div class="meta">Roma · 8. apr 2026 · 4 glimt</div></div><div class="arrow">→</div></div>
+      <div class="w-glimt-list-item"><div class="thumb"></div><div class="info"><h3>Tapas i Barcelona</h3><div class="meta">Barcelona · 2. mar 2026 · 6 glimt</div></div><div class="arrow">→</div></div>
+      <div class="w-glimt-list-item"><div class="thumb"></div><div class="info"><h3>Vintur i Toscana</h3><div class="meta">Firenze · 14. feb 2026 · 3 glimt</div></div><div class="arrow">→</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Explore</div>
+  <div class="wireframe">
+    <div class="w-explore-2col">
+      <div class="w-act-card"><div class="emoji">🏛️</div><div class="title">Omvisning i Colosseum</div><div class="desc">Guidet tur gjennom amfiteateret med historisk kontekst...</div><div class="tags"><span class="tag">💚 Under 100 kr</span><span class="tag">🕐 2 timer</span></div></div>
+      <div class="w-act-card"><div class="emoji">🍕</div><div class="title">Pizzavandring i Trastevere</div><div class="desc">Smak de beste pizzastedene i det sjarmerende nabolaget...</div><div class="tags"><span class="tag">💛 100–300 kr</span><span class="tag">🕐 3 timer</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FORSLAG 4: Magazine / hybrid layout
+     ═══════════════════════════════════════════ -->
+<div class="proposal">
+  <div class="proposal-header">
+    <span class="proposal-num">Forslag 4</span>
+    <h2 class="proposal-name">Magasin-layout</h2>
+  </div>
+  <p class="proposal-desc">
+    Inspirert av redaksjonelle magasiner. City landing har ett stort hero-panel med to mindre ved siden av – gir hierarki og fokus. Mine glimt bruker en masonry-aktig layout der første kort er ekstra stort. Explore er kompakt 3-kolonne uten tips-boks.
+  </p>
+
+  <div class="section-label">City Landing</div>
+  <div class="wireframe">
+    <div class="w-magazine">
+      <div class="w-mag-hero"><div class="bg"></div><div class="content"><div class="eyebrow">Personlig reiseopplevelse</div><h3>Velg din <em>guide</em></h3></div></div>
+      <div class="w-mag-side"><div class="bg g"></div><div class="content"><div class="eyebrow">Tilpasset for deg</div><h3>Filtrer for <em>aktiviteter</em></h3></div></div>
+      <div class="w-mag-side"><div class="bg p"></div><div class="content"><div class="eyebrow">Denne måneden</div><h3>Hva skjer i <em>byen</em></h3></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Mine Glimt</div>
+  <div class="wireframe">
+    <div class="w-glimt-masonry">
+      <div class="w-glimt-card" style="aspect-ratio:auto; min-height:400px;"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="overlay"></div><div class="info"><div class="meta">Roma · 8. apr 2026</div><h3>Helgetur til Roma</h3></div></div>
+      <div class="w-glimt-card"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="overlay"></div><div class="info"><div class="meta">Barcelona · 2. mar</div><h3>Tapas i Barcelona</h3></div></div>
+      <div class="w-glimt-card"><div class="mosaic"><div></div><div></div><div></div><div></div></div><div class="overlay"></div><div class="info"><div class="meta">Firenze · 14. feb</div><h3>Vintur i Toscana</h3></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Explore</div>
+  <div class="wireframe">
+    <div class="w-explore-compact">
+      <div class="w-act-mini"><div class="emoji">🏛️</div><div class="title">Omvisning i Colosseum</div><div class="tags"><span class="tag">💚 Under 100 kr</span><span class="tag">🕐 2t</span></div></div>
+      <div class="w-act-mini"><div class="emoji">🍕</div><div class="title">Pizzavandring</div><div class="tags"><span class="tag">💛 100–300 kr</span><span class="tag">🕐 3t</span></div></div>
+      <div class="w-act-mini"><div class="emoji">🌿</div><div class="title">Villa Borghese</div><div class="tags"><span class="tag">✨ Gratis</span><span class="tag">🕐 2t</span></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

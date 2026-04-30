@@ -1,0 +1,45 @@
+// Firestore sikkerhetsregler for Glimt
+//
+// Kopier innholdet nedenfor inn i Firebase-konsollen:
+//   Firestore Database → Rules → Lim inn → Publish
+//
+// Regelsett:
+//  1) Hver bruker kan lese og skrive sine egne data under
+//     users/{uid}/...
+//  2) Alle innloggede brukere kan lese elementer i kolleksjons-
+//     gruppene `userGlimts` og `myCreatedGlimt` så lenge feltet
+//     `isPublic` er satt til true. Dette gir "utforsk"-funksjoner
+//     på tvers av brukere uten å eksponere privat innhold.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Privat: eier har full tilgang ─────────────────────
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+
+      // Subkolleksjoner: reisebrev, enkeltglimt, lagrede,
+      // kalender og reiseplaner.
+      match /{subcollection}/{docId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == userId;
+      }
+    }
+
+    // ── Offentlig: alle innloggede kan lese delte reisebrev ─
+    // Collection group query mot "userGlimts". Reglene tillater
+    // kun lesing der dokumentet selv har isPublic == true.
+    match /{path=**}/userGlimts/{docId} {
+      allow read: if request.auth != null
+                  && resource.data.isPublic == true;
+    }
+
+    // ── Offentlig: alle innloggede kan lese delte enkeltglimt ─
+    match /{path=**}/myCreatedGlimt/{docId} {
+      allow read: if request.auth != null
+                  && resource.data.isPublic == true;
+    }
+  }
+}

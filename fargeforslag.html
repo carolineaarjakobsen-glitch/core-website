@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glimt – Fargeforslag v3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: #fdf8ee; color: #2c2420; padding: 2.5rem; max-width: 1100px; margin: 0 auto; }
+
+    h1 { font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 600; color: #1e2a4a; margin-bottom: 0.4rem; }
+    .subtitle { font-size: 0.9rem; color: #7a7067; margin-bottom: 2.5rem; line-height: 1.6; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section h2 {
+      font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase; color: #7a7067; margin-bottom: 1rem;
+    }
+
+    .palette-row { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+
+    .swatch { width: 130px; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 2px 12px rgba(44,36,32,0.07); }
+    .swatch-color { height: 72px; display: flex; align-items: flex-end; padding: 0.4rem 0.6rem; }
+    .swatch-color span { font-size: 0.65rem; font-weight: 500; color: rgba(255,255,255,0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    .swatch-color.light span { color: #7a7067; text-shadow: none; }
+    .swatch-info { padding: 0.5rem 0.6rem; }
+    .swatch-name { font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 600; color: #2c2420; margin-bottom: 0.1rem; }
+    .swatch-var { font-size: 0.6rem; color: #9a8f85; }
+
+    /* Comparison */
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .comp-label { font-family: 'Poppins', sans-serif; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #9a8f85; margin-bottom: 0.6rem; }
+
+    .mini { background: #fff; border-radius: 16px; padding: 1.2rem; box-shadow: 0 2px 12px rgba(44,36,32,0.06); }
+    .mini-pills { display: flex; gap: 0.3rem; margin-bottom: 0.7rem; }
+    .pill { font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 500; padding: 0.22rem 0.55rem; border-radius: 50px; border: 1px solid #f0ddb8; background: #fff; color: #7a7067; }
+    .pill.coral { background: #d95f5f; border-color: #d95f5f; color: #fff; }
+    .pill.sky { background: #6b8bae; border-color: #6b8bae; color: #fff; }
+
+    .card { display: flex; gap: 0.5rem; padding: 0.5rem 0.6rem; border-radius: 10px; margin-bottom: 0.4rem; }
+    .card.coral-c { background: #fceee9; border: 1px solid #f5d9d0; }
+    .card.sky-c { background: #eaf1f7; border: 1px solid #d0dde8; }
+    .card-emoji { font-size: 0.95rem; }
+    .card-title { font-family: 'Poppins', sans-serif; font-size: 0.66rem; font-weight: 600; color: #1e2a4a; }
+    .tag { display: inline-block; font-size: 0.52rem; font-weight: 500; padding: 0.08rem 0.4rem; border-radius: 50px; margin-top: 0.15rem; }
+    .tag.coral-t { background: rgba(217,95,95,0.1); color: #d95f5f; }
+    .tag.sky-t { background: rgba(107,139,174,0.12); color: #6b8bae; }
+    .tag.gold-t { background: rgba(212,149,42,0.14); color: #b87d22; }
+
+    /* Full mock */
+    .mock-layout { display: grid; grid-template-columns: 1fr 320px; gap: 1.2rem; }
+    .mock-cal { background: #fff; border-radius: 18px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(44,36,32,0.07); }
+    .mock-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 0.6rem; flex-wrap: wrap; }
+    .city-badge { font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6b8bae; background: rgba(107,139,174,0.1); padding: 0.2rem 0.6rem; border-radius: 50px; }
+    .add-btn { display: inline-flex; align-items: center; gap: 0.25rem; font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 500; padding: 0.3rem 0.8rem; border-radius: 50px; border: 1.5px solid #6b8bae; background: transparent; color: #6b8bae; }
+    .month-title { font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 600; color: #1e2a4a; }
+
+    .weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.15rem; margin-bottom: 0.2rem; }
+    .weekdays span { font-size: 0.6rem; font-weight: 500; color: #9a8f85; text-align: center; text-transform: uppercase; letter-spacing: 0.06em; }
+    .grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.15rem; }
+    .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 9px; font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 500; color: #2c2420; gap: 2px; }
+    .day.e { visibility: hidden; }
+    .day.today { background: #1e2a4a; color: #fff; }
+    .day.sel { background: #6b8bae; color: #fff; }
+    .dot { width: 4px; height: 4px; border-radius: 50%; background: #6b8bae; }
+    .day.today .dot, .day.sel .dot { background: rgba(255,255,255,0.6); }
+
+    .pills { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+    .fpill { font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 500; padding: 0.35rem 0.9rem; border-radius: 50px; border: 1.5px solid #d8cfc7; background: #fff; color: #7a7067; }
+    .fpill.active { background: #6b8bae; border-color: #6b8bae; color: #fff; }
+
+    .aside { background: #fff; border-radius: 18px; padding: 1.3rem; box-shadow: 0 4px 20px rgba(44,36,32,0.07); }
+    .aside-date { font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 600; color: #1e2a4a; margin-bottom: 0.8rem; padding-bottom: 0.7rem; border-bottom: 1px solid #f0ddb8; }
+    .aside-cards { display: flex; flex-direction: column; gap: 0.6rem; }
+    .acard { display: flex; gap: 0.7rem; padding: 0.7rem 0.8rem; border-radius: 11px; background: #fdf8ee; border: 1.5px solid #f0ddb8; }
+    .acard-emoji { font-size: 1.2rem; }
+    .acard-title { font-family: 'Poppins', sans-serif; font-size: 0.76rem; font-weight: 600; color: #1e2a4a; margin-bottom: 0.1rem; }
+    .acard-desc { font-size: 0.7rem; color: #7a7067; line-height: 1.45; }
+    .acard-tags { display: flex; gap: 0.25rem; margin-top: 0.3rem; }
+    .atag { font-size: 0.58rem; font-weight: 500; padding: 0.1rem 0.45rem; border-radius: 50px; }
+    .atag.sky { background: rgba(107,139,174,0.12); color: #6b8bae; }
+    .atag.gold { background: rgba(212,149,42,0.14); color: #b87d22; }
+
+    /* Table */
+    table { border-collapse: collapse; font-size: 0.8rem; }
+    th { padding: 0.5rem 0.8rem; font-family: 'Poppins', sans-serif; font-weight: 600; color: #1e2a4a; text-align: left; border-bottom: 2px solid #f0ddb8; }
+    td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #f0ddb8; }
+    .dot-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid #ddd; vertical-align: middle; margin-right: 0.25rem; }
+
+    @media (max-width: 820px) { .mock-layout, .comparison { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <h1>Fargeforslag v3: Himmelblå primær + Varm gylden sekundær</h1>
+  <p class="subtitle">
+    Himmelblå (#6b8bae) tar over korallens rolle som primæraksent — knapper, valgt dato, aktive pills, event-tags.<br>
+    Varme gyldne toner (#d4952a) brukes som sekundærfarge for "Mitt glimt"-tagg og spesielle elementer. Navy beholdes.
+  </p>
+
+  <!-- PALETTER -->
+  <div class="section">
+    <h2>Beholdes fra før</h2>
+    <div class="palette-row">
+      <div class="swatch"><div class="swatch-color" style="background:#1e2a4a"><span>#1e2a4a</span></div><div class="swatch-info"><div class="swatch-name">Navy</div><div class="swatch-var">--navy</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2e3f6e"><span>#2e3f6e</span></div><div class="swatch-info"><div class="swatch-name">Navy Light</div><div class="swatch-var">--navy-light</div></div></div>
+    </div>
+
+    <h2>Himmelblå — primæraksent (erstatter korall)</h2>
+    <div class="palette-row">
+      <div class="swatch"><div class="swatch-color light" style="background:#eaf1f7"><span>#eaf1f7</span></div><div class="swatch-info"><div class="swatch-name">Sky BG</div><div class="swatch-var">--sky-bg</div></div></div>
+      <div class="swatch"><div class="swatch-color light" style="background:#d0dde8"><span>#d0dde8</span></div><div class="swatch-info"><div class="swatch-name">Sky Mid</div><div class="swatch-var">--sky-mid</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#6b8bae"><span>#6b8bae</span></div><div class="swatch-info"><div class="swatch-name">Himmelblå</div><div class="swatch-var">--sky</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#567a9a"><span>#567a9a</span></div><div class="swatch-info"><div class="swatch-name">Sky Hover</div><div class="swatch-var">--sky-dark</div></div></div>
+    </div>
+
+    <h2>Varm gylden — sekundæraksent</h2>
+    <div class="palette-row">
+      <div class="swatch"><div class="swatch-color light" style="background:#fdf8ee"><span>#fdf8ee</span></div><div class="swatch-info"><div class="swatch-name">Gylden BG</div><div class="swatch-var">--gold-bg</div></div></div>
+      <div class="swatch"><div class="swatch-color light" style="background:#f7ecd4"><span>#f7ecd4</span></div><div class="swatch-info"><div class="swatch-name">Gylden Light</div><div class="swatch-var">--gold-light</div></div></div>
+      <div class="swatch"><div class="swatch-color light" style="background:#f0ddb8"><span>#f0ddb8</span></div><div class="swatch-info"><div class="swatch-name">Gylden Mid</div><div class="swatch-var">--gold-mid</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#d4952a"><span>#d4952a</span></div><div class="swatch-info"><div class="swatch-name">Honninggul</div><div class="swatch-var">--gold</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#b87d22"><span>#b87d22</span></div><div class="swatch-info"><div class="swatch-name">Gylden Mørk</div><div class="swatch-var">--gold-dark</div></div></div>
+    </div>
+
+    <h2>Tekst</h2>
+    <div class="palette-row">
+      <div class="swatch"><div class="swatch-color" style="background:#2c2420"><span>#2c2420</span></div><div class="swatch-info"><div class="swatch-name">Tekst mørk</div><div class="swatch-var">--text-dark</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#7a7067"><span>#7a7067</span></div><div class="swatch-info"><div class="swatch-name">Tekst mid</div><div class="swatch-var">--text-mid</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#9a8f85"><span>#9a8f85</span></div><div class="swatch-info"><div class="swatch-name">Tekst dempet</div><div class="swatch-var">--text-light</div></div></div>
+    </div>
+  </div>
+
+  <!-- SAMMENLIGNING -->
+  <div class="section">
+    <h2>Sammenligning: Nåværende vs. Forslag</h2>
+    <div class="comparison">
+      <div>
+        <div class="comp-label">Nåværende (korall)</div>
+        <div class="mini" style="background:#fceee9">
+          <div class="mini-pills">
+            <div class="pill coral">København</div>
+            <div class="pill">Roma</div>
+            <div class="pill">Stockholm</div>
+          </div>
+          <div class="card coral-c"><div class="card-emoji">🎵</div><div><div class="card-title">Jazz i Nyhavn</div><div class="tag coral-t">Konsert</div></div></div>
+          <div class="card coral-c"><div class="card-emoji">🏛️</div><div><div class="card-title">Colosseum</div><div class="tag coral-t">Severdighet</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="comp-label">Forslag (himmelblå primær + varm gylden sekundær)</div>
+        <div class="mini" style="background:#faf6ea">
+          <div class="mini-pills">
+            <div class="pill sky">København</div>
+            <div class="pill">Roma</div>
+            <div class="pill">Stockholm</div>
+          </div>
+          <div class="card sky-c"><div class="card-emoji">🎵</div><div><div class="card-title">Jazz i Nyhavn</div><div class="tag sky-t">Konsert</div></div></div>
+          <div class="card sky-c"><div class="card-emoji">🏛️</div><div><div class="card-title">Colosseum</div><div class="tag gold-t">Mitt glimt</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULL MOCKUP -->
+  <div class="section">
+    <h2>Visuell mockup – Kalender med ny palett</h2>
+
+    <div class="pills">
+      <div class="fpill active">København</div>
+      <div class="fpill">Roma</div>
+      <div class="fpill">Stockholm</div>
+      <div class="fpill">Dublin</div>
+    </div>
+
+    <div class="mock-layout">
+      <div class="mock-cal">
+        <div class="mock-header">
+          <div class="city-badge">København</div>
+          <div class="add-btn">+ Nytt glimt</div>
+          <div class="month-title">April 2026</div>
+        </div>
+        <div class="weekdays"><span>Man</span><span>Tir</span><span>Ons</span><span>Tor</span><span>Fre</span><span>Lør</span><span>Søn</span></div>
+        <div class="grid">
+          <div class="day e"></div><div class="day e"></div>
+          <div class="day">1<div class="dot"></div></div><div class="day">2<div class="dot"></div></div><div class="day">3<div class="dot"></div></div><div class="day">4<div class="dot"></div></div><div class="day">5</div>
+          <div class="day">6<div class="dot"></div></div><div class="day">7</div><div class="day">8<div class="dot"></div></div><div class="day">9</div><div class="day">10<div class="dot"></div></div><div class="day">11</div><div class="day today">12<div class="dot"></div></div>
+          <div class="day">13</div><div class="day">14</div><div class="day sel">15<div class="dot"></div></div><div class="day">16</div><div class="day">17<div class="dot"></div></div><div class="day">18</div><div class="day">19</div>
+          <div class="day">20<div class="dot"></div></div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24<div class="dot"></div></div><div class="day">25</div><div class="day">26</div>
+          <div class="day">27</div><div class="day">28</div><div class="day">29<div class="dot"></div></div><div class="day">30</div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <div class="aside-date">Onsdag 15. april 2026</div>
+        <div class="aside-cards">
+          <div class="acard">
+            <div class="acard-emoji">🎵</div>
+            <div>
+              <div class="acard-title">Jazz i Nyhavn</div>
+              <div class="acard-desc">Live jazzkonsert ved kanalen kl. 20:00</div>
+              <div class="acard-tags"><span class="atag sky">Konsert</span><span class="atag gold">Mitt glimt</span></div>
+            </div>
+          </div>
+          <div class="acard">
+            <div class="acard-emoji">🚲</div>
+            <div>
+              <div class="acard-title">Sykling langs kanalene</div>
+              <div class="acard-desc">Leie sykkel og utforsk Christianshavn</div>
+              <div class="acard-tags"><span class="atag sky">Aktivitet</span></div>
+            </div>
+          </div>
+          <div class="acard">
+            <div class="acard-emoji">🌷</div>
+            <div>
+              <div class="acard-title">Tivoli åpner sesongen</div>
+              <div class="acard-desc">Blomster og fornøyelser i Tivoli</div>
+              <div class="acard-tags"><span class="atag sky">Sesong</span><span class="atag" style="background:rgba(30,82,177,0.08);color:#1052b1;">Ticketmaster</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPPING -->
+  <div class="section">
+    <h2>Variabel-mapping: Gammel → Ny</h2>
+    <table>
+      <thead><tr><th>Nåværende</th><th>Ny verdi</th><th>Bruk</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot-swatch" style="background:#fceee9"></span> --blush-bg #fceee9</td><td><span class="dot-swatch" style="background:#fdf8ee"></span> --gold-bg #fdf8ee</td><td style="color:#7a7067">Side-bakgrunn</td></tr>
+        <tr><td><span class="dot-swatch" style="background:#f5d9d0"></span> --blush-mid #f5d9d0</td><td><span class="dot-swatch" style="background:#d0dde8"></span> --sky-mid #d0dde8</td><td style="color:#7a7067">Borders, skillelinjer (primærelementer)</td></tr>
+        <tr><td><span class="dot-swatch" style="background:#d95f5f"></span> --coral #d95f5f</td><td><span class="dot-swatch" style="background:#6b8bae"></span> --sky #6b8bae</td><td style="color:#7a7067">Primær aksent — knapper, valgt dato, tags, pills</td></tr>
+        <tr><td><span class="dot-swatch" style="background:#e88080"></span> --coral-light #e88080</td><td><span class="dot-swatch" style="background:#567a9a"></span> --sky-dark #567a9a</td><td style="color:#7a7067">Hover-tilstand</td></tr>
+        <tr><td>—</td><td><span class="dot-swatch" style="background:#d4952a"></span> --gold #d4952a</td><td style="color:#7a7067">Sekundær — "Mitt glimt"-tagg, spesielle elementer</td></tr>
+        <tr><td>—</td><td><span class="dot-swatch" style="background:#f0ddb8"></span> --gold-mid #f0ddb8</td><td style="color:#7a7067">Nøytrale borders, kort-bakgrunner</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

@@ -1,10 +1,56 @@
 // ============================================================
 //  Glimt – opprett-glimt.js
 //  Håndterer dynamiske glimt-kort og lagring av et reisebrev
-//  til localStorage under nøkkelen "glimt.userGlimts".
+//  via GlimtStore (Firestore). Lagre-knappen aktiveres først
+//  når både Firebase Auth og GlimtStore.init() er ferdig, slik
+//  at vi ikke får "stille" Firestore-feil hvor reisebrevet
+//  forsvinner ved neste sidelast.
 // ============================================================
 
-const STORAGE_KEY = "glimt.userGlimts";
+const STORAGE_KEY = "glimt.userGlimts"; // beholdt for legacy-edit-fallback før migrering
+
+// ── Hjelpere: ready-sjekk + UI-feilmelding + knappe-aktivering ──
+function isStoreReady() {
+  return (
+    typeof firebase !== "undefined" &&
+    firebase.auth &&
+    !!firebase.auth().currentUser &&
+    typeof GlimtStore !== "undefined" &&
+    GlimtStore.isReady &&
+    GlimtStore.isReady()
+  );
+}
+
+function showFormError(msg) {
+  const el = document.getElementById("opprett-form-error");
+  if (el) {
+    el.textContent = msg;
+    el.hidden = false;
+  } else {
+    alert(msg);
+  }
+}
+
+function hideFormError() {
+  const el = document.getElementById("opprett-form-error");
+  if (el) {
+    el.hidden = true;
+    el.textContent = "";
+  }
+}
+
+function tryEnableSubmit() {
+  const btn = document.getElementById("opprett-submit-btn");
+  if (!btn) return;
+  if (isStoreReady()) {
+    btn.disabled = false;
+    btn.removeAttribute("aria-disabled");
+    btn.removeAttribute("title");
+  } else {
+    btn.disabled = true;
+    btn.setAttribute("aria-disabled", "true");
+  }
+}
 
 // ── By-normalisering ────────────────────────────────────────
 // Mapper nærliggende kommuner/bydeler til sin «forelder»-by
@@ -972,8 +1018,19 @@ function loadGuideForEditing(guide) {
 }
 
 // ── Lagre hele reisebrevet i localStorage ────────────────────
-function saveGuide(e) {
+async function saveGuide(e) {
   e.preventDefault();
+  hideFormError();
+
+  // Hard guard: knappen skal være disabled hvis vi ikke er klare,
+  // men dobbeltsjekk her for å unngå at en hurtig submitter kan
+  // sende skjemaet før Auth+Store er klare. Dette er nøkkelen til
+  // å unngå at reisebrev "forsvinner" når Firestore-skrivingen
+  // feiler stille.
+  if (!isStoreReady()) {
+    showFormError("Lager ikke klart ennå. Vent et øyeblikk og prøv igjen.");
+    return;
+  }
 
   // Bruk glimtItems direkte (all data er der allerede)
   const filled = glimtItems.filter(g =>
@@ -981,7 +1038,7 @@ function saveGuide(e) {
   );
 
   if (filled.length === 0) {
-    alert("Legg til minst ett glimt før du lagrer reisebrevet.");
+    showFormError("Legg til minst ett glimt før du lagrer reisebrevet.");
     return;
   }
 
@@ -999,18 +1056,9 @@ function saveGuide(e) {
   // By
   const mainCity = filled.map(g => g.city).find(c => c) || filled[0].sted || filled[0].address || "";
 
-  // Les eksisterende reisebrev
-  let existing = [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) existing = parsed;
-    }
-  } catch (_) {}
-
+  // I redigeringsmodus: hent eksisterende fra GlimtStore-cachen
   const existingGuide = editingGuideId
-    ? existing.find((g) => g.id === editingGuideId)
+    ? (GlimtStore.getUserGlimt ? GlimtStore.getUserGlimt(editingGuideId) : null)
     : null;
 
   const guideToggle = document.getElementById("guide-toggle-cb");
@@ -1032,38 +1080,27 @@ function saveGuide(e) {
     glimts:      glimtsForStorage
   };
 
-  if (editingGuideId && existingGuide) {
-    existing = existing.map((g) => (g.id === editingGuideId ? guide : g));
-  } else {
-    existing.unshift(guide);
-  }
+  // Lås knappen mens vi venter på Firestore
+  const submitBtn = document.getElementById("opprett-submit-btn");
+  if (submitBtn) submitBtn.disabled = true;
 
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+    await GlimtStore.saveUserGlimt(guide);
+    // Synk reiseplan først ETTER vellykket lagring av reisebrevet
+    await syncReiseplan(guide);
   } catch (err) {
     console.error("Kunne ikke lagre reisebrev:", err);
-    const isQuota = err && (
-      err.name === "QuotaExceededError" ||
-      err.code === 22 ||
-      err.code === 1014 ||
-      /quota/i.test(err.message || "")
+    showFormError(
+      "Kunne ikke lagre reisebrevet: " +
+      (err && err.message ? err.message : "ukjent feil") +
+      ". Prøv igjen."
     );
-
-    if (isQuota) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([guide]));
-        alert("Nettleseren er tom for plass. Vi måtte fjerne eldre reisebrev for å lagre det nye.");
-      } catch (err2) {
-        alert("Nettleseren har ikke plass til å lagre reisebrevet. Prøv færre glimt.");
-        return;
-      }
-    } else {
-      alert("Kunne ikke lagre reisebrevet: " + (err.message || "ukjent feil") + ". Prøv igjen.");
-      return;
-    }
+    // Lås opp knappen så brukeren kan prøve på nytt
+    if (submitBtn) submitBtn.disabled = false;
+    return;
   }
 
-  syncReiseplan(guide);
+  // Først NÅ – etter at promise er resolvet – navigerer vi videre.
   window.location.href = `glimt-detalj.html?id=${encodeURIComponent(guide.id)}`;
 }
 
@@ -1087,13 +1124,11 @@ function closeLagretGlimtModal() {
 }
 
 function populateLagretGlimtModal() {
+  // Panel 1: Egne opprettede glimt (myCreatedGlimt-cache)
   const egnePanel = document.getElementById("lagret-panel-egne");
-  let egne = [];
-  try {
-    const raw = localStorage.getItem("glimt.myCreatedGlimt");
-    if (raw) egne = JSON.parse(raw) || [];
-    if (!Array.isArray(egne)) egne = [];
-  } catch { egne = []; }
+  const egne = (typeof GlimtStore !== "undefined" && GlimtStore.getMyCreatedGlimt)
+    ? GlimtStore.getMyCreatedGlimt()
+    : [];
 
   if (egne.length === 0) {
     egnePanel.innerHTML = `<div class="lg-empty"><div class="lg-empty-icon">✦</div><p>Du har ingen egne glimt ennå.</p></div>`;
@@ -1101,13 +1136,11 @@ function populateLagretGlimtModal() {
     egnePanel.innerHTML = egne.map(g => buildLgCard(g, "Opprettet av deg")).join("");
   }
 
+  // Panel 2: Bokmerka glimt fra andre (savedGlimt-cache)
   const bokmerketPanel = document.getElementById("lagret-panel-bokmerket");
-  let bokmerket = [];
-  try {
-    const raw = localStorage.getItem("glimt.savedGlimt");
-    if (raw) bokmerket = JSON.parse(raw) || [];
-    if (!Array.isArray(bokmerket)) bokmerket = [];
-  } catch { bokmerket = []; }
+  const bokmerket = (typeof GlimtStore !== "undefined" && GlimtStore.getSavedGlimt)
+    ? GlimtStore.getSavedGlimt()
+    : [];
 
   if (bokmerket.length === 0) {
     bokmerketPanel.innerHTML = `<div class="lg-empty"><div class="lg-empty-icon">🔖</div><p>Ingen bokmerka glimt ennå.</p></div>`;
@@ -1221,19 +1254,13 @@ function initLagretGlimtModal() {
 //  SYNKRONISERING REISEBREV → REISEPLAN
 // ══════════════════════════════════════════════════════════════
 
-function syncReiseplan(guide) {
-  const RP_KEY = "glimt.reiseplaner";
-  let plans = [];
-  try {
-    const raw = localStorage.getItem(RP_KEY);
-    if (raw) plans = JSON.parse(raw) || [];
-    if (!Array.isArray(plans)) plans = [];
-  } catch { plans = []; }
-
+// Returnerer en Promise og må await-es av kalleren slik at
+// navigasjon skjer ETTER at både reisebrev og plan er lagret.
+async function syncReiseplan(guide) {
   const planId = "rp-from-" + guide.id;
 
   if (guide.isReiseplan) {
-    const existingIdx = plans.findIndex(p => p.id === planId);
+    const existing = GlimtStore.getPlan ? GlimtStore.getPlan(planId) : null;
     const plan = {
       id:            planId,
       name:          guide.title || "Uten tittel",
@@ -1245,22 +1272,21 @@ function syncReiseplan(guide) {
       status:        "mal",
       sourceType:    "reisebrev",
       sourceId:      guide.id,
-      createdAt:     existingIdx >= 0 ? plans[existingIdx].createdAt : new Date().toISOString(),
+      createdAt:     existing ? existing.createdAt : new Date().toISOString(),
       updatedAt:     new Date().toISOString()
     };
-    if (existingIdx >= 0) {
-      plans[existingIdx] = plan;
-    } else {
-      plans.push(plan);
-    }
+    await GlimtStore.savePlan(plan);
   } else {
-    plans = plans.filter(p => p.id !== planId);
-  }
-
-  try {
-    localStorage.setItem(RP_KEY, JSON.stringify(plans));
-  } catch (e) {
-    console.warn("Kunne ikke synkronisere reiseplan:", e);
+    // Fjern eventuell eksisterende plan-mal hvis toggle er av
+    const existing = GlimtStore.getPlan ? GlimtStore.getPlan(planId) : null;
+    if (existing) {
+      try {
+        await GlimtStore.deletePlan(planId);
+      } catch (e) {
+        // Best effort – ikke blokker reisebrev-lagring hvis plan-sletting feiler
+        console.warn("Kunne ikke fjerne reiseplan-mal:", e);
+      }
+    }
   }
 }
 
@@ -1377,40 +1403,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Sjekk redigeringsmodus
+  // Sjekk redigeringsmodus / mal-direktelink
   const urlParams = new URLSearchParams(window.location.search);
   const editId = urlParams.get("edit");
-  let loadedExisting = false;
-
-  if (editId) {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const all = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(all)) {
-        const guide = all.find((g) => g.id === editId);
-        if (guide) {
-          editingGuideId = guide.id;
-          loadedExisting = loadGuideForEditing(guide);
-        }
-      }
-    } catch (err) {
-      console.warn("Klarte ikke å laste reisebrev for redigering:", err);
-    }
-  }
-
   const preselectedMal = urlParams.get("mal");
 
-  if (loadedExisting) {
+  // I edit-modus eller ved direktelink hopper vi over mal-velger
+  // og viser skjemaet umiddelbart. Selve dataen for edit hentes fra
+  // GlimtStore-cachen så snart storen er klar (se onReady-callback).
+  if (editId || preselectedMal) {
     const velger = document.getElementById("mal-velger");
     const main   = document.getElementById("opprett-main");
     if (velger) velger.style.display = "none";
     if (main) main.style.display = "";
-  } else if (preselectedMal) {
-    const velger = document.getElementById("mal-velger");
-    const main   = document.getElementById("opprett-main");
-    if (velger) velger.style.display = "none";
-    if (main) main.style.display = "";
-    applyMal(preselectedMal);
+    if (preselectedMal && !editId) applyMal(preselectedMal);
   } else {
     initMalVelger();
   }
@@ -1420,7 +1426,7 @@ document.addEventListener("DOMContentLoaded", () => {
     openGlimtModal();
   });
 
-  // «Lagre reisebrev»-knappen
+  // «Lagre reisebrev»-knappen (knappen er disabled til Auth+Store er klare)
   form.addEventListener("submit", saveGuide);
 
   // Popup-modal: submit
@@ -1452,35 +1458,95 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Init lagret-glimt modal
   initLagretGlimtModal();
+
+  // ── Aktivering av Lagre-knappen ──────────────────────────────
+  // Lytt på auth-state. Sender til login hvis brukeren logges ut
+  // midt i bruk (auth-guard.js gjør samme jobb, men vi sørger for
+  // at knappen blir disabled umiddelbart hvis brukeren forsvinner).
+  if (typeof firebase !== "undefined" && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (!user) {
+        const btn = document.getElementById("opprett-submit-btn");
+        if (btn) btn.disabled = true;
+        return;
+      }
+      tryEnableSubmit();
+    });
+  }
+
+  // Lytt på GlimtStore.onReady (kjøres umiddelbart hvis allerede klar)
+  if (typeof GlimtStore !== "undefined" && GlimtStore.onReady) {
+    GlimtStore.onReady(function () {
+      tryEnableSubmit();
+
+      // Edit-modus: last reisebrevet fra cachen NÅ
+      if (editId) {
+        const guide = GlimtStore.getUserGlimt(editId);
+        if (guide) {
+          editingGuideId = guide.id;
+          loadGuideForEditing(guide);
+        }
+      }
+    });
+  }
 });
 
 
 // ── Robust edit-mode init (title/subtitle/spotify) ────────────
 // robust-edit-init
 (function () {
+  function fillFromGuide(guide) {
+    if (!guide) return;
+    var ti = document.getElementById("guide-title-input");
+    var si = document.getElementById("guide-subtitle-input");
+    var sp = document.getElementById("guide-spotify-url");
+    var prev = document.getElementById("spotify-embed-preview");
+    if (ti && !ti.value) ti.value = guide.title || "";
+    if (si && !si.value) si.value = guide.subtitle || "";
+    if (sp && !sp.value) sp.value = guide.spotifyUrl || "";
+    if (sp && prev && window.renderSpotifyEmbed) window.renderSpotifyEmbed(sp.value, prev);
+  }
+
   function runInit() {
     var params = new URLSearchParams(window.location.search);
     var editId = params.get("edit");
     if (!editId) return;
     try {
+      // Foretrukket: les fra GlimtStore-cachen (Firestore som kilde til sannhet).
+      if (typeof GlimtStore !== "undefined" && GlimtStore.isReady && GlimtStore.isReady()) {
+        var guide = GlimtStore.getUserGlimt(editId);
+        if (guide) { fillFromGuide(guide); return; }
+      }
+      // Fallback: legacy localStorage (hvis migrering ikke har kjørt ennå)
       var raw = localStorage.getItem("glimt.userGlimts");
       if (!raw) return;
       var list = JSON.parse(raw);
-      var guide = list.find(function (g) { return g.id === editId; });
-      if (!guide) return;
-      var ti = document.getElementById("guide-title-input");
-      var si = document.getElementById("guide-subtitle-input");
-      var sp = document.getElementById("guide-spotify-url");
-      var prev = document.getElementById("spotify-embed-preview");
-      if (ti && !ti.value) ti.value = guide.title || "";
-      if (si && !si.value) si.value = guide.subtitle || "";
-      if (sp && !sp.value) sp.value = guide.spotifyUrl || "";
-      if (sp && prev && window.renderSpotifyEmbed) window.renderSpotifyEmbed(sp.value, prev);
+      var legacy = list.find(function (g) { return g.id === editId; });
+      if (legacy) fillFromGuide(legacy);
     } catch (e) { console.warn("Edit-mode init failed:", e); }
   }
+
   // Kjør flere ganger for å fange forskjellige load-tidspunkter
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", runInit);
   else runInit();
   setTimeout(runInit, 300);
   setTimeout(runInit, 1000);
+
+  // Når GlimtStore er klar (Firestore har lastet), kjør init på nytt
+  // slik at vi får ferskeste data fra Firestore (overstyrer evt. legacy
+  // localStorage som kan være utdatert).
+  if (typeof window !== "undefined") {
+    var hookGlimtStore = function () {
+      if (typeof GlimtStore !== "undefined" && GlimtStore.onReady) {
+        GlimtStore.onReady(runInit);
+      } else {
+        setTimeout(hookGlimtStore, 100);
+      }
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", hookGlimtStore);
+    } else {
+      hookGlimtStore();
+    }
+  }
 })();

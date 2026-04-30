@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glimt – Automatiske tester</title>
+  <style>
+    :root {
+      --coral: #EA672D;
+      --navy: #5D372A;
+      --blush-bg: #fff7e0;
+      --text-mid: #777;
+      --text-light: #999;
+      --text-dark: #333;
+      --coral-light: #f07a3f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+      color: #fff;
+    }
+    .subtitle {
+      color: #888;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+    .suite {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .suite-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .test-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .test-row:last-child { border-bottom: none; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .badge--pass { background: #065f46; color: #6ee7b7; }
+    .badge--fail { background: #7f1d1d; color: #fca5a5; }
+    .test-name { flex: 1; }
+    .test-detail { font-size: 0.72rem; color: #888; }
+    .summary {
+      margin-top: 1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .summary--pass { background: #065f46; color: #6ee7b7; }
+    .summary--fail { background: #7f1d1d; color: #fca5a5; }
+    .summary span { font-weight: 400; opacity: 0.8; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+  <h1>Glimt – Funksjonalitetstester</h1>
+  <p class="subtitle">Automatiske tester for lagrede glimt, events, planer og integrasjon</p>
+  <div id="results"></div>
+  <div id="summary"></div>
+
+  <!-- Load dependencies in correct order -->
+  <script src="../cities.js"></script>
+  <script src="../saved-glimt.js"></script>
+
+  <script>
+    // ── Test framework ──────────────────────────────────────
+    const results = [];
+    let currentSuite = "";
+
+    function suite(name) { currentSuite = name; }
+
+    function assert(name, fn) {
+      try {
+        const result = fn();
+        if (result === true || result === undefined) {
+          results.push({ suite: currentSuite, name, pass: true });
+        } else {
+          results.push({ suite: currentSuite, name, pass: false, detail: `Returnerte: ${JSON.stringify(result)}` });
+        }
+      } catch (e) {
+        results.push({ suite: currentSuite, name, pass: false, detail: e.message });
+      }
+    }
+
+    function assertEqual(name, actual, expected) {
+      if (JSON.stringify(actual) === JSON.stringify(expected)) {
+        results.push({ suite: currentSuite, name, pass: true });
+      } else {
+        results.push({ suite: currentSuite, name, pass: false, detail: `Forventet: ${JSON.stringify(expected)}, fikk: ${JSON.stringify(actual)}` });
+      }
+    }
+
+    // ── Setup: clear localStorage before each suite ─────────
+    function clearStorage() {
+      localStorage.removeItem("glimt.savedGlimt");
+      localStorage.removeItem("glimt.myCalendar");
+      localStorage.removeItem("glimt.reiseplaner");
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 1: Lagrede glimt – CRUD
+    // ════════════════════════════════════════════════════════
+    suite("Lagrede glimt – CRUD");
+    clearStorage();
+
+    assert("loadSavedGlimt() returnerer tom liste ved start", () => {
+      return loadSavedGlimt().length === 0;
+    });
+
+    assert("addSavedGlimt() legger til et glimt", () => {
+      const ok = addSavedGlimt({ id: "test-1", title: "Testglimt", city: "Roma", author: "Test", image: "img.jpg", type: "glimt" });
+      return ok === true && loadSavedGlimt().length === 1;
+    });
+
+    assert("addSavedGlimt() forhindrer duplikater", () => {
+      const ok = addSavedGlimt({ id: "test-1", title: "Duplikat", city: "Roma" });
+      return ok === false && loadSavedGlimt().length === 1;
+    });
+
+    assert("addSavedGlimt() kan legge til flere unike glimt", () => {
+      addSavedGlimt({ id: "test-2", title: "Glimt 2", city: "København" });
+      addSavedGlimt({ id: "test-3", title: "Glimt 3", city: "Dublin" });
+      return loadSavedGlimt().length === 3;
+    });
+
+    assert("isGlimtSaved() returnerer true for lagret glimt", () => {
+      return isGlimtSaved("test-1") === true;
+    });
+
+    assert("isGlimtSaved() returnerer false for ukjent glimt", () => {
+      return isGlimtSaved("finnes-ikke") === false;
+    });
+
+    assert("removeSavedGlimt() fjerner riktig glimt", () => {
+      removeSavedGlimt("test-2");
+      const list = loadSavedGlimt();
+      return list.length === 2 && !list.some(g => g.id === "test-2");
+    });
+
+    assert("removeSavedGlimt() beholder andre glimt intakt", () => {
+      const list = loadSavedGlimt();
+      return list.some(g => g.id === "test-1") && list.some(g => g.id === "test-3");
+    });
+
+    assert("Data overlever reload (localStorage persistens)", () => {
+      const raw = localStorage.getItem("glimt.savedGlimt");
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length === 2;
+    });
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 2: Lagrede events – CRUD
+    // ════════════════════════════════════════════════════════
+    suite("Lagrede events – CRUD");
+    clearStorage();
+
+    assert("loadSavedEventsShared() returnerer tom liste ved start", () => {
+      return loadSavedEventsShared().length === 0;
+    });
+
+    assert("Kan lagre events direkte i localStorage", () => {
+      const events = [
+        { id: "ev-1", name: "Konsert i Roma", city: "Roma", date: "2026-05-14", venue: "Colosseum" },
+        { id: "ev-2", name: "Festival i KBH", city: "København", date: "2026-07-03", venue: "Tivoli" },
+        { id: "ev-3", name: "Pubkveld Dublin", city: "Dublin", date: "2026-06-20", venue: "Temple Bar" }
+      ];
+      localStorage.setItem("glimt.myCalendar", JSON.stringify(events));
+      return loadSavedEventsShared().length === 3;
+    });
+
+    assert("removeSavedEvent() fjerner riktig event", () => {
+      removeSavedEvent("ev-2");
+      const list = loadSavedEventsShared();
+      return list.length === 2 && !list.some(e => e.id === "ev-2");
+    });
+
+    assert("removeSavedEvent() beholder andre events", () => {
+      const list = loadSavedEventsShared();
+      return list.some(e => e.id === "ev-1") && list.some(e => e.id === "ev-3");
+    });
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 3: Reiseplaner – CRUD og tilknytning
+    // ════════════════════════════════════════════════════════
+    suite("Reiseplaner – CRUD og tilknytning");
+    clearStorage();
+
+    assert("loadPlansShared() returnerer tom liste ved start", () => {
+      return loadPlansShared().length === 0;
+    });
+
+    assert("savePlansShared() lagrer planer", () => {
+      savePlansShared([
+        { id: "plan-1", name: "Roma i mai", city: "Roma", from: "2026-05-12", to: "2026-05-17", glimtCount: 0, eventCount: 0, savedItems: [] },
+        { id: "plan-2", name: "KBH sommer", city: "København", from: "2026-07-01", to: "2026-07-06", glimtCount: 0, eventCount: 0, savedItems: [] }
+      ]);
+      return loadPlansShared().length === 2;
+    });
+
+    assert("Kan legge glimt til plan via savedItems", () => {
+      const plans = loadPlansShared();
+      const plan = plans.find(p => p.id === "plan-1");
+      plan.savedItems.push({ id: "glimt-x", title: "Testglimt", type: "glimt" });
+      plan.glimtCount++;
+      savePlansShared(plans);
+
+      const updated = loadPlansShared().find(p => p.id === "plan-1");
+      return updated.savedItems.length === 1 && updated.glimtCount === 1;
+    });
+
+    assert("Kan legge event til plan via savedItems", () => {
+      const plans = loadPlansShared();
+      const plan = plans.find(p => p.id === "plan-1");
+      plan.savedItems.push({ id: "event-y", title: "Konsert", type: "event" });
+      plan.eventCount++;
+      savePlansShared(plans);
+
+      const updated = loadPlansShared().find(p => p.id === "plan-1");
+      return updated.savedItems.length === 2 && updated.eventCount === 1;
+    });
+
+    assert("Andre planer forblir upåvirket", () => {
+      const plan2 = loadPlansShared().find(p => p.id === "plan-2");
+      return plan2.savedItems.length === 0 && plan2.glimtCount === 0;
+    });
+
+    assert("Duplikatsjekk i savedItems fungerer", () => {
+      const plans = loadPlansShared();
+      const plan = plans.find(p => p.id === "plan-1");
+      const alreadyExists = plan.savedItems.some(si => si.id === "glimt-x");
+      return alreadyExists === true;
+    });
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 4: Data-integritet og edge cases
+    // ════════════════════════════════════════════════════════
+    suite("Data-integritet og edge cases");
+    clearStorage();
+
+    assert("loadSavedGlimt() håndterer korrupt localStorage", () => {
+      localStorage.setItem("glimt.savedGlimt", "KORRUPT DATA {{{");
+      const result = loadSavedGlimt();
+      return Array.isArray(result) && result.length === 0;
+    });
+
+    assert("loadSavedGlimt() håndterer ikke-array JSON", () => {
+      localStorage.setItem("glimt.savedGlimt", '"bare en streng"');
+      const result = loadSavedGlimt();
+      return Array.isArray(result) && result.length === 0;
+    });
+
+    assert("loadSavedGlimt() håndterer null localStorage", () => {
+      localStorage.removeItem("glimt.savedGlimt");
+      const result = loadSavedGlimt();
+      return Array.isArray(result) && result.length === 0;
+    });
+
+    assert("loadPlansShared() håndterer korrupt data", () => {
+      localStorage.setItem("glimt.reiseplaner", "NOT_JSON");
+      return loadPlansShared().length === 0;
+    });
+
+    assert("loadSavedEventsShared() håndterer korrupt data", () => {
+      localStorage.setItem("glimt.myCalendar", "{broken}}}");
+      return loadSavedEventsShared().length === 0;
+    });
+
+    assert("escHtmlShared() escaper HTML-tegn", () => {
+      const result = escHtmlShared('<b>test</b> & "quotes"');
+      return !result.includes("<b>") && result.includes("&lt;") && result.includes("&amp;");
+    });
+
+    assert("escHtmlShared() håndterer null/undefined", () => {
+      return escHtmlShared(null) === "" && escHtmlShared(undefined) === "";
+    });
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 5: Flyt – lagre fra utforsk → mine planer → plan-detalj
+    // ════════════════════════════════════════════════════════
+    suite("Integrasjonsflyt: utforsk → mine planer → detalj");
+    clearStorage();
+
+    assert("1. Bruker lagrer 3 glimt fra utforsk-reisebrev", () => {
+      addSavedGlimt({ id: "community-roma-1", title: "Helgetur til Roma", city: "Roma", author: "Glimt", image: "roma1.jpg", type: "glimt", savedAt: new Date().toISOString() });
+      addSavedGlimt({ id: "community-kbh-1", title: "Kulinarisk København", city: "København", author: "Glimt", image: "kbh1.jpg", type: "glimt", savedAt: new Date().toISOString() });
+      addSavedGlimt({ id: "community-dublin-1", title: "Dublin på tre dager", city: "Dublin", author: "Glimt", image: "dublin1.jpg", type: "glimt", savedAt: new Date().toISOString() });
+      return loadSavedGlimt().length === 3;
+    });
+
+    assert("2. Bruker lagrer 2 events fra kalenderen", () => {
+      localStorage.setItem("glimt.myCalendar", JSON.stringify([
+        { id: "cal-1", name: "Jazzkonsert", city: "Roma", date: "2026-05-15", venue: "Casa del Jazz" },
+        { id: "cal-2", name: "Smørrebrød-kurs", city: "København", date: "2026-07-04", venue: "Torvehallerne" }
+      ]));
+      return loadSavedEventsShared().length === 2;
+    });
+
+    assert("3. Bruker oppretter en reiseplan for Roma", () => {
+      savePlansShared([{
+        id: "plan-roma-test",
+        name: "Roma i mai",
+        city: "Roma",
+        from: "2026-05-12",
+        to: "2026-05-17",
+        glimtCount: 0,
+        eventCount: 0,
+        savedItems: [],
+        status: "aktiv"
+      }]);
+      return loadPlansShared().length === 1;
+    });
+
+    assert("4. Bruker legger Roma-glimt i planen", () => {
+      const plans = loadPlansShared();
+      const plan = plans[0];
+      const romaGlimt = loadSavedGlimt().filter(g => g.city === "Roma");
+      romaGlimt.forEach(g => {
+        plan.savedItems.push({ ...g });
+        plan.glimtCount++;
+      });
+      savePlansShared(plans);
+      const updated = loadPlansShared()[0];
+      return updated.savedItems.length === 1 && updated.glimtCount === 1;
+    });
+
+    assert("5. Bruker legger Roma-event i planen", () => {
+      const plans = loadPlansShared();
+      const plan = plans[0];
+      const romaEvents = loadSavedEventsShared().filter(e => e.city === "Roma");
+      romaEvents.forEach(e => {
+        plan.savedItems.push({ ...e, type: "event" });
+        plan.eventCount++;
+      });
+      savePlansShared(plans);
+      const updated = loadPlansShared()[0];
+      return updated.savedItems.length === 2 && updated.eventCount === 1;
+    });
+
+    assert("6. Fjerne et lagret glimt oppdaterer korrekt", () => {
+      removeSavedGlimt("community-kbh-1");
+      const remaining = loadSavedGlimt();
+      return remaining.length === 2 && !remaining.some(g => g.id === "community-kbh-1");
+    });
+
+    assert("7. Fjerne event oppdaterer korrekt", () => {
+      removeSavedEvent("cal-2");
+      const remaining = loadSavedEventsShared();
+      return remaining.length === 1 && remaining[0].id === "cal-1";
+    });
+
+    assert("8. Planens savedItems er uavhengig av lagrede glimt (kopi, ikke referanse)", () => {
+      // Planen burde fortsatt ha sine items selv om vi fjernet fra lagrede glimt
+      const plan = loadPlansShared()[0];
+      return plan.savedItems.length === 2;
+    });
+
+    // ════════════════════════════════════════════════════════
+    //  SUITE 6: showToast og UI-hjelpere
+    // ════════════════════════════════════════════════════════
+    suite("UI-hjelpere");
+
+    assert("showToast() oppretter toast-element i DOM", () => {
+      showToast("Testmelding", "success");
+      const toast = document.querySelector(".glimt-toast");
+      return toast !== null && toast.textContent.includes("Testmelding");
+    });
+
+    assert("showToast() fjerner forrige toast ved ny", () => {
+      showToast("Ny melding", "info");
+      const toasts = document.querySelectorAll(".glimt-toast");
+      return toasts.length === 1 && toasts[0].textContent.includes("Ny melding");
+    });
+
+    assert("CITIES array er tilgjengelig", () => {
+      return typeof CITIES !== "undefined" && Array.isArray(CITIES) && CITIES.length > 0;
+    });
+
+    // ── Rydd opp ────────────────────────────────────────────
+    clearStorage();
+    // Fjern eventuelle toasts
+    document.querySelectorAll(".glimt-toast").forEach(t => t.remove());
+
+    // ── Render resultater ───────────────────────────────────
+    const container = document.getElementById("results");
+    const summaryEl = document.getElementById("summary");
+
+    const suites = {};
+    results.forEach(r => {
+      if (!suites[r.suite]) suites[r.suite] = [];
+      suites[r.suite].push(r);
+    });
+
+    let totalPass = 0, totalFail = 0;
+
+    Object.entries(suites).forEach(([suiteName, tests]) => {
+      const passed = tests.filter(t => t.pass).length;
+      const failed = tests.filter(t => !t.pass).length;
+      totalPass += passed;
+      totalFail += failed;
+
+      const div = document.createElement("div");
+      div.className = "suite";
+      div.innerHTML = `
+        <div class="suite-title">
+          ${failed === 0 ? '✅' : '❌'} ${suiteName}
+          <span style="font-size:0.72rem;color:#888;font-weight:400">(${passed}/${tests.length} bestått)</span>
+        </div>
+        ${tests.map(t => `
+          <div class="test-row">
+            <div class="badge ${t.pass ? 'badge--pass' : 'badge--fail'}">${t.pass ? '✓' : '✗'}</div>
+            <span class="test-name">${t.name}</span>
+            ${t.detail ? `<span class="test-detail">${t.detail}</span>` : ''}
+          </div>
+        `).join('')}
+      `;
+      container.appendChild(div);
+    });
+
+    const total = totalPass + totalFail;
+    summaryEl.className = `summary ${totalFail === 0 ? 'summary--pass' : 'summary--fail'}`;
+    summaryEl.innerHTML = totalFail === 0
+      ? `✅ Alle ${total} tester bestått! <span>Lagrede glimt, events og plan-integrasjon fungerer som forventet.</span>`
+      : `❌ ${totalFail} av ${total} tester feilet. <span>Se detaljer over for å finne feilene.</span>`;
+  </script>
+</body>
+</html>

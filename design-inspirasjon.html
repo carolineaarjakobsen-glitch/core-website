@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glimt - Design Inspiration & Mood Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fff9f0;
+            font-family: 'DM Sans', sans-serif;
+            color: #5D372A;
+            line-height: 1.6;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, #FFEEBC 0%, #ffe8a3 100%);
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(218, 232, 255, 0.3);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            z-index: 1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(234, 103, 45, 0.1);
+            border-radius: 50%;
+            bottom: -50px;
+            left: 10%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 120px;
+            font-weight: 800;
+            color: #5D372A;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #EA672D;
+            font-style: italic;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 100px 0;
+        }
+
+        section h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #5D372A;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        /* COLOR PALETTE */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .color-swatch {
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(93, 55, 42, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            transition: transform 0.3s ease;
+        }
+
+        .color-swatch:hover {
+            transform: translateY(-8px);
+        }
+
+        .color-box {
+            height: 200px;
+            width: 100%;
+        }
+
+        .color-info {
+            padding: 30px 20px;
+        }
+
+        .color-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #5D372A;
+            margin-bottom: 8px;
+        }
+
+        .color-hex {
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .color-usage {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* TYPOGRAPHY SECTION */
+        .typography {
+            background: white;
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 10px 40px rgba(93, 55, 42, 0.08);
+        }
+
+        .typography-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .typography-item h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .typography-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .typo-heading {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
+
+        .typo-h1 {
+            font-size: 52px;
+            color: #5D372A;
+        }
+
+        .typo-h2 {
+            font-size: 36px;
+            color: #EA672D;
+        }
+
+        .typo-h3 {
+            font-size: 24px;
+            color: #5D372A;
+        }
+
+        .typo-body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            color: #5D372A;
+            line-height: 1.7;
+        }
+
+        .typo-accent {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: #D2E8FF;
+            font-weight: 600;
+        }
+
+        /* MOOD SECTION */
+        .mood-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .mood-canvas {
+            height: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(93, 55, 42, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Canvas 1: Overlapping Circles */
+        .mood-circles {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .circle-bistre {
+            background: #5D372A;
+            width: 180px;
+            height: 180px;
+            top: 20%;
+            left: 10%;
+        }
+
+        .circle-flame {
+            background: #EA672D;
+            width: 150px;
+            height: 150px;
+            top: 40%;
+            right: 15%;
+        }
+
+        .circle-blue {
+            background: #D2E8FF;
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 35%;
+        }
+
+        .circle-vanilla {
+            background: #FFEEBC;
+            width: 160px;
+            height: 160px;
+            bottom: 20%;
+            right: 10%;
+        }
+
+        /* Canvas 2: Geometric Patterns */
+        .mood-geometric {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #fff9f0 25%, transparent 25%, transparent 75%, #fff9f0 75%, #fff9f0),
+                        linear-gradient(45deg, #fff9f0 25%, transparent 25%, transparent 75%, #fff9f0 75%, #fff9f0);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+
+        .geometric-shape {
+            position: absolute;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #EA672D;
+            opacity: 0.7;
+            top: 10%;
+            left: 5%;
+        }
+
+        .rect-flame {
+            width: 120px;
+            height: 80px;
+            background: #EA672D;
+            opacity: 0.6;
+            top: 50%;
+            right: 10%;
+            transform: rotate(25deg);
+        }
+
+        .rect-blue {
+            width: 100px;
+            height: 100px;
+            background: #D2E8FF;
+            opacity: 0.5;
+            bottom: 15%;
+            left: 15%;
+            transform: rotate(-15deg);
+        }
+
+        /* Canvas 3: Wavy Abstract */
+        .mood-wave {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #FFEEBC 0%, #ffe8a3 50%, #fff9f0 100%);
+        }
+
+        .wave-shape {
+            position: absolute;
+        }
+
+        .semi-circle-bistre {
+            width: 300px;
+            height: 150px;
+            background: #5D372A;
+            opacity: 0.7;
+            border-radius: 0 0 300px 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .semi-circle-blue {
+            width: 250px;
+            height: 125px;
+            background: #D2E8FF;
+            opacity: 0.6;
+            border-radius: 300px 300px 0 0;
+            bottom: 10%;
+            right: 5%;
+        }
+
+        /* Canvas 4: Organic Blobs */
+        .mood-blobs {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50% 40% 60% 30% / 40% 50% 30% 60%;
+            opacity: 0.75;
+            animation: blob-rotation 15s infinite ease-in-out;
+        }
+
+        .blob-flame {
+            background: #EA672D;
+            width: 200px;
+            height: 200px;
+            top: 5%;
+            left: 5%;
+        }
+
+        .blob-blue {
+            background: #D2E8FF;
+            width: 180px;
+            height: 180px;
+            bottom: 10%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes blob-rotation {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* COMPONENTS SECTION */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(93, 55, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .component-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            align-self: flex-start;
+        }
+
+        /* Button */
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #5D372A;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #EA672D;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(234, 103, 45, 0.3);
+        }
+
+        /* Tags */
+        .tag {
+            background: #D2E8FF;
+            color: #5D372A;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .tag-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Event Card */
+        .event-card {
+            background: #FFEEBC;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 8px 30px rgba(93, 55, 42, 0.1);
+        }
+
+        .event-card-header {
+            border-left: 4px solid #EA672D;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .event-card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #5D372A;
+            margin-bottom: 8px;
+        }
+
+        .event-card-date {
+            font-size: 13px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .event-card-desc {
+            font-size: 14px;
+            color: #5D372A;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .event-card-btn {
+            background: #EA672D;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .event-card-btn:hover {
+            background: #5D372A;
+        }
+
+        /* Navbar Mock */
+        .navbar-mock {
+            background: #5D372A;
+            padding: 20px 40px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .nav-brand {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFEEBC;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #EA672D;
+        }
+
+        /* LOGO CONCEPT */
+        .logo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 10px 40px rgba(93, 55, 42, 0.08);
+            text-align: center;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-svg {
+            width: 200px;
+            height: 200px;
+        }
+
+        .logo-description {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .logo-description p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #5D372A;
+        }
+
+        .logo-concept {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #EA672D;
+            margin-bottom: 15px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #5D372A;
+            color: white;
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 60px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            section h2 {
+                font-size: 36px;
+            }
+
+            .typography-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .mood-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Glimt</h1>
+            <p>Din lokale reiseleder</p>
+        </div>
+    </section>
+
+    <!-- COLOR PALETTE SECTION -->
+    <section class="container">
+        <h2>Fargepalet</h2>
+        <div class="color-palette">
+            <div class="color-swatch">
+                <div class="color-box" style="background: #5D372A;"></div>
+                <div class="color-info">
+                    <div class="color-name">Bistre</div>
+                    <div class="color-hex">#5D372A</div>
+                    <div class="color-usage">Navbar, footer, headings, main text</div>
+                </div>
+            </div>
+
+            <div class="color-swatch">
+                <div class="color-box" style="background: #EA672D;"></div>
+                <div class="color-info">
+                    <div class="color-name">Flame</div>
+                    <div class="color-hex">#EA672D</div>
+                    <div class="color-usage">Primary accent, buttons, active states</div>
+                </div>
+            </div>
+
+            <div class="color-swatch">
+                <div class="color-box" style="background: #D2E8FF;"></div>
+                <div class="color-info">
+                    <div class="color-name">Columbia Blue</div>
+                    <div class="color-hex">#D2E8FF</div>
+                    <div class="color-usage">Tags, card backgrounds, secondary elements</div>
+                </div>
+            </div>
+
+            <div class="color-swatch">
+                <div class="color-box" style="background: #FFEEBC;"></div>
+                <div class="color-info">
+                    <div class="color-name">Vanilla</div>
+                    <div class="color-hex">#FFEEBC</div>
+                    <div class="color-usage">Hero backgrounds, card fills, warm tone</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TYPOGRAPHY SECTION -->
+    <section class="container">
+        <h2>Typografi</h2>
+        <div class="typography">
+            <div class="typography-grid">
+                <div class="typography-item">
+                    <h3>Headings — Poppins</h3>
+                    <div class="typography-showcase">
+                        <div class="typo-heading typo-h1">Heading 1</div>
+                        <div class="typo-heading typo-h2">Heading 2</div>
+                        <div class="typo-heading typo-h3">Heading 3</div>
+                    </div>
+                </div>
+
+                <div class="typography-item">
+                    <h3>Body Text — DM Sans</h3>
+                    <div class="typography-showcase">
+                        <p class="typo-body">Discover the hidden gems of Norway with Glimt. Our local guides share stories, culture, and unforgettable experiences.</p>
+                        <p style="font-size: 13px; color: #999; line-height: 1.6;">Supporting text for additional information and details</p>
+                        <div class="typo-accent">Special accent text</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MOOD SECTION -->
+    <section class="container">
+        <h2>Mood & Patterns</h2>
+        <div class="mood-gallery">
+            <div class="mood-canvas mood-circles">
+                <div class="circle circle-bistre"></div>
+                <div class="circle circle-flame"></div>
+                <div class="circle circle-blue"></div>
+                <div class="circle circle-vanilla"></div>
+            </div>
+
+            <div class="mood-canvas mood-geometric">
+                <div class="geometric-shape triangle"></div>
+                <div class="geometric-shape rect-flame"></div>
+                <div class="geometric-shape rect-blue"></div>
+            </div>
+
+            <div class="mood-canvas mood-wave">
+                <div class="wave-shape semi-circle-bistre"></div>
+                <div class="wave-shape semi-circle-blue"></div>
+            </div>
+
+            <div class="mood-canvas mood-blobs">
+                <div class="blob blob-flame"></div>
+                <div class="blob blob-blue"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPONENTS SECTION -->
+    <section class="container">
+        <h2>Component Showcase</h2>
+        <div class="components-grid">
+            <div class="component-card">
+                <span class="component-title">Primary Button</span>
+                <button class="btn btn-primary">Utforsk Nå</button>
+            </div>
+
+            <div class="component-card">
+                <span class="component-title">Tags & Pills</span>
+                <div class="tag-group">
+                    <span class="tag">Eventyr</span>
+                    <span class="tag">Kultur</span>
+                    <span class="tag">Natur</span>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <span class="component-title">Event Card</span>
+                <div class="event-card">
+                    <div class="event-card-header">
+                        <div class="event-card-title">Oslo Food Tour</div>
+                        <div class="event-card-date">May 15, 2026</div>
+                    </div>
+                    <p class="event-card-desc">Taste authentic Scandinavian cuisine with a local guide</p>
+                    <button class="event-card-btn">Registrer</button>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <span class="component-title">Navigation Bar</span>
+                <div class="navbar-mock">
+                    <div class="nav-brand">Glimt</div>
+                    <div class="nav-links">
+                        <a href="#" class="nav-link">Tours</a>
+                        <a href="#" class="nav-link">About</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGO CONCEPT SECTION -->
+    <section class="container">
+        <h2>Logo Concept</h2>
+        <div class="logo-section">
+            <div class="logo-container">
+                <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Envelope -->
+                    <g>
+                        <!-- Envelope body -->
+                        <rect x="30" y="60" width="140" height="90" fill="none" stroke="#5D372A" stroke-width="2" rx="4"/>
+                        <!-- Envelope flap -->
+                        <path d="M 30 60 L 100 105 L 170 60" fill="none" stroke="#5D372A" stroke-width="2"/>
+                    </g>
+                    <!-- Sun inside -->
+                    <g>
+                        <!-- Sun circle -->
+                        <circle cx="100" cy="100" r="35" fill="#EA672D" opacity="0.9"/>
+                        <!-- Sun rays -->
+                        <g stroke="#EA672D" stroke-width="2.5" stroke-linecap="round">
+                            <line x1="100" y1="35" x2="100" y2="20"/>
+                            <line x1="100" y1="165" x2="100" y2="180"/>
+                            <line x1="35" y1="100" x2="20" y2="100"/>
+                            <line x1="165" y1="100" x2="180" y2="100"/>
+                            <line x1="48" y1="52" x2="37" y2="41"/>
+                            <line x1="163" y1="167" x2="174" y2="178"/>
+                            <line x1="152" y1="48" x2="163" y2="37"/>
+                            <line x1="47" y1="163" x2="36" y2="174"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="logo-description">
+                <div class="logo-concept">Envelope with Rising Sun</div>
+                <p>The Glimt logo combines an envelope (representing connection and communication) with a vibrant orange sun (symbolizing warmth, discovery, and local travel experiences). The envelope's clean geometric lines embody professionalism and trust, while the sun's rays suggest guidance and enlightenment through local storytelling.</p>
+                <p>The bistre envelope provides grounding, while the flame-orange sun creates an energetic focal point, making it instantly recognizable and deeply connected to the brand's mission of bringing travelers and local experts together.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Glimt — Din lokale reiseleder | Design Inspiration Mood Board</p>
+    </footer>
+
+</body>
+</html>

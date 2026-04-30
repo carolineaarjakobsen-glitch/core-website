@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glimt – Automatiske tester</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg:    #0f0f14;
+      --panel: #1a1a24;
+      --line:  #2a2a35;
+      --text:  #e9e8ee;
+      --muted: #a09fae;
+      --pass:  #4ade80;
+      --fail:  #f87171;
+      --run:   #fbbf24;
+      --blue:  #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      line-height: 1.5;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { margin: 0 0 0.25rem; }
+    .lead { color: var(--muted); margin: 0 0 1.5rem; }
+
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      background: var(--blue);
+      color: #0a0a0f;
+      border: 0;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .summary {
+      margin-left: auto;
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+    .summary span.pass { color: var(--pass); }
+    .summary span.fail { color: var(--fail); }
+    .summary span.run  { color: var(--run);  }
+
+    .user {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .user b { color: var(--text); }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-count {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .test {
+      padding: 0.65rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+    .test:last-child { border-bottom: 0; }
+    .test .status {
+      flex-shrink: 0;
+      width: 1.25rem;
+      text-align: center;
+      font-weight: 700;
+    }
+    .test.pending .status { color: var(--muted); }
+    .test.running .status { color: var(--run); }
+    .test.pass    .status { color: var(--pass); }
+    .test.fail    .status { color: var(--fail); }
+    .test .name { flex: 1; }
+    .test .detail {
+      margin-top: 0.25rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .test.fail .detail { color: var(--fail); }
+    .test .duration {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Glimt – automatiske tester</h1>
+    <p class="lead">
+      Kjører integrasjonstester mot Firestore, GlimtStore og sikkerhetsregler.
+      Testdata ryddes opp før og etter hver kjøring (alle dokumenter med id som
+      begynner på <code>test-</code>).
+    </p>
+
+    <div class="controls">
+      <button id="run-btn">Kjør alle tester</button>
+      <button id="cleanup-btn" class="secondary">Rydd testdata</button>
+      <div class="summary">
+        <span class="pass">✓ <span id="count-pass">0</span> pass</span>
+        <span class="fail">✗ <span id="count-fail">0</span> fail</span>
+        <span class="run">· <span id="count-total">0</span> totalt</span>
+      </div>
+    </div>
+
+    <div class="user" id="user-info">Venter på innlogging …</div>
+    <div id="sections"></div>
+  </div>
+
+  <!-- Firebase + store -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../glimt-store.js"></script>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    //  Test runner
+    // ══════════════════════════════════════════════════════════════
+
+    const TEST_PREFIX = "test-";
+    const runner = {
+      sections: [],
+      currentSection: null,
+      pass: 0,
+      fail: 0,
+      total: 0
+    };
+
+    function describe(name) {
+      const el = document.createElement("div");
+      el.className = "section";
+      el.innerHTML = `
+        <div class="section-header">
+          <span>${name}</span>
+          <span class="section-count"></span>
+        </div>
+        <div class="tests"></div>
+      `;
+      document.getElementById("sections").appendChild(el);
+      const section = { name, el, tests: [] };
+      runner.sections.push(section);
+      runner.currentSection = section;
+      return section;
+    }
+
+    function test(name, fn) {
+      const section = runner.currentSection;
+      const el = document.createElement("div");
+      el.className = "test pending";
+      el.innerHTML = `
+        <span class="status">·</span>
+        <div>
+          <div class="name">${name}</div>
+          <div class="detail" style="display:none"></div>
+        </div>
+        <span class="duration"></span>
+      `;
+      section.el.querySelector(".tests").appendChild(el);
+      section.tests.push({ name, fn, el });
+      runner.total += 1;
+    }
+
+    function assert(cond, msg) {
+      if (!cond) throw new Error("Assertion failed: " + (msg || ""));
+    }
+    function assertEqual(actual, expected, msg) {
+      if (actual !== expected) {
+        throw new Error(
+          `Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}` +
+          (msg ? " (" + msg + ")" : "")
+        );
+      }
+    }
+    async function assertThrows(fn, codeMatch, msg) {
+      try {
+        await fn();
+      } catch (err) {
+        if (codeMatch && err.code && !String(err.code).includes(codeMatch)) {
+          throw new Error(`Threw ${err.code}, expected ${codeMatch} (${msg || ""})`);
+        }
+        return; // passed
+      }
+      throw new Error("Expected throw but none occurred" + (msg ? " (" + msg + ")" : ""));
+    }
+
+    async function cleanupTestData(db, uid) {
+      // Slett alle dokumenter i alle brukerens subkolleksjoner med "test-"-prefiks
+      const cols = ["userGlimts", "myCreatedGlimt", "savedGlimt", "myCalendar", "reiseplaner"];
+      for (const c of cols) {
+        const snap = await db.collection("users").doc(uid).collection(c).get();
+        const batch = db.batch();
+        let hasDeletes = false;
+        snap.forEach(d => {
+          if (d.id.startsWith(TEST_PREFIX)) {
+            batch.delete(d.ref);
+            hasDeletes = true;
+          }
+        });
+        if (hasDeletes) await batch.commit();
+      }
+    }
+
+    async function runTest(t) {
+      t.el.classList.remove("pending");
+      t.el.classList.add("running");
+      t.el.querySelector(".status").textContent = "…";
+      const start = performance.now();
+      try {
+        await t.fn();
+        const ms = Math.round(performance.now() - start);
+        t.el.classList.remove("running");
+        t.el.classList.add("pass");
+        t.el.querySelector(".status").textContent = "✓";
+        t.el.querySelector(".duration").textContent = `${ms} ms`;
+        runner.pass += 1;
+      } catch (err) {
+        const ms = Math.round(performance.now() - start);
+        t.el.classList.remove("running");
+        t.el.classList.add("fail");
+        t.el.querySelector(".status").textContent = "✗";
+        const detail = t.el.querySelector(".detail");
+        detail.textContent = err.stack || err.message || String(err);
+        detail.style.display = "block";
+        t.el.querySelector(".duration").textContent = `${ms} ms`;
+        runner.fail += 1;
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      document.getElementById("count-pass").textContent = runner.pass;
+      document.getElementById("count-fail").textContent = runner.fail;
+      document.getElementById("count-total").textContent = runner.total;
+      runner.sections.forEach(s => {
+        const p = s.tests.filter(t => t.el.classList.contains("pass")).length;
+        const f = s.tests.filter(t => t.el.classList.contains("fail")).length;
+        s.el.querySelector(".section-count").textContent =
+          `${p}/${s.tests.length}${f ? ` (${f} fail)` : ""}`;
+      });
+    }
+
+    async function runAll() {
+      const btn = document.getElementById("run-btn");
+      btn.disabled = true; btn.textContent = "Kjører …";
+      runner.pass = 0; runner.fail = 0;
+      runner.sections.forEach(s => s.tests.forEach(t => {
+        t.el.className = "test pending";
+        t.el.querySelector(".status").textContent = "·";
+        t.el.querySelector(".duration").textContent = "";
+        t.el.querySelector(".detail").style.display = "none";
+      }));
+      updateSummary();
+
+      // Rydd før kjøring
+      try {
+        await cleanupTestData(firebase.firestore(), GlimtStore.getUserId());
+      } catch (err) {
+        console.warn("Pre-cleanup feilet:", err);
+      }
+
+      for (const s of runner.sections) {
+        for (const t of s.tests) {
+          await runTest(t);
+        }
+      }
+
+      // Rydd etter kjøring
+      try {
+        await cleanupTestData(firebase.firestore(), GlimtStore.getUserId());
+      } catch (err) {
+        console.warn("Post-cleanup feilet:", err);
+      }
+
+      btn.disabled = false; btn.textContent = "Kjør alle tester";
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  Test suite definition
+    // ══════════════════════════════════════════════════════════════
+
+    function defineTests() {
+      // ── Store-initialisering ────────────────────────────────
+      describe("1. Store readiness");
+      test("GlimtStore er globalt tilgjengelig", () => {
+        assert(typeof window.GlimtStore === "object", "GlimtStore mangler på window");
+      });
+      test("GlimtStore.isReady() er true etter init", () => {
+        assert(GlimtStore.isReady(), "isReady() returnerte false");
+      });
+      test("GlimtStore.getUserId() returnerer innlogget bruker", () => {
+        const uid = GlimtStore.getUserId();
+        assert(uid && typeof uid === "string" && uid.length > 0, "userId er tomt");
+      });
+
+      // ── CRUD: userGlimts (reisebrev) ────────────────────────
+      describe("2. CRUD – reisebrev (userGlimts)");
+      const guideId = TEST_PREFIX + "guide-" + Date.now();
+      test("saveUserGlimt lagrer nytt reisebrev", async () => {
+        await GlimtStore.saveUserGlimt({
+          id: guideId,
+          title: "Test-reisebrev",
+          city: "Oslo",
+          createdAt: new Date().toISOString(),
+          glimts: [{ title: "Glimt 1", image: "" }]
+        });
+      });
+      test("getUserGlimt returnerer nylig lagret (fra cache)", () => {
+        const g = GlimtStore.getUserGlimt(guideId);
+        assert(g, "Fant ikke glimt i cache");
+        assertEqual(g.title, "Test-reisebrev");
+      });
+      test("getUserGlimts inneholder det nye reisebrevet", () => {
+        const all = GlimtStore.getUserGlimts();
+        assert(all.some(g => g.id === guideId), "Mangler i listen");
+      });
+      test("saveUserGlimt oppdaterer eksisterende dokument", async () => {
+        await GlimtStore.saveUserGlimt({
+          id: guideId,
+          title: "Oppdatert tittel",
+          city: "Bergen",
+          createdAt: new Date().toISOString(),
+          glimts: []
+        });
+        const g = GlimtStore.getUserGlimt(guideId);
+        assertEqual(g.title, "Oppdatert tittel");
+        assertEqual(g.city, "Bergen");
+      });
+      test("dokumentet finnes faktisk i Firestore (ikke bare cache)", async () => {
+        const uid = GlimtStore.getUserId();
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc(guideId).get();
+        assert(snap.exists, "Dokumentet finnes ikke i Firestore");
+        assertEqual(snap.data().title, "Oppdatert tittel");
+      });
+      test("deleteUserGlimt fjerner både cache og Firestore", async () => {
+        await GlimtStore.deleteUserGlimt(guideId);
+        assert(!GlimtStore.getUserGlimt(guideId), "Fortsatt i cache");
+        const uid = GlimtStore.getUserId();
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc(guideId).get();
+        assert(!snap.exists, "Dokumentet er fortsatt i Firestore");
+      });
+
+      // ── CRUD: myCreatedGlimt ────────────────────────────────
+      describe("3. CRUD – enkeltglimt (myCreatedGlimt)");
+      const mcId = TEST_PREFIX + "mc-" + Date.now();
+      test("saveMyCreatedGlimt + getMyCreatedGlimt fungerer", async () => {
+        await GlimtStore.saveMyCreatedGlimt({
+          id: mcId, title: "Test-glimt", city: "Oslo",
+          createdAt: new Date().toISOString()
+        });
+        const all = GlimtStore.getMyCreatedGlimt();
+        assert(all.some(g => g.id === mcId));
+      });
+      test("deleteMyCreatedGlimt rydder opp", async () => {
+        await GlimtStore.deleteMyCreatedGlimt(mcId);
+        const all = GlimtStore.getMyCreatedGlimt();
+        assert(!all.some(g => g.id === mcId));
+      });
+
+      // ── CRUD: savedGlimt ────────────────────────────────────
+      describe("4. CRUD – lagrede glimt (savedGlimt)");
+      const sgId = TEST_PREFIX + "sg-" + Date.now();
+      test("addSavedGlimt + isGlimtSaved fungerer", async () => {
+        const added = await GlimtStore.addSavedGlimt({
+          id: sgId, title: "Lagret test", author: "Test",
+          type: "glimt", savedAt: new Date().toISOString()
+        });
+        assert(added === true, "addSavedGlimt returnerte ikke true");
+        assert(GlimtStore.isGlimtSaved(sgId), "isGlimtSaved er false");
+      });
+      test("addSavedGlimt blokkerer duplikater", async () => {
+        const added = await GlimtStore.addSavedGlimt({ id: sgId, title: "x" });
+        assert(added === false, "Tillot duplikat");
+      });
+      test("removeSavedGlimt fjerner", async () => {
+        await GlimtStore.removeSavedGlimt(sgId);
+        assert(!GlimtStore.isGlimtSaved(sgId));
+      });
+
+      // ── CRUD: myCalendar ────────────────────────────────────
+      describe("5. CRUD – kalender (myCalendar)");
+      const evId = TEST_PREFIX + "ev-" + Date.now();
+      test("saveCalendarEvent + getCalendarEvents fungerer", async () => {
+        await GlimtStore.saveCalendarEvent({
+          id: evId, title: "Test-event", date: "2026-06-01", city: "Oslo"
+        });
+        const all = GlimtStore.getCalendarEvents();
+        assert(all.some(e => e.id === evId));
+      });
+      test("removeCalendarEvent rydder opp", async () => {
+        await GlimtStore.removeCalendarEvent(evId);
+        const all = GlimtStore.getCalendarEvents();
+        assert(!all.some(e => e.id === evId));
+      });
+
+      // ── CRUD: reiseplaner ───────────────────────────────────
+      describe("6. CRUD – reiseplaner");
+      const planId = TEST_PREFIX + "plan-" + Date.now();
+      test("savePlan + getPlan fungerer", async () => {
+        await GlimtStore.savePlan({
+          id: planId, name: "Test-plan", city: "Oslo",
+          glimtCount: 0, eventCount: 0, status: "utkast"
+        });
+        const p = GlimtStore.getPlan(planId);
+        assert(p, "Fant ikke plan");
+        assertEqual(p.name, "Test-plan");
+      });
+      test("replaceList utfører diff-basert skrive/slette", async () => {
+        const other = TEST_PREFIX + "plan2-" + Date.now();
+        // Etter replaceList skal bare "other" være igjen av testplanene
+        await GlimtStore.replaceList("reiseplaner", [
+          { id: other, name: "Kept plan", city: "Oslo" }
+        ]);
+        const all = GlimtStore.getPlans();
+        assert(!all.some(p => p.id === planId), "Gammel plan ble ikke slettet");
+        assert(all.some(p => p.id === other), "Ny plan mangler");
+        await GlimtStore.deletePlan(other);
+      });
+
+      // ── Migrering ───────────────────────────────────────────
+      describe("7. localStorage-migrering");
+      test("migrering kjører på ny hvis flagget fjernes", async () => {
+        const uid = GlimtStore.getUserId();
+        const legacyId = TEST_PREFIX + "legacy-" + Date.now();
+
+        // Seed legacy-data
+        localStorage.setItem("glimt.userGlimts", JSON.stringify([
+          { id: legacyId, title: "Legacy-reisebrev", city: "Oslo", glimts: [] }
+        ]));
+        localStorage.removeItem("glimt.migratedToFirestore");
+
+        // Re-init store – dette skal plukke opp den nye localStorage-dataen
+        await GlimtStore.init(uid);
+
+        // Verifiser at data havner i Firestore
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc(legacyId).get();
+        assert(snap.exists, "Legacy-data havnet ikke i Firestore");
+
+        // Verifiser at legacy-nøkkel er fjernet
+        assert(!localStorage.getItem("glimt.userGlimts"),
+          "Legacy-nøkkel er fortsatt satt");
+
+        // Verifiser at migreringsflagg er satt
+        assertEqual(localStorage.getItem("glimt.migratedToFirestore"), "done");
+
+        // Rydd
+        await GlimtStore.deleteUserGlimt(legacyId);
+      });
+      test("migrering hopper over demo-data (demo-/sg-prefikser)", async () => {
+        const uid = GlimtStore.getUserId();
+        localStorage.setItem("glimt.userGlimts", JSON.stringify([
+          { id: "demo-roma-01", title: "Demo", glimts: [] }
+        ]));
+        localStorage.setItem("glimt.savedGlimt", JSON.stringify([
+          { id: "sg-1", title: "Demo saved" }
+        ]));
+        localStorage.removeItem("glimt.migratedToFirestore");
+        await GlimtStore.init(uid);
+
+        const demoSnap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc("demo-roma-01").get();
+        assert(!demoSnap.exists, "Demo-data ble migrert (skulle ikke være)");
+        const sgSnap = await firebase.firestore()
+          .collection("users").doc(uid).collection("savedGlimt").doc("sg-1").get();
+        assert(!sgSnap.exists, "sg-data ble migrert (skulle ikke være)");
+      });
+
+      // ── Offentlig deling (collection group) ─────────────────
+      describe("8. Offentlig deling (isPublic)");
+      test("saveUserGlimt med isPublic:true legger til authorId og authorName", async () => {
+        const id = TEST_PREFIX + "public-" + Date.now();
+        await GlimtStore.saveUserGlimt({
+          id, title: "Offentlig test", city: "Oslo",
+          createdAt: new Date().toISOString(),
+          isPublic: true,
+          glimts: []
+        });
+        const uid = GlimtStore.getUserId();
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc(id).get();
+        const data = snap.data();
+        assert(data.isPublic === true, "isPublic ikke lagret");
+        assertEqual(data.authorId, uid, "authorId feil");
+        assert(data.authorName && data.authorName.length > 0,
+          "authorName mangler");
+        await GlimtStore.deleteUserGlimt(id);
+      });
+      test("saveUserGlimt med isPublic:false fjerner forfatter-metadata", async () => {
+        const id = TEST_PREFIX + "togglepub-" + Date.now();
+        // Først delt
+        await GlimtStore.saveUserGlimt({
+          id, title: "x", createdAt: new Date().toISOString(),
+          isPublic: true, glimts: []
+        });
+        // Så privat igjen
+        await GlimtStore.saveUserGlimt({
+          id, title: "x", createdAt: new Date().toISOString(),
+          isPublic: false, glimts: []
+        });
+        const uid = GlimtStore.getUserId();
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").doc(id).get();
+        const data = snap.data();
+        assertEqual(data.isPublic, false);
+        assert(data.authorId === undefined, "authorId skulle vært fjernet");
+        assert(data.authorName === undefined, "authorName skulle vært fjernet");
+        await GlimtStore.deleteUserGlimt(id);
+      });
+      test("getPublicUserGlimts finner egen delt reisebrev", async () => {
+        const id = TEST_PREFIX + "pub-read-" + Date.now();
+        await GlimtStore.saveUserGlimt({
+          id, title: "Les meg offentlig", city: "Bergen",
+          createdAt: new Date().toISOString(),
+          isPublic: true, glimts: []
+        });
+        const shared = await GlimtStore.getPublicUserGlimts();
+        assert(shared.some(g => g.id === id),
+          "fant ikke nylig delt reisebrev i offentlig liste");
+        await GlimtStore.deleteUserGlimt(id);
+      });
+      test("getPublicUserGlimts støtter by-filter", async () => {
+        const idA = TEST_PREFIX + "pub-byA-" + Date.now();
+        const idB = TEST_PREFIX + "pub-byB-" + Date.now();
+        await GlimtStore.saveUserGlimt({
+          id: idA, title: "A", city: "Roma",
+          createdAt: new Date().toISOString(), isPublic: true, glimts: []
+        });
+        await GlimtStore.saveUserGlimt({
+          id: idB, title: "B", city: "Stockholm",
+          createdAt: new Date().toISOString(), isPublic: true, glimts: []
+        });
+        const roma = await GlimtStore.getPublicUserGlimts({ city: "Roma" });
+        assert(roma.some(g => g.id === idA), "Roma-filter fant ikke A");
+        assert(!roma.some(g => g.id === idB), "Roma-filter inkluderte B");
+        await GlimtStore.deleteUserGlimt(idA);
+        await GlimtStore.deleteUserGlimt(idB);
+      });
+      test("getPublicMyCreatedGlimt returnerer delte enkeltglimt", async () => {
+        const id = TEST_PREFIX + "pub-single-" + Date.now();
+        await GlimtStore.saveMyCreatedGlimt({
+          id, title: "Delt enkeltglimt", city: "Oslo",
+          createdAt: new Date().toISOString(), isPublic: true
+        });
+        const shared = await GlimtStore.getPublicMyCreatedGlimt();
+        assert(shared.some(g => g.id === id));
+        await GlimtStore.deleteMyCreatedGlimt(id);
+      });
+      test("private glimt dukker IKKE opp i offentlige spørringer", async () => {
+        const id = TEST_PREFIX + "priv-" + Date.now();
+        await GlimtStore.saveUserGlimt({
+          id, title: "Privat", createdAt: new Date().toISOString(),
+          isPublic: false, glimts: []
+        });
+        const shared = await GlimtStore.getPublicUserGlimts();
+        assert(!shared.some(g => g.id === id),
+          "privat reisebrev havnet i offentlig liste");
+        await GlimtStore.deleteUserGlimt(id);
+      });
+
+      // ── Sikkerhetsregler ────────────────────────────────────
+      describe("9. Sikkerhetsregler (negative tester)");
+      test("kan ikke lese annen brukers userGlimts", async () => {
+        const db = firebase.firestore();
+        await assertThrows(
+          () => db.collection("users").doc("some-other-uid")
+                  .collection("userGlimts").get(),
+          "permission-denied",
+          "Firestore lot oss lese annen brukers data"
+        );
+      });
+      test("kan ikke skrive til annen brukers userGlimts", async () => {
+        const db = firebase.firestore();
+        await assertThrows(
+          () => db.collection("users").doc("some-other-uid")
+                  .collection("userGlimts").doc("x").set({ title: "hack" }),
+          "permission-denied",
+          "Firestore lot oss skrive til annen bruker"
+        );
+      });
+      test("kan ikke lese rot-kolleksjoner utenfor users/", async () => {
+        const db = firebase.firestore();
+        await assertThrows(
+          () => db.collection("publicData").get(),
+          "permission-denied"
+        );
+      });
+      test("kan lese egen userGlimts (positiv kontroll)", async () => {
+        const uid = GlimtStore.getUserId();
+        const snap = await firebase.firestore()
+          .collection("users").doc(uid).collection("userGlimts").get();
+        assert(Array.isArray(snap.docs), "Snap er ikke et QuerySnapshot");
+      });
+
+      // ── Auth-guard inkludering ──────────────────────────────
+      describe("10. Auth-guard inkludert på beskyttede sider");
+      const protectedPages = [
+        "mine-glimt.html", "glimt-detalj.html", "opprett-glimt.html",
+        "mine-enkeltglimt.html", "mine-reiseplaner.html",
+        "reiseplan-detalj.html", "min-kalender.html", "calendar.html",
+        "utforsk-glimt.html", "utforsk-reisebrev.html",
+        "explore.html", "city-landing.html"
+      ];
+      protectedPages.forEach(page => {
+        test(`${page} laster auth-guard.js`, async () => {
+          const res = await fetch("../" + page);
+          assert(res.ok, `HTTP ${res.status}`);
+          const html = await res.text();
+          assert(html.includes("auth-guard.js"), "auth-guard.js ikke inkludert");
+          assert(html.includes("firebase-firestore-compat.js"),
+            "firestore-SDK ikke inkludert");
+          assert(html.includes("glimt-store.js"), "glimt-store.js ikke inkludert");
+        });
+      });
+
+      // ── Login-side skal IKKE ha auth-guard ─────────────────
+      describe("11. Login-siden er åpen");
+      test("login.html har IKKE auth-guard.js", async () => {
+        const res = await fetch("../login.html");
+        assert(res.ok);
+        const html = await res.text();
+        assert(!html.includes("auth-guard.js"),
+          "login.html har auth-guard.js – ville forårsaket redirect-loop");
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  Oppstart
+    // ══════════════════════════════════════════════════════════════
+
+    (async function bootstrap() {
+      // Vent på auth
+      await new Promise(resolve => {
+        const unsub = firebase.auth().onAuthStateChanged(user => {
+          unsub();
+          resolve(user);
+        });
+      });
+
+      const user = firebase.auth().currentUser;
+      const userInfo = document.getElementById("user-info");
+      if (!user) {
+        userInfo.innerHTML =
+          "⚠ <b>Du er ikke logget inn.</b> Åpne " +
+          '<a style="color:var(--blue)" href="../login.html?redirect=tests/test-glimt-store.html">' +
+          "login.html</a> og kom tilbake hit etterpå.";
+        return;
+      }
+
+      // Init store
+      try {
+        await GlimtStore.init(user.uid);
+      } catch (err) {
+        userInfo.innerHTML = `✗ Kunne ikke initialisere GlimtStore: ${err.message}`;
+        return;
+      }
+
+      userInfo.innerHTML =
+        `Logget inn som <b>${user.email || user.displayName || "Ukjent"}</b> ` +
+        `<span style="color:var(--muted)">(${user.uid})</span>`;
+
+      defineTests();
+      updateSummary();
+    })();
+
+    document.getElementById("run-btn").addEventListener("click", runAll);
+    document.getElementById("cleanup-btn").addEventListener("click", async () => {
+      try {
+        await cleanupTestData(firebase.firestore(), GlimtStore.getUserId());
+        alert("Ferdig – all testdata er slettet.");
+      } catch (err) {
+        alert("Feil: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
