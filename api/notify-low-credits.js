@@ -15,11 +15,15 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || "caroline.aar.jakobsen@gmail.com";
+  const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
 
   if (!RESEND_API_KEY) {
     console.error("RESEND_API_KEY mangler i miljøvariabler");
     return res.status(500).json({ error: "E-postvarsel er ikke konfigurert" });
+  }
+  if (!NOTIFY_EMAIL) {
+    console.error("NOTIFY_EMAIL mangler i miljøvariabler – sett den i Vercel → Settings → Environment Variables");
+    return res.status(500).json({ error: "Mottaker-e-post er ikke konfigurert" });
   }
 
   const { reason } = req.body || {};
