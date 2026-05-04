@@ -1,0 +1,70 @@
+# ============================================================
+#  Glimt – Continuous Integration
+#  Kjører på hver push og pull request mot main.
+#
+#  Strategi:
+#   - Job 1 (gating): syntaks-sjekk på alle JS-filer. MÅ passere
+#     – fanger reelle feil som ville knust siden.
+#   - Job 2 (informativ): full statisk test (HTML-struktur, store-API,
+#     security rules osv.). Feiler ikke build, men gir oversikt over
+#     gjenværende migrerings-jobb.
+# ============================================================
+
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  syntax-check:
+    name: Syntaks-sjekk (gating)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Hent ut koden
+        uses: actions/checkout@v4
+
+      - name: Sett opp Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Sjekk syntaks i alle JS-filer
+        run: |
+          set -e
+          fail=0
+          for f in $(find . -maxdepth 2 -name "*.js" \
+                      -not -path "./node_modules/*" \
+                      -not -path "./.git/*"); do
+            if ! node -c "$f" 2>/dev/null; then
+              echo "::error file=$f::Syntaksfeil"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then exit 1; fi
+          echo "✓ Alle JS-filer parser uten syntaksfeil"
+
+  full-static-tests:
+    name: Full statisk test (informativ)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Feiler IKKE build – brukes bare for å se progresjon
+    continue-on-error: true
+
+    steps:
+      - name: Hent ut koden
+        uses: actions/checkout@v4
+
+      - name: Sett opp Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Kjør alle statiske tester
+        run: node tests/run-static-tests.js
